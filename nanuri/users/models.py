@@ -5,18 +5,47 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None):
+    def create_user(
+        self,
+        email,
+        nickname=None,
+        latitude=None,
+        longitude=None,
+        profile_url=None,
+        password=None,
+    ):
         if not email:
             raise ValueError('Users must have an email address')
 
-        user = self.model(email=self.normalize_email(email))
+        user = self.model(
+            email=self.normalize_email(email),
+            nickname=nickname,
+            latitude=latitude,
+            longitude=longitude,
+            profile_url=profile_url,
+        )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None):
-        user = self.create_user(email, password=password)
+    def create_superuser(
+        self,
+        email,
+        nickname=None,
+        latitude=None,
+        longitude=None,
+        profile_url=None,
+        password=None,
+    ):
+        user = self.create_user(
+            email,
+            nickname=nickname,
+            latitude=latitude,
+            longitude=longitude,
+            profile_url=profile_url,
+            password=password,
+        )
         user.is_admin = True
         user.save(using=self._db)
         return user

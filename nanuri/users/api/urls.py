@@ -1,0 +1,10 @@
+from django.urls import path
+
+from .views import UserListCreateAPIView, UserRetrieveUpdateDestroyAPIView
+
+app_name = 'nanuri.users'
+
+urlpatterns = [
+    path('', UserListCreateAPIView.as_view(), name='list'),
+    path('<uuid:uuid>/', UserRetrieveUpdateDestroyAPIView.as_view(), name='detail'),
+]
