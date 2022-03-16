@@ -1,5 +1,8 @@
 name: nanuri-backend
 
+env:
+  SECRET_KEY: "lbmy-9j9^+a#gogp5g!8-peqov^d&wcofz%dal44hq(m8ty=^z"
+
 on:
   push:
     branches: [ main ]
