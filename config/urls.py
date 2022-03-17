@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # REST APIs
     path('api/v1/users/', include('nanuri.users.api.urls', namespace='users_api')),
+    path('api/v1/posts/', include('nanuri.posts.api.urls', namespace='posts_api')),
 ]

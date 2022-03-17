@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'nanuri.users.apps.UsersConfig',
+    'nanuri.posts.apps.PostsConfig',
 ]
 
 MIDDLEWARE = [
