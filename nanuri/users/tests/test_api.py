@@ -1,3 +1,4 @@
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 
 from ..models import User
@@ -27,7 +28,8 @@ class UserAPITestCase(APITestCase):
             nickname="Administrator",
             password="password1234",
         )
-        self.admin_client.force_authenticate(user=self.admin)
+        admin_token = Token.objects.create(user=self.admin)
+        self.admin_client.force_authenticate(user=self.admin, token=admin_token)
 
     def test_get_user_list(self):
         response = self.admin_client.get("/api/v1/users/")
@@ -44,11 +46,14 @@ class UserAPITestCase(APITestCase):
 
         self.assertFalse("password" in user)
 
+        response = APIClient().get("/api/v1/users/")
+        self.assertEqual(response.status_code, 401)
+
     def test_create_user(self):
         response = self.admin_client.post(
             "/api/v1/users/",
             data={
-                "email": "user@example.com",
+                "email": "test1@example.com",
                 "password": "password1234",
             },
         )
