@@ -2,6 +2,9 @@ name: nanuri-backend
 
 env:
   SECRET_KEY: "lbmy-9j9^+a#gogp5g!8-peqov^d&wcofz%dal44hq(m8ty=^z"
+  KAKAO_REST_API_KEY: ""
+  KAKAO_APP_ID: ""
+  KAKAO_REDIRECT_URI: ""
 
 on:
   push:

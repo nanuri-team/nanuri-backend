@@ -2,50 +2,22 @@ import uuid
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
-    def create_user(
-        self,
-        email,
-        nickname=None,
-        latitude=None,
-        longitude=None,
-        profile_url=None,
-        password=None,
-    ):
+    def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('Users must have an email address')
 
-        user = self.model(
-            email=self.normalize_email(email),
-            nickname=nickname,
-            latitude=latitude,
-            longitude=longitude,
-            profile_url=profile_url,
-        )
+        user = self.model(email=self.normalize_email(email), **extra_fields)
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(
-        self,
-        email,
-        nickname=None,
-        latitude=None,
-        longitude=None,
-        profile_url=None,
-        password=None,
-    ):
-        user = self.create_user(
-            email,
-            nickname=nickname,
-            latitude=latitude,
-            longitude=longitude,
-            profile_url=profile_url,
-            password=password,
-        )
+    def create_superuser(self, email, password=None, **extra_fields):
+        user = self.create_user(email, password=password, **extra_fields)
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -69,6 +41,15 @@ class User(AbstractBaseUser):
     latitude = models.FloatField(null=True, blank=True, default=None)
     longitude = models.FloatField(null=True, blank=True, default=None)
     profile_url = models.URLField(null=True, blank=True)
+    auth_provider = models.CharField(
+        max_length=15,
+        choices=(
+            ('APPLE', _('애플')),
+            ('KAKAO', _('카카오')),
+        ),
+        null=True,
+        default=True,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
