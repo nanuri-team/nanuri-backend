@@ -29,7 +29,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost"]
 
 
 # Application definition
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'nanuri.authentication.apps.AuthenticationConfig',
     'nanuri.users.apps.UsersConfig',
     'nanuri.posts.apps.PostsConfig',
 ]
@@ -139,3 +140,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
 }
+
+KAKAO_REST_API_KEY = os.environ["KAKAO_REST_API_KEY"]
+KAKAO_REDIRECT_URI = os.environ["KAKAO_REDIRECT_URI"]

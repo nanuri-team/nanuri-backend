@@ -47,6 +47,7 @@ class UserAdmin(BaseUserAdmin):
 
     list_display = (
         'email',
+        'auth_provider',
         'is_active',
         'is_admin',
         'latitude',
