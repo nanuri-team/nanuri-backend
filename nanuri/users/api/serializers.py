@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ('id',)
+        exclude = ('id', 'favorite_posts')
         extra_kwargs = {
             'password': {
                 'write_only': True,
