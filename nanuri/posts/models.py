@@ -44,9 +44,12 @@ class Post(models.Model):
     )
     is_published = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
+    view_count = models.PositiveBigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # post.writer == 이 글의 작성자
+    # user.posts.all() == 이 유저가 작성한 모든 글
     writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     category = models.ForeignKey(
         Category,
@@ -54,7 +57,9 @@ class Post(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
-    participants = models.ManyToManyField(User)
+    # post.participants.all() == 이 글에 참여한 모든 유저
+    # user.posts_participated.all() == 이 유저가 참여한 모든 글
+    participants = models.ManyToManyField(User, related_name="posts_participated")
 
     def __str__(self):
         return self.title
