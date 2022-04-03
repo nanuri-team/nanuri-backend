@@ -29,7 +29,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'channels',
     'nanuri.authentication.apps.AuthenticationConfig',
     'nanuri.users.apps.UsersConfig',
     'nanuri.posts.apps.PostsConfig',
+    'nanuri.chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
@@ -77,6 +79,20 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+ASGI_APPLICATION = 'config.asgi.application'
+
+CHANNEL_LAYERS = {
+    # 'default': {
+    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
+    #     'CONFIG': {
+    #         'hosts': [('127.0.0.1', 6379)],
+    #     },
+    # }
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    }
+}
 
 
 # Database
@@ -141,5 +157,5 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
-KAKAO_REST_API_KEY = os.environ["KAKAO_REST_API_KEY"]
-KAKAO_REDIRECT_URI = os.environ["KAKAO_REDIRECT_URI"]
+KAKAO_REST_API_KEY = os.environ['KAKAO_REST_API_KEY']
+KAKAO_REDIRECT_URI = os.environ['KAKAO_REDIRECT_URI']
