@@ -1,13 +1,7 @@
 name: nanuri-backend
 
 env:
-  SECRET_KEY: "lbmy-9j9^+a#gogp5g!8-peqov^d&wcofz%dal44hq(m8ty=^z"
-  KAKAO_REST_API_KEY: ""
-  KAKAO_APP_ID: ""
-  KAKAO_REDIRECT_URI: ""
-  MARIADB_DATABASE: testdb
-  MARIADB_USER: tester
-  MARIADB_PASSWORD: tester
+  DJANGO_SETTINGS_MODULE: config.settings.test
   AWS_REGION: ap-northeast-2
 
 on:
