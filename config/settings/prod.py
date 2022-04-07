@@ -9,12 +9,12 @@ ALLOWED_HOSTS = ['app']
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ['MARIADB_DATABASE'],
-        'USER': 'root',
-        'PASSWORD': os.environ['MARIADB_ROOT_PASSWORD'],
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ['POSTGRES_DB'],
+        'USER': os.environ['POSTGRES_USER'],
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
         'HOST': 'db',
-        'PORT': '3306',
+        'PORT': '5432',
     }
 }
 

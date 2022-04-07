@@ -22,11 +22,11 @@ services:
       - db
 
   db:
-    image: mariadb:10.8
+    image: postgres:12.9
     env_file:
       - ".env"
     volumes:
-      - local_db_data:/var/lib/mysql
+      - local_db_data:/var/lib/postgresql/data
     ports:
-      - "3306:3306"
+      - "5432:5432"
     restart: always
