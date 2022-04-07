@@ -11,12 +11,12 @@ services:
     env_file:
       - ".env"
     volumes:
-      - .:/code:z
+      - ".:/code:z"
     ports:
       - "8000:8000"
     working_dir: /code
     command: >
-      sh -c "daphne -b 0.0.0.0 -p 8000 config.asgi:application"
+      sh -c "python manage.py collectstatic --no-input && daphne -b 0.0.0.0 -p 8000 config.asgi:application"
     restart: unless-stopped
     depends_on:
       - db

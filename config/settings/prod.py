@@ -18,5 +18,7 @@ DATABASES = {
     }
 }
 
+STATIC_ROOT = BASE_DIR / 'static'
+
 KAKAO_REST_API_KEY = os.environ['KAKAO_REST_API_KEY']
 KAKAO_REDIRECT_URI = os.environ['KAKAO_REDIRECT_URI']
