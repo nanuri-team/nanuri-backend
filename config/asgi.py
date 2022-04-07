@@ -12,6 +12,8 @@ import os
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 
+asgi_application = get_asgi_application()
+
 import nanuri.chat.middlewares
 import nanuri.chat.routing
 
@@ -19,7 +21,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
 
 application = ProtocolTypeRouter(
     {
-        'http': get_asgi_application(),
+        'http': asgi_application,
         'websocket': nanuri.chat.middlewares.QueryTokenAuthMiddleware(
             URLRouter(nanuri.chat.routing.websocket_urlpatterns)
         ),
