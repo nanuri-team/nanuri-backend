@@ -5,6 +5,9 @@ env:
   KAKAO_REST_API_KEY: ""
   KAKAO_APP_ID: ""
   KAKAO_REDIRECT_URI: ""
+  MARIADB_DATABASE: testdb
+  MARIADB_USER: tester
+  MARIADB_PASSWORD: tester
   AWS_REGION: ap-northeast-2
 
 on:

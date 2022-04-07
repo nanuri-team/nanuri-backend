@@ -29,7 +29,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["localhost", "app"]
 
 
 # Application definition
@@ -84,8 +84,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ['MARIADB_DATABASE'],
+        'USER': os.environ['MARIADB_USER'],
+        'PASSWORD': os.environ['MARIADB_PASSWORD'],
+        'HOST': 'db',
+        'PORT': '3306',
     }
 }
 

@@ -1,0 +1,49 @@
+version: "3"
+
+volumes:
+  local_db_data: {}
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - ".env"
+    volumes:
+      - .:/code:z
+    expose:
+      - 8000
+    working_dir: /code
+    command: |
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.8
+    env_file:
+      - ".env"
+    environment:
+      - MARIADB_RANDOM_ROOT_PASSWORD=true
+    volumes:
+      - local_db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+
+  web:
+    image: nginx:1.21
+    environment:
+      - NGINX_PORT=80
+      - SERVER_NAME=localhost
+      - APP_HOST=app
+      - APP_PORT=8000
+    volumes:
+      - ./templates:/etc/nginx/templates
+    ports:
+      - "8080:80"
+    restart: always
+    depends_on:
+      - app
