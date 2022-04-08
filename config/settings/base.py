@@ -40,11 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'channels',
     'nanuri.authentication.apps.AuthenticationConfig',
     'nanuri.users.apps.UsersConfig',
     'nanuri.posts.apps.PostsConfig',
-    'nanuri.chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
@@ -76,20 +74,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
-ASGI_APPLICATION = 'config.asgi.application'
-
-CHANNEL_LAYERS = {
-    # 'default': {
-    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
-    #     'CONFIG': {
-    #         'hosts': [('127.0.0.1', 6379)],
-    #     },
-    # }
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    }
-}
 
 
 # Database
