@@ -7,7 +7,7 @@ from nanuri.users.models import User
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -66,6 +66,12 @@ class Post(models.Model):
 
 
 class Order(models.Model):
+    uuid = models.UUIDField(
+        verbose_name='uuid',
+        unique=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
     price = models.PositiveIntegerField()
     status = models.CharField(
         max_length=15,
@@ -82,4 +88,8 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, default=None)
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="orders",
+    )
