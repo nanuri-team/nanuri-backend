@@ -20,5 +20,14 @@ DATABASES = {
 
 STATIC_ROOT = BASE_DIR / 'static'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    }
+}
+
 KAKAO_REST_API_KEY = os.environ['KAKAO_REST_API_KEY']
 KAKAO_REDIRECT_URI = os.environ['KAKAO_REDIRECT_URI']
