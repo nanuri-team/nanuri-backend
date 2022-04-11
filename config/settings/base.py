@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'nanuri.authentication.apps.AuthenticationConfig',
     'nanuri.users.apps.UsersConfig',
     'nanuri.posts.apps.PostsConfig',
+    'nanuri.chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
