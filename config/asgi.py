@@ -9,21 +9,21 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/asgi/
 
 import os
 
+from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 
-asgi_application = get_asgi_application()
-
-import nanuri.chat.middlewares
 import nanuri.chat.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.local')
 
+django_asgi_app = get_asgi_application()
+
 application = ProtocolTypeRouter(
     {
-        'http': asgi_application,
-        'websocket': nanuri.chat.middlewares.QueryTokenAuthMiddleware(
-            URLRouter(nanuri.chat.routing.websocket_urlpatterns)
+        'http': django_asgi_app,
+        'websocket': AuthMiddlewareStack(
+            URLRouter(nanuri.chat.routing.websocket_urlpatterns),
         ),
     }
 )

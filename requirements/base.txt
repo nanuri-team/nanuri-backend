@@ -1,6 +1,6 @@
+boto3~=1.21.37
 channels~=3.0.4
-channels_redis~=3.4.0
-daphne~=3.0.2
+channels-redis~=3.4.0
 Django~=3.2.12
 djangorestframework~=3.13.1
 python-dotenv~=0.19.2
