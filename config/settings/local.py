@@ -25,5 +25,7 @@ CHANNEL_LAYERS = {
     }
 }
 
+DYNAMODB_ENDPOINT_URL = 'http://localhost:8000'
+
 KAKAO_REST_API_KEY = os.environ['KAKAO_REST_API_KEY']
 KAKAO_REDIRECT_URI = os.environ['KAKAO_REDIRECT_URI']

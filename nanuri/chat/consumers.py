@@ -2,8 +2,10 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from .dynamodb import group_message_table
 
-class ChatConsumer(AsyncWebsocketConsumer):
+
+class GroupChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
@@ -27,6 +29,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
+
+        group_message_table.insert_row(
+            channel_id=self.room_name,
+            message_to=self.room_group_name,
+            message_from="user@example.com",
+            message=message,
+        )
 
         # Send message to room group
         await self.channel_layer.group_send(
