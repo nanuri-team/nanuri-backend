@@ -9,6 +9,10 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
+        self.user = self.scope['user']
+
+        if self.user is None:
+            await self.close()
 
         # Join room group
         await self.channel_layer.group_add(
@@ -33,7 +37,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
         group_message_table.insert_row(
             channel_id=self.room_name,
             message_to=self.room_group_name,
-            message_from="user@example.com",
+            message_from=self.user.email,
             message=message,
         )
 
