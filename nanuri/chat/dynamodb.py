@@ -9,11 +9,15 @@ class GroupMessageTable:
     def __init__(self):
         self.resource = boto3.resource(
             'dynamodb',
-            endpoint_url=settings.DYNAMODB_ENDPOINT_URL,
+            endpoint_url=settings.AWS_DYNAMODB_ENDPOINT_URL,
+            aws_access_key_id=settings.AWS_DYNAMODB_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_DYNAMODB_SECRET_ACCESS_KEY,
         )
         self.client = boto3.client(
             'dynamodb',
-            endpoint_url=settings.DYNAMODB_ENDPOINT_URL,
+            endpoint_url=settings.AWS_DYNAMODB_ENDPOINT_URL,
+            aws_access_key_id=settings.AWS_DYNAMODB_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_DYNAMODB_SECRET_ACCESS_KEY,
         )
         self.table_name = 'group_message'
 
