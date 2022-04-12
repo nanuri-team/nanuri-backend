@@ -4,6 +4,17 @@ from ..models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    posts = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="title",
+    )
+    favorite_posts = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="title",
+    )
+
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         if "password" in validated_data:
@@ -12,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ('id', 'favorite_posts')
+        exclude = ('id',)
         extra_kwargs = {
             'password': {
                 'write_only': True,

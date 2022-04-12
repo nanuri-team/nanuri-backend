@@ -4,11 +4,6 @@ from ..models import Category, Order, Post
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    # parent = serializers.SlugRelatedField(
-    #     many=False,
-    #     slug_field="name",
-    # )
-
     class Meta:
         model = Category
         exclude = ("id",)
@@ -19,6 +14,26 @@ class PostSerializer(serializers.ModelSerializer):
         many=False,
         read_only=True,
         slug_field="email",
+    )
+    participants = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="email",
+    )
+    category = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field="name",
+    )
+    favored_by = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="email",
+    )
+    orders = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="uuid",
     )
 
     class Meta:
