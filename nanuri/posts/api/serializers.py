@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Category, Order, Post
+from ..models import Category, Post
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -30,11 +30,6 @@ class PostSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field="email",
     )
-    orders = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field="uuid",
-    )
 
     class Meta:
         model = Post
@@ -44,9 +39,3 @@ class PostSerializer(serializers.ModelSerializer):
             'published_at': {'read_only': True},
             'participants': {'read_only': True},
         }
-
-
-class OrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        exclude = ("id",)
