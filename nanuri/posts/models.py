@@ -72,7 +72,11 @@ class Post(models.Model):
     )
     # post.participants.all() == 이 글에 참여한 모든 유저
     # user.posts_participated.all() == 이 유저가 참여한 모든 글
-    participants = models.ManyToManyField(User, related_name="posts_participated")
+    participants = models.ManyToManyField(
+        User,
+        related_name="posts_participated",
+        blank=True,
+    )
 
     def __str__(self):
         return self.title
