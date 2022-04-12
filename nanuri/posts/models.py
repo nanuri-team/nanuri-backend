@@ -42,6 +42,19 @@ class Post(models.Model):
         null=True,
         blank=True,
     )
+    order_status = models.CharField(
+        max_length=15,
+        choices=(
+            ('ADVERTISING', _('인원 모집 중')),
+            ('ORDERING', _('주문 진행 중')),
+            ('ORDERED', _('주문 완료')),
+            ('DELIVERING1', _('1차 배송 중')),
+            ('DELIVERING2', _('2차 배송 중')),
+            ('DELIVERED', _('배송 완료')),
+            ('CANCELLED', _('취소됨')),
+        ),
+        default='ADVERTISING',
+    )
     is_published = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
     view_count = models.PositiveBigIntegerField(default=0)
@@ -63,33 +76,3 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class Order(models.Model):
-    uuid = models.UUIDField(
-        verbose_name='uuid',
-        unique=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-    price = models.PositiveIntegerField()
-    status = models.CharField(
-        max_length=15,
-        choices=(
-            ('ADVERTISING', _('인원 모집 중')),
-            ('ORDERED', _('주문 완료')),
-            ('DELIVERING1', _('1차 배송 중')),
-            ('DELIVERING2', _('2차 배송 중')),
-            ('DELIVERED', _('배송 완료')),
-            ('CANCELLED', _('취소됨')),
-        ),
-        default='ADVERTISING',
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    post = models.ForeignKey(
-        Post,
-        on_delete=models.CASCADE,
-        related_name="orders",
-    )

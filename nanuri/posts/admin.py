@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Order, Post
+from .models import Category, Post
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -16,6 +16,7 @@ class PostAdmin(admin.ModelAdmin):
         'num_participants',
         'product_url',
         'trade_type',
+        'order_status',
         'is_published',
         'published_at',
         'created_at',
@@ -30,14 +31,5 @@ class CategoryAdmin(admin.ModelAdmin):
     ]
 
 
-class OrderAdmin(admin.ModelAdmin):
-    list_display = [
-        "pk",
-        "price",
-        "status",
-    ]
-
-
 admin.site.register(Post, PostAdmin)
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(Order, OrderAdmin)
