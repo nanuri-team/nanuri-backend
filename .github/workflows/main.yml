@@ -6,7 +6,11 @@ env:
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
 
 jobs:
   ci:
@@ -14,7 +18,9 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: ["3.9"]
+        python-version:
+          - "3.8"
+          - "3.9"
 
     steps:
       - uses: actions/checkout@v2
@@ -53,6 +59,7 @@ jobs:
       - ci
 
     runs-on: ubuntu-20.04
+    if: ${{ github.event_name == 'push' }}
 
     steps:
       - uses: actions/checkout@v2
