@@ -2,7 +2,9 @@ import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -107,3 +109,31 @@ class KakaoTokenAPIView(APIView):
 
         token, _ = Token.objects.get_or_create(user=user)
         return Response(data={"token": token.key}, status=status.HTTP_200_OK)
+
+
+def unlink_kakao_account(kakao_id):
+    response = requests.post(
+        "https://kapi.kakao.com/v1/user/unlink",
+        headers={"Authorization": f"KakaoAK {settings.KAKAO_APP_ADMIN_KEY}"},
+        data={
+            "target_id_type": "user_id",
+            "target_id": kakao_id,
+        },
+    )
+    if response.status_code != status.HTTP_200_OK:
+        data = response.json()
+        if "code" in data and data["code"] == -101:
+            raise ex.KakaoAccountAlreadyUnlinkedError()
+        raise ex.KakaoAccountUnlinkFailedError()
+    return response.json()
+
+
+class KakaoUnlinkAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        token = Token.objects.get(key=request.auth)
+        kakao_account = KakaoAccount.objects.get(user=token.user)
+        unlink_kakao_account(kakao_account.kakao_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
