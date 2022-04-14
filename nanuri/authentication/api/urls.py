@@ -5,6 +5,14 @@ from . import views
 app_name = 'nanuri.authentication'
 
 urlpatterns = [
-    path('kakao-token/', views.KakaoTokenAPIView.as_view(), name='token'),
-    path('kakao-unlink/', views.KakaoUnlinkAPIView.as_view(), name='unlink'),
+    path(
+        'kakao/token/callback/',
+        views.KakaoTokenCallbackAPIView.as_view(),
+        name='token_callback',
+    ),
+    path(
+        'kakao/unlink/',
+        views.KakaoUnlinkAPIView.as_view(),
+        name='unlink',
+    ),
 ]

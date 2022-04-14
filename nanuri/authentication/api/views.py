@@ -96,7 +96,7 @@ def get_or_create_user(email):
     return user, user_created
 
 
-class KakaoTokenAPIView(APIView):
+class KakaoTokenCallbackAPIView(APIView):
     def get(self, request):
         authorization_code = get_code_query_param(request)
         access_token = refresh_kakao_token(authorization_code)["access_token"]
