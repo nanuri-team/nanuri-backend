@@ -1,12 +1,12 @@
 import requests
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from nanuri.users.models import User
-
+from ..models import KakaoAccount
 from . import exceptions as ex
 
 
@@ -57,13 +57,12 @@ def get_kakao_account_info(access_token):
     return response.json()
 
 
-def get_kakao_email(access_token):
+def get_kakao_email(kakao_account_info):
     """
     카카오 이메일 정보를 가져옵니다.
 
     https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
     """
-    kakao_account_info = get_kakao_account_info(access_token)
     if "kakao_account" not in kakao_account_info:
         raise ex.KakaoAccountRetrieveFailedError(
             detail="카카오 계정 정보가 없습니다. 카카오 동의항목에 문제가 발생한 것 같습니다."
@@ -85,29 +84,26 @@ def get_or_create_user(email):
     """
     유저 객체를 가져오거나 새로 생성합니다.
     """
+    user_model = get_user_model()
     try:
-        user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        user = User.objects.create_user(email=email, auth_provider="KAKAO")
-    return user
-
-
-def get_or_create_token(user):
-    """
-    토큰 객체를 가져오거나 새로 생성합니다.
-    """
-    try:
-        token = Token.objects.get(user=user)
-    except Token.DoesNotExist:
-        token = Token.objects.create(user=user)
-    return token
+        user = user_model.objects.get(email=email)
+        user_created = False
+    except user_model.DoesNotExist:
+        user = user_model.objects.create_user(email=email, auth_provider="KAKAO")
+        user_created = True
+    return user, user_created
 
 
 class KakaoTokenAPIView(APIView):
     def get(self, request):
         authorization_code = get_code_query_param(request)
         access_token = refresh_kakao_token(authorization_code)["access_token"]
-        email = get_kakao_email(access_token)
-        user = get_or_create_user(email)
-        token = get_or_create_token(user)
+        kakao_account_info = get_kakao_account_info(access_token)
+        email = get_kakao_email(kakao_account_info)
+
+        user, _ = get_or_create_user(email=email)
+        kakao_id = kakao_account_info["id"]
+        KakaoAccount.objects.get_or_create(user=user, kakao_id=kakao_id)
+
+        token, _ = Token.objects.get_or_create(user=user)
         return Response(data={"token": token.key}, status=status.HTTP_200_OK)
