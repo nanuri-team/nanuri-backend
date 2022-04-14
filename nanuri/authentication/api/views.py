@@ -105,9 +105,9 @@ class KakaoTokenCallbackAPIView(APIView):
 
         user, _ = get_or_create_user(email=email)
         kakao_id = kakao_account_info["id"]
-        KakaoAccount.objects.get_or_create(user=user, kakao_id=kakao_id)
+        KakaoAccount.objects.update_or_create(user=user, kakao_id=kakao_id)
 
-        token, _ = Token.objects.get_or_create(user=user)
+        token, _ = Token.objects.update_or_create(user=user)
         return Response(data={"token": token.key}, status=status.HTTP_200_OK)
 
 
