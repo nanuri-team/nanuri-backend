@@ -79,7 +79,7 @@ class Post(models.Model):
         on_delete=models.CASCADE,
         related_name='posts',
     )
-    category = models.ForeignKey(
+    category = models.OneToOneField(
         Category,
         null=True,
         blank=True,
