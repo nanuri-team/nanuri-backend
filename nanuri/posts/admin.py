@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from .models import Category, Post
+from .models import Category, Post, PostImage
 
 
 class PostAdmin(admin.ModelAdmin):
     list_display = [
         'uuid',
         'title',
-        'image_url',
+        'image',
         'unit_price',
         'quantity',
         'description',
@@ -24,6 +24,13 @@ class PostAdmin(admin.ModelAdmin):
     ]
 
 
+class PostImageAdmin(admin.ModelAdmin):
+    list_display = [
+        "post",
+        "image",
+    ]
+
+
 class CategoryAdmin(admin.ModelAdmin):
     list_display = [
         "name",
@@ -32,4 +39,5 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Post, PostAdmin)
+admin.site.register(PostImage, PostImageAdmin)
 admin.site.register(Category, CategoryAdmin)

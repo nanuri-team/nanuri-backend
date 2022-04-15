@@ -1,9 +1,9 @@
-import uuid
+from pathlib import Path
+from uuid import uuid4
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from nanuri.users.models import User
 
 
 class Category(models.Model):
@@ -18,14 +18,25 @@ class Category(models.Model):
 
 
 class Post(models.Model):
+    def upload_to(self, filename):
+        post_uuid = self.uuid
+        ext = Path(filename).suffix
+        return f"posts/{post_uuid}/{uuid4().hex[:8]}{ext}"
+
     uuid = models.UUIDField(
         verbose_name='uuid',
         unique=True,
-        default=uuid.uuid4,
+        default=uuid4,
         editable=False,
     )
     title = models.CharField(max_length=255)
-    image_url = models.URLField()
+    image = models.ImageField(
+        unique=True,
+        null=True,
+        blank=True,
+        default=None,
+        upload_to=upload_to,
+    )
     unit_price = models.PositiveIntegerField()
     quantity = models.PositiveIntegerField()
     description = models.TextField()
@@ -63,7 +74,11 @@ class Post(models.Model):
 
     # post.writer == 이 글의 작성자
     # user.posts.all() == 이 유저가 작성한 모든 글
-    writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    writer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='posts',
+    )
     category = models.ForeignKey(
         Category,
         null=True,
@@ -73,10 +88,30 @@ class Post(models.Model):
     # post.participants.all() == 이 글에 참여한 모든 유저
     # user.posts_participated.all() == 이 유저가 참여한 모든 글
     participants = models.ManyToManyField(
-        User,
+        settings.AUTH_USER_MODEL,
         related_name="posts_participated",
         blank=True,
     )
 
     def __str__(self):
         return self.title
+
+
+class PostImage(models.Model):
+    def upload_to(self, filename):
+        post_uuid = self.post.uuid
+        ext = Path(filename).suffix
+        return f"posts/{post_uuid}/{uuid4().hex[:8]}{ext}"
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="images",
+    )
+    image = models.ImageField(
+        unique=True,
+        null=True,
+        blank=True,
+        default=None,
+        upload_to=upload_to,
+    )
