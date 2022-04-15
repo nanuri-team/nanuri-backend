@@ -7,6 +7,12 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
+THIRD_PARTY_APPS += [
+    'storages',
+]
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
