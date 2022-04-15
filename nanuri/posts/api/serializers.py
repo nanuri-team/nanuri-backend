@@ -1,12 +1,18 @@
 from rest_framework import serializers
 
-from ..models import Category, Post
+from ..models import Category, Post, PostImage
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         exclude = ("id",)
+
+
+class PostImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostImage
+        fields = ("image",)
 
 
 class PostSerializer(serializers.ModelSerializer):
