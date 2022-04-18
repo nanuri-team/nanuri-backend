@@ -69,6 +69,8 @@ class Post(models.Model):
     is_published = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
     view_count = models.PositiveBigIntegerField(default=0)
+    waited_from = models.DateTimeField(null=True, blank=True, default=None)
+    waited_until = models.DateTimeField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

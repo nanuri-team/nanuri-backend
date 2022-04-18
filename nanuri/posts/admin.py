@@ -19,6 +19,8 @@ class PostAdmin(admin.ModelAdmin):
         'order_status',
         'is_published',
         'published_at',
+        'waited_from',
+        'waited_until',
         'created_at',
         'updated_at',
     ]
