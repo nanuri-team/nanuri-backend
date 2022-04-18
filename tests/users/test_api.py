@@ -54,10 +54,11 @@ class TestUserEndpoints:
             "profile_url",
             "auth_provider",
         ]
+        data = {field: getattr(new_user, field) for field in fields}
+        data["password"] = new_password
         response = user_client.put(
             reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid}),
-            data={field: getattr(new_user, field) for field in fields}
-            | {"password": new_password},
+            data=data,
             format="json",
         )
         result = response.json()
