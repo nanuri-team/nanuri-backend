@@ -19,11 +19,11 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
     # REST APIs
-    path('api/auth/', include('nanuri.authentication.api.urls', namespace='auth')),
-    path('api/v1/users/', include('nanuri.users.api.urls', namespace='users_api')),
-    path('api/v1/posts/', include('nanuri.posts.api.urls', namespace='posts_api')),
+    path("api/auth/", include("nanuri.authentication.api.urls", namespace="auth")),
+    path("api/v1/users/", include("nanuri.users.api.urls")),
+    path("api/v1/posts/", include("nanuri.posts.api.urls")),
 ]
 
 if settings.DEBUG:
