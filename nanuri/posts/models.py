@@ -56,7 +56,7 @@ class Post(models.Model):
     order_status = models.CharField(
         max_length=15,
         choices=(
-            ('ADVERTISING', _('인원 모집 중')),
+            ('WAITING', _('인원 모집 중')),
             ('ORDERING', _('주문 진행 중')),
             ('ORDERED', _('주문 완료')),
             ('DELIVERING1', _('1차 배송 중')),
@@ -64,11 +64,13 @@ class Post(models.Model):
             ('DELIVERED', _('배송 완료')),
             ('CANCELLED', _('취소됨')),
         ),
-        default='ADVERTISING',
+        default='WAITING',
     )
     is_published = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
     view_count = models.PositiveBigIntegerField(default=0)
+    waited_from = models.DateTimeField(null=True, blank=True, default=None)
+    waited_until = models.DateTimeField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
