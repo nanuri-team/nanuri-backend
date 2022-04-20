@@ -18,10 +18,10 @@ class QueryTokenAuthMiddleware:
         self.app = app
 
     async def __call__(self, scope, receive, send):
-        scope['user'] = None
-        params = parse_qs(scope['query_string'])
-        if b'token' in params.keys():
-            token_key = params[b'token'][0].decode()
+        scope["user"] = None
+        params = parse_qs(scope["query_string"])
+        if b"token" in params.keys():
+            token_key = params[b"token"][0].decode()
             user = await get_user(token_key)
-            scope['user'] = user
+            scope["user"] = user
         return await self.app(scope, receive, send)

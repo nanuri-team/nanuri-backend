@@ -9,25 +9,25 @@ from .models import User
 
 
 class UserCreationForm(forms.ModelForm):
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(
-        label='Password confirmation', widget=forms.PasswordInput
+        label="Password confirmation", widget=forms.PasswordInput
     )
 
     class Meta:
         model = User
-        fields = ('email',)
+        fields = ("email",)
 
     def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
             raise ValidationError("Passwords don't match")
         return password2
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password1'])
+        user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
         return user
@@ -39,14 +39,14 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
         fields = (
-            'email',
-            'nickname',
-            'is_active',
-            'is_admin',
-            'latitude',
-            'longitude',
-            'profile_url',
-            'auth_provider',
+            "email",
+            "nickname",
+            "is_active",
+            "is_admin",
+            "latitude",
+            "longitude",
+            "profile_url",
+            "auth_provider",
         )
 
 
@@ -55,34 +55,34 @@ class UserAdmin(BaseUserAdmin):
     add_form = UserCreationForm
 
     list_display = (
-        'uuid',
-        'email',
-        'nickname',
-        'is_active',
-        'is_admin',
-        'latitude',
-        'longitude',
-        'profile_url',
-        'auth_provider',
-        'created_at',
-        'updated_at',
+        "uuid",
+        "email",
+        "nickname",
+        "is_active",
+        "is_admin",
+        "latitude",
+        "longitude",
+        "profile_url",
+        "auth_provider",
+        "created_at",
+        "updated_at",
     )
-    list_filter = ('is_active', 'is_admin')
+    list_filter = ("is_active", "is_admin")
     fieldsets = (
         (
             None,
             {
-                'fields': (
-                    'email',
-                    'nickname',
-                    'password',
-                    'is_active',
-                    'is_admin',
-                    'latitude',
-                    'longitude',
-                    'profile_url',
-                    'auth_provider',
-                    'favorite_posts',
+                "fields": (
+                    "email",
+                    "nickname",
+                    "password",
+                    "is_active",
+                    "is_admin",
+                    "latitude",
+                    "longitude",
+                    "profile_url",
+                    "auth_provider",
+                    "favorite_posts",
                 )
             },
         ),
@@ -91,13 +91,13 @@ class UserAdmin(BaseUserAdmin):
         (
             None,
             {
-                'classes': ('wide',),
-                'fields': ('email', 'password1', 'password2'),
+                "classes": ("wide",),
+                "fields": ("email", "password1", "password2"),
             },
         ),
     )
-    search_fields = ('email',)
-    ordering = ('email',)
+    search_fields = ("email",)
+    ordering = ("email",)
     filter_horizontal = ()
 
 

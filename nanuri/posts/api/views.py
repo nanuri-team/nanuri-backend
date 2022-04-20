@@ -1,4 +1,10 @@
 from django.core.files.storage import default_storage
+from drf_spectacular.utils import (
+    OpenApiExample,
+    OpenApiTypes,
+    extend_schema,
+    extend_schema_view,
+)
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
     ListCreateAPIView,
@@ -11,11 +17,13 @@ from rest_framework.permissions import IsAuthenticated
 from ..models import Post, PostImage
 from .serializers import PostImageSerializer, PostSerializer
 
-from drf_spectacular.utils import OpenApiExample, OpenApiTypes
-from drf_spectacular.utils import extend_schema, extend_schema_view
 
 @extend_schema_view(
-    get=extend_schema(description='<h2>상품 정보를 불러오는 API</h2>', summary='Return all posts', tags=["Post"],),
+    get=extend_schema(
+        description="<h2>상품 정보를 불러오는 API</h2>",
+        summary="Return all posts",
+        tags=["Post"],
+    ),
     post=extend_schema(
         description="""<h2>상품 정보를 등록하는 API</h2>
             <h3>
@@ -33,89 +41,87 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
             - waited_from : 참가자 모집 시작일 <br><br>
             - waited_until : 참가자 모집 마지막일
             </h3>
-        """,  
-        summary='Create a new post', 
+        """,
+        summary="Create a new post",
         tags=["Post"],
         request={
-            'multipart/form-data': {
-                'type': 'object',
-                'properties': {
-                    'title': {
-                        'type': 'string',
-                        'default': '나누리 상품 공동구매 인원 모집합니다.',
-                        'required': True,
-                        'nullable': False
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "default": "나누리 상품 공동구매 인원 모집합니다.",
+                        "required": True,
+                        "nullable": False,
                     },
-                    'image': {
-                        'type': 'file',
-                        'format': 'formData',
-                        'required': False,
+                    "image": {
+                        "type": "file",
+                        "format": "formData",
+                        "required": False,
                     },
-                    'unit_price': {
-                        'type': 'integer',
-                        'default': '8000',
-                        'required': True
+                    "unit_price": {
+                        "type": "integer",
+                        "default": "8000",
+                        "required": True,
                     },
-                    'quantity': {
-                        'type': 'integer',
-                        'default': '6',
-                        'required': True
+                    "quantity": {"type": "integer", "default": "6", "required": True},
+                    "description": {
+                        "type": "string",
+                        "default": "같이 공동구매 하실분?",
+                        "required": True,
                     },
-                    'description': {
-                        'type': 'string',
-                        'default': '같이 공동구매 하실분?',
-                        'required': True
+                    "min_participants": {
+                        "type": "integer",
+                        "format": "Int",
+                        "default": "3",
+                        "required": True,
                     },
-                    'min_participants': {
-                        'type': 'integer',
-                        'format': 'Int',
-                        'default': '3',
-                        'required': True
+                    "max_participants": {
+                        "type": "integer",
+                        "format": "Int",
+                        "default": "6",
+                        "required": True,
                     },
-                    'max_participants': {
-                        'type': 'integer',
-                        'format': 'Int',
-                        'default': '6',
-                        'required': True
+                    "product_url": {
+                        "type": "string",
+                        "format": "url",
+                        "default": "http://localhost:8080/admin/",
+                        "required": True,
                     },
-                    'product_url': {
-                        'type': 'string',
-                        'format': 'url',
-                        'default': 'http://localhost:8080/admin/',
-                        'required': True
+                    "trade_type": {
+                        "type": "string",
+                        "formData": "enum",
+                        "enum": ["DIRECT", "PARCEL"],
                     },
-                    'trade_type': {
-                        'type': 'string',
-                        'formData': 'enum',
-                        'enum': ['DIRECT', 'PARCEL']
+                    "order_status": {
+                        "type": "string",
+                        "formData": "enum",
+                        "enum": [
+                            "WAITING",
+                            "ORDERING",
+                            "ORDERED",
+                            "DELIVERING1",
+                            "DELIVERING2",
+                            "DELIVERED",
+                            "CANCELLED",
+                        ],
+                        "default": "WAITING",
                     },
-                    'order_status': {
-                        'type': 'string',
-                        'formData': 'enum',
-                        'enum': ['WAITING', 'ORDERING', 'ORDERED', 'DELIVERING1', 'DELIVERING2', 'DELIVERED', 'CANCELLED'],
-                        'default': 'WAITING'
+                    "is_published": {"type": "boolean", "default": "true"},
+                    "view_count": {"type": "integer", "readOnly": True},
+                    "waited_from": {
+                        "type": "date",
+                        "formData": "date-time",
+                        "default": "2022-04-20T05:00:22.026Z",
                     },
-                    'is_published': {
-                        'type': 'boolean',
-                        'default': 'true'
+                    "waited_until": {
+                        "type": "date",
+                        "default": "2022-04-20T05:00:22.026Z",
                     },
-                    'view_count': {
-                        'type': 'integer',
-                        'readOnly': True
-                    },
-                    'waited_from': {
-                        'type': 'date',
-                        'formData': 'date-time',
-                        'default': '2022-04-20T05:00:22.026Z'
-                    },
-                    'waited_until': {
-                        'type': 'date',
-                        'default': '2022-04-20T05:00:22.026Z'
-                    }
-                }
+                },
             }
         },
-    )
+    ),
 )
 class PostListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -129,11 +135,22 @@ class PostListCreateAPIView(ListCreateAPIView):
 
 
 @extend_schema_view(
-    get=extend_schema(description='<h2>상품 게시글 정보를 불러오는 API</h2>', summary='Return post by post uuid', tags=["Post"],
+    get=extend_schema(
+        description="<h2>상품 게시글 정보를 불러오는 API</h2>",
+        summary="Return post by post uuid",
+        tags=["Post"],
     ),
-    put=extend_schema(description='<h2>상품 게시글의 전체를 업데이트 하는 API</h2>', summary='Update post', tags=["Post"]),
-    patch=extend_schema(description='<h2>상품 게시글을 업데이트 하는 API</h2>', summary='Update post', tags=["Post"]),
-    delete=extend_schema(description='<h2>상품 게시글을 삭제하는 API</h2>', summary='Delete post', tags=["Post"])
+    put=extend_schema(
+        description="<h2>상품 게시글의 전체를 업데이트 하는 API</h2>",
+        summary="Update post",
+        tags=["Post"],
+    ),
+    patch=extend_schema(
+        description="<h2>상품 게시글을 업데이트 하는 API</h2>", summary="Update post", tags=["Post"]
+    ),
+    delete=extend_schema(
+        description="<h2>상품 게시글을 삭제하는 API</h2>", summary="Delete post", tags=["Post"]
+    ),
 )
 class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
@@ -150,24 +167,23 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 
 @extend_schema_view(
-    get=extend_schema(description='<h2>상품 이미지를 불러오는 API</h2>', summary='Return image', tags=["Post"],),
+    get=extend_schema(
+        description="<h2>상품 이미지를 불러오는 API</h2>",
+        summary="Return image",
+        tags=["Post"],
+    ),
     post=extend_schema(
         description="""<h2>상품 이미지를 등록하는 API</h2>
             <h3>
             - image : 상품 이미지 파일 등록 <br>
             <h3>
-        """,  
-        summary='Create post image', 
+        """,
+        summary="Create post image",
         tags=["Post"],
         request={
-            'multipart/form-data': {
-                'type': 'object',
-                'properties': {
-                    'image': {
-                        'type': 'file',
-                        'format': 'formData'
-                    }
-                }
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {"image": {"type": "file", "format": "formData"}},
             }
         },
         examples=[
@@ -177,10 +193,9 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
                     "image": "null",
                 },
             ),
-        ]
-    )
+        ],
+    ),
 )
-
 class PostImageListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -196,10 +211,18 @@ class PostImageListCreateAPIView(ListCreateAPIView):
         post = Post.objects.get(uuid=uuid)
         serializer.save(post=post)
 
+
 @extend_schema_view(
-    get=extend_schema(description='<h2>상품 게시글의 특정 이미지를 불러오는 API</h2>', summary='Return post by post uuid', tags=["Post"],
+    get=extend_schema(
+        description="<h2>상품 게시글의 특정 이미지를 불러오는 API</h2>",
+        summary="Return post by post uuid",
+        tags=["Post"],
     ),
-    delete=extend_schema(description='<h2>상품 게시글의 특정 이미지를 삭제하는 API</h2>', summary='Delete post', tags=["Post"])
+    delete=extend_schema(
+        description="<h2>상품 게시글의 특정 이미지를 삭제하는 API</h2>",
+        summary="Delete post",
+        tags=["Post"],
+    ),
 )
 class PostImageRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     authentication_classes = [TokenAuthentication]

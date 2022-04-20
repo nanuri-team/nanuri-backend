@@ -5,8 +5,8 @@ from .models import KakaoAccount
 
 class KakaoAccountAdmin(admin.ModelAdmin):
     list_display = [
-        'user',
-        'kakao_id',
+        "user",
+        "kakao_id",
     ]
 
 

@@ -7,9 +7,9 @@ from .dynamodb import group_message_table
 
 class GroupChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
-        self.user = self.scope['user']
+        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
+        self.room_group_name = "chat_%s" % self.room_name
+        self.user = self.scope["user"]
 
         if self.user is None:
             await self.close()
@@ -32,7 +32,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
     # Receive message from WebSocket
     async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        message = text_data_json["message"]
 
         group_message_table.insert_row(
             channel_id=self.room_name,
@@ -45,14 +45,14 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.room_group_name,
             {
-                'type': 'chat_message',
-                'message': message,
+                "type": "chat_message",
+                "message": message,
             },
         )
 
     # Receive message from room group
     async def chat_message(self, event):
-        message = event['message']
+        message = event["message"]
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({'message': message}))
+        await self.send(text_data=json.dumps({"message": message}))

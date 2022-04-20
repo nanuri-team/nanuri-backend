@@ -35,7 +35,9 @@ class PostFactory(DjangoModelFactory):
     trade_type = FuzzyChoice(choices=["DIRECT", "PARCEL"])
     order_status = "WAITING"
     is_published = True
-    published_at = factory.Faker("date_time_this_month", tzinfo=timezone.get_current_timezone())
+    published_at = factory.Faker(
+        "date_time_this_month", tzinfo=timezone.get_current_timezone()
+    )
     view_count = factory.Faker("pyint")
     waited_from = factory.LazyAttribute(lambda x: x.published_at.date())
     waited_until = factory.LazyAttribute(lambda x: x.waited_from + timedelta(days=3))

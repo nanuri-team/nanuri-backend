@@ -46,7 +46,9 @@ class TestPostEndpoints:
         assert result["title"] == post.title
 
     def test_retrieve(self, user_client, post):
-        response = user_client.get(reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid}))
+        response = user_client.get(
+            reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid})
+        )
         result = response.json()
 
         assert response.status_code == 200
