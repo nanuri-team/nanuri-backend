@@ -41,7 +41,9 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         exclude = ("id",)
         extra_kwargs = {
-            'num_participants': {'read_only': True},
-            'published_at': {'read_only': True},
-            'participants': {'read_only': True},
+            "num_participants": {"read_only": True},
+            "published_at": {"read_only": True},
+            "view_count": {"read_only": True},
+            "waited_from": {"read_only": True},
+            "waited_until": {"read_only": True},
         }

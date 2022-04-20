@@ -20,7 +20,7 @@ class PostListCreateAPIView(ListCreateAPIView):
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
-        serializer.save(writer=self.request.auth.user)
+        serializer.save(writer=self.request.user)
 
 
 class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
