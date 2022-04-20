@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 from ..models import KakaoAccount
 from . import exceptions as ex
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
+
 
 def get_code_query_param(request):
     """
@@ -95,7 +97,9 @@ def get_or_create_user(email):
         user_created = True
     return user, user_created
 
-
+@extend_schema_view(
+    get=extend_schema(summary='Return kakao token', tags=["Auth"])
+)
 class KakaoTokenCallbackAPIView(APIView):
     def get(self, request):
         authorization_code = get_code_query_param(request)
@@ -127,7 +131,9 @@ def unlink_kakao_account(kakao_id):
         raise ex.KakaoAccountUnlinkFailedError()
     return response.json()
 
-
+@extend_schema_view(
+    post=extend_schema(summary='unlink kakao account', tags=["Auth"])
+)
 class KakaoUnlinkAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

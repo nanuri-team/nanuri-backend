@@ -44,6 +44,7 @@ THIRD_PARTY_APPS = [
     'channels',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_spectacular',
 ]
 
 LOCAL_APPS = [
@@ -155,9 +156,28 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
 # AWS
 
 AWS_REGION = os.getenv('AWS_REGION', default='ap-northeast-2')
+
+
+# OpenAPI
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Nanuri API Document',
+    'DESCRIPTION': """Nanuri를 위한 API 문서입니다. <br><br> 팀원: 김서현, 김지현, 김혜지, 이희대, 임지환, 최민경""",
+    'SWAGGER_UI_SETTINGS': {
+        'dom_id': '#swagger-ui',
+        'layout': 'BaseLayout',
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+        'filter': True,
+    },
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}

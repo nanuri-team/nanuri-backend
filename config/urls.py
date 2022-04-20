@@ -18,12 +18,23 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+from drf_spectacular.views import SpectacularJSONAPIView
+from drf_spectacular.views import SpectacularRedocView
+from drf_spectacular.views import SpectacularSwaggerView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     # REST APIs
     path("api/auth/", include("nanuri.authentication.api.urls", namespace="auth")),
     path("api/v1/users/", include("nanuri.users.api.urls")),
     path("api/v1/posts/", include("nanuri.posts.api.urls")),
+
+    # Open API 자체를 조회 : json
+    path("docs/json/", SpectacularJSONAPIView.as_view(), name="schema-json"),
+    # Open API Document UI로 조회: Swagger, Redoc
+    path("docs/swagger/", SpectacularSwaggerView.as_view(url_name="schema-json"), name="swagger-ui",),
+    path("docs/redoc/", SpectacularRedocView.as_view(url_name="schema-json"), name="redoc",),
+    
 ]
 
 if settings.DEBUG:
