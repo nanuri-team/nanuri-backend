@@ -31,9 +31,7 @@ class TestUserEndpoints:
         assert result["email"] == user.email
 
     def test_retrieve(self, user_client, user):
-        response = user_client.get(
-            reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid})
-        )
+        response = user_client.get(reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid}))
         result = response.json()
 
         assert response.status_code == 200

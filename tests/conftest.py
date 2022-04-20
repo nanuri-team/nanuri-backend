@@ -1,6 +1,7 @@
 import pytest
 from rest_framework.test import APIClient
 
+from .posts.factories import PostFactory
 from .users.factories import UserFactory
 
 
@@ -14,3 +15,8 @@ def user_client(user):
     client = APIClient()
     client.force_authenticate(user)
     return client
+
+
+@pytest.fixture
+def post():
+    return PostFactory.create()
