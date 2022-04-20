@@ -29,7 +29,9 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
             - num_participants : 현재 참가 인원  <br><br>
             - product_url : 상품 URL <br><br>
             - trade_type : 나눔 방법 (DIRECT(직거래), PARCEL(택배 거래)) <br><br>
-            - order_status : 상품의 진행상태 (ADVERTISING(인원 모집 중), ORDERING(주문 진행 중), ORDERED(주문 완료), DELIVERING1(1차 배송 중), DELIVERING2(2차 배송 중), DELIVERED(배송 완료), CANCELLED(취소됨)) <br>
+            - order_status : 상품의 진행상태 (WAITING(인원 모집 중), ORDERING(주문 진행 중), ORDERED(주문 완료), DELIVERING1(1차 배송 중), DELIVERING2(2차 배송 중), DELIVERED(배송 완료), CANCELLED(취소됨)) <br><br>
+            - waited_from : 참가자 모집 시작일 <br><br>
+            - waited_until : 참가자 모집 마지막일
             </h3>
         """,  
         summary='Create a new post', 
@@ -90,8 +92,8 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
                     'order_status': {
                         'type': 'string',
                         'formData': 'enum',
-                        'enum': ['ADVERTISING', 'ORDERING', 'ORDERED', 'DELIVERING1', 'DELIVERING2', 'DELIVERED', 'CANCELLED'],
-                        'default': 'ADVERTISING'
+                        'enum': ['WAITING', 'ORDERING', 'ORDERED', 'DELIVERING1', 'DELIVERING2', 'DELIVERED', 'CANCELLED'],
+                        'default': 'WAITING'
                     },
                     'is_published': {
                         'type': 'boolean',
@@ -100,6 +102,15 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
                     'view_count': {
                         'type': 'integer',
                         'readOnly': True
+                    },
+                    'waited_from': {
+                        'type': 'date',
+                        'formData': 'date-time',
+                        'default': '2022-04-20T05:00:22.026Z'
+                    },
+                    'waited_until': {
+                        'type': 'date',
+                        'default': '2022-04-20T05:00:22.026Z'
                     }
                 }
             }
