@@ -55,9 +55,7 @@ def get_kakao_account_info(access_token):
         headers={"Authorization": f"Bearer {access_token}"},
     )
     if response.status_code != status.HTTP_200_OK:
-        raise ex.KakaoAccountRetrieveFailedError(
-            detail="카카오 계정 정보를 가져오는데 실패했습니다. 액세스 토큰이 올바른지 확인해주세요."
-        )
+        raise ex.KakaoAccountRetrieveFailedError(detail="카카오 계정 정보를 가져오는데 실패했습니다. 액세스 토큰이 올바른지 확인해주세요.")
     return response.json()
 
 
@@ -68,16 +66,11 @@ def get_kakao_email(kakao_account_info):
     https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
     """
     if "kakao_account" not in kakao_account_info:
-        raise ex.KakaoAccountRetrieveFailedError(
-            detail="카카오 계정 정보가 없습니다. 카카오 동의항목에 문제가 발생한 것 같습니다."
-        )
+        raise ex.KakaoAccountRetrieveFailedError(detail="카카오 계정 정보가 없습니다. 카카오 동의항목에 문제가 발생한 것 같습니다.")
     kakao_account = kakao_account_info["kakao_account"]
     if "is_email_valid" not in kakao_account or not kakao_account["is_email_valid"]:
         raise ex.KakaoAccountRetrieveFailedError(detail="이메일이 유효하지 않습니다.")
-    if (
-        "is_email_verified" not in kakao_account
-        or not kakao_account["is_email_verified"]
-    ):
+    if "is_email_verified" not in kakao_account or not kakao_account["is_email_verified"]:
         raise ex.KakaoAccountRetrieveFailedError(detail="이메일이 인증되지 않았습니다.")
     if "email" not in kakao_account or not kakao_account["email"]:
         raise ex.KakaoAccountRetrieveFailedError(detail="이메일이 없습니다.")
@@ -97,9 +90,8 @@ def get_or_create_user(email):
         user_created = True
     return user, user_created
 
-@extend_schema_view(
-    get=extend_schema(summary='Return kakao token', tags=["Auth"])
-)
+
+@extend_schema_view(get=extend_schema(summary='Return kakao token', tags=["Auth"]))
 class KakaoTokenCallbackAPIView(APIView):
     def get(self, request):
         authorization_code = get_code_query_param(request)
@@ -131,9 +123,8 @@ def unlink_kakao_account(kakao_id):
         raise ex.KakaoAccountUnlinkFailedError()
     return response.json()
 
-@extend_schema_view(
-    post=extend_schema(summary='unlink kakao account', tags=["Auth"])
-)
+
+@extend_schema_view(post=extend_schema(summary='unlink kakao account', tags=["Auth"]))
 class KakaoUnlinkAPIView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

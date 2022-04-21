@@ -93,9 +93,7 @@ class TestUserEndpoints:
 
     def test_destroy(self, user_client, user):
         assert get_user_model().objects.filter(uuid=str(user.uuid)).count() == 1
-        response = user_client.delete(
-            reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid})
-        )
+        response = user_client.delete(reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid}))
 
         assert response.status_code == 204
         assert get_user_model().objects.filter(uuid=str(user.uuid)).count() == 0
