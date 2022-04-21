@@ -107,9 +107,7 @@ class TestPostEndpoints:
 
     def test_destroy(self, user_client, post):
         assert Post.objects.filter(uuid=str(post.uuid)).count() == 1
-        response = user_client.delete(
-            reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid})
-        )
+        response = user_client.delete(reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid}))
 
         assert response.status_code == 204
         assert Post.objects.filter(uuid=str(post.uuid)).count() == 0
