@@ -43,6 +43,11 @@ jobs:
           pip install flake8
           if [ -f requirements/local.txt ]; then pip install -r requirements/local.txt; fi
 
+      - name: Format code with black
+        uses: psf/black@stable
+        with:
+          options: "--check --diff --line-length=120 --skip-string-normalization --extend-exclude migrations"
+
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
