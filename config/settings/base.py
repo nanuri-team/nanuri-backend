@@ -160,6 +160,23 @@ REST_FRAMEWORK = {
 }
 
 
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
+
+
 # AWS
 
 AWS_REGION = os.getenv('AWS_REGION', default='ap-northeast-2')
