@@ -15,6 +15,7 @@ for (let i = 0; i < 30; i++) {
     const index = Math.floor(Math.random() * 100);
     const socket = sockets[index];
     socket.send(JSON.stringify({
+        'type': 'chat_message',
         'message': `Hello, I am user ${index}!`
     }));
 }
