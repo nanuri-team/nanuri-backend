@@ -10,7 +10,7 @@ class KakaoAccount(models.Model):
         blank=True,
         default=None,
     )
-    kakao_id = models.PositiveIntegerField(
+    kakao_id = models.PositiveBigIntegerField(
         null=True,
         blank=True,
         default=None,
