@@ -1,4 +1,5 @@
 import pytest
+from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 from .posts.factories import PostFactory
@@ -20,3 +21,8 @@ def user_client(user):
 @pytest.fixture
 def post():
     return PostFactory.create()
+
+
+@pytest.fixture
+def token(user):
+    return Token.objects.create(user=user)
