@@ -41,7 +41,7 @@ class User(AbstractBaseUser):
     latitude = models.FloatField(null=True, blank=True, default=None)
     longitude = models.FloatField(null=True, blank=True, default=None)
     address = models.CharField(max_length=255, null=True, blank=True, default=None)
-    profile_url = models.URLField(null=True, blank=True)
+    profile = models.ImageField(null=True, blank=True, default=None)
     auth_provider = models.CharField(
         max_length=15,
         choices=(

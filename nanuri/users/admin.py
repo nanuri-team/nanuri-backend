@@ -43,7 +43,7 @@ class UserChangeForm(forms.ModelForm):
             'is_admin',
             'latitude',
             'longitude',
-            'profile_url',
+            'profile',
             'auth_provider',
         )
 
@@ -61,7 +61,7 @@ class UserAdmin(BaseUserAdmin):
         'latitude',
         'longitude',
         'address',
-        'profile_url',
+        'profile',
         'auth_provider',
         'created_at',
         'updated_at',
@@ -80,7 +80,7 @@ class UserAdmin(BaseUserAdmin):
                     'latitude',
                     'longitude',
                     'address',
-                    'profile_url',
+                    'profile',
                     'auth_provider',
                     'favorite_posts',
                 )
