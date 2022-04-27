@@ -157,17 +157,20 @@ class KakaoAccountListCreateAPIView(ListCreateAPIView):
     queryset = KakaoAccount.objects.all()
     serializer_class = KakaoAccountSerializer
 
-    def perform_create(self, serializer):
-        kakao_id = self.request.POST.get("kakao_id", default=None)
-        kakao_account_info = get_kakao_account_info_by_admin_key(kakao_id)
-        email = get_kakao_email(kakao_account_info)
-        user, created = get_or_create_user(email=email)
-        try:
-            KakaoAccount.objects.get(user=user, kakao_id=kakao_id)
-        except KakaoAccount.DoesNotExist:
-            serializer.save(user=user, kakao_id=kakao_id)
-        else:
-            raise ex.KakaoAccountAlreadyRegisteredError()
+    def post(self, request, *args, **kwargs):
+        serializer = KakaoAccountSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            kakao_id = serializer.validated_data["kakao_id"]
+            kakao_account_info = get_kakao_account_info_by_admin_key(kakao_id)
+            email = get_kakao_email(kakao_account_info)
+            user, created = get_or_create_user(email=email)
+            try:
+                KakaoAccount.objects.get(user=user, kakao_id=kakao_id)
+            except KakaoAccount.DoesNotExist:
+                serializer.save(user=user, kakao_id=kakao_id)
+            token, _ = Token.objects.update_or_create(user=user)
+            return Response(data={"token": token.key}, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class KakaoAccountRetrieveDestroyAPIView(RetrieveDestroyAPIView):
