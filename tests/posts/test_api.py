@@ -35,8 +35,8 @@ class TestPostEndpoints:
                 "is_published": post.is_published,
                 # "published_at": post.published_at,
                 # "view_count": post.view_count,
-                # "waited_from": post.waited_from,
-                # "waited_until": post.waited_until,
+                "waited_from": post.waited_from,
+                "waited_until": post.waited_until,
             },
             format="json",
         )
