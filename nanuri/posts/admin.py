@@ -7,7 +7,10 @@ class PostAdmin(admin.ModelAdmin):
     list_display = [
         'uuid',
         'title',
+        'writer',
+        'writer_address',
         'image',
+        'category',
         'unit_price',
         'quantity',
         'description',
@@ -24,6 +27,9 @@ class PostAdmin(admin.ModelAdmin):
         'created_at',
         'updated_at',
     ]
+
+    def writer_address(self, obj):
+        return obj.writer.address
 
 
 class PostImageAdmin(admin.ModelAdmin):
