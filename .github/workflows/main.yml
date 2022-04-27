@@ -3,6 +3,7 @@ name: nanuri-backend
 env:
   DJANGO_SETTINGS_MODULE: config.settings.test
   AWS_REGION: ap-northeast-2
+  KAKAO_APP_ADMIN_KEY: ${{ secrets.KAKAO_APP_ADMIN_KEY }}
 
 on:
   push:
