@@ -1,17 +1,18 @@
 import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
+from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..models import KakaoAccount
 from . import exceptions as ex
-
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from .serializers import KakaoAccountSerializer
 
 
 def get_code_query_param(request):
@@ -44,11 +45,11 @@ def refresh_kakao_token(authorization_code):
     return response.json()
 
 
-def get_kakao_account_info(access_token):
+def get_kakao_account_info_by_access_token(access_token):
     """
-    카카오 계정 정보를 가져옵니다.
+    액세스 토큰을 사용해 카카오 계정 정보를 가져옵니다.
 
-    https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
+    https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info-request
     """
     response = requests.get(
         "https://kapi.kakao.com/v2/user/me",
@@ -56,6 +57,22 @@ def get_kakao_account_info(access_token):
     )
     if response.status_code != status.HTTP_200_OK:
         raise ex.KakaoAccountRetrieveFailedError(detail="카카오 계정 정보를 가져오는데 실패했습니다. 액세스 토큰이 올바른지 확인해주세요.")
+    return response.json()
+
+
+def get_kakao_account_info_by_admin_key(kakao_id):
+    """
+    어드민 키를 사용해 카카오 계정 정보를 가져옵니다.
+
+    https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info-admin-key
+    """
+    response = requests.get(
+        f"https://kapi.kakao.com/v2/user/me",
+        params={"target_id_type": "user_id", "target_id": kakao_id},
+        headers={"Authorization": f"KakaoAK {settings.KAKAO_APP_ADMIN_KEY}"},
+    )
+    if response.status_code != status.HTTP_200_OK:
+        raise ex.KakaoAccountRetrieveFailedError(detail="카카오 계정 정보를 가져오는데 실패했습니다. 어드민 키가 올바른지 확인해주세요.")
     return response.json()
 
 
@@ -96,7 +113,7 @@ class KakaoTokenCallbackAPIView(APIView):
     def get(self, request):
         authorization_code = get_code_query_param(request)
         access_token = refresh_kakao_token(authorization_code)["access_token"]
-        kakao_account_info = get_kakao_account_info(access_token)
+        kakao_account_info = get_kakao_account_info_by_access_token(access_token)
         email = get_kakao_email(kakao_account_info)
 
         user, _ = get_or_create_user(email=email)
@@ -134,3 +151,26 @@ class KakaoUnlinkAPIView(APIView):
         kakao_account = KakaoAccount.objects.get(user=token.user)
         unlink_kakao_account(kakao_account.kakao_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class KakaoAccountListCreateAPIView(ListCreateAPIView):
+    queryset = KakaoAccount.objects.all()
+    serializer_class = KakaoAccountSerializer
+
+    def perform_create(self, serializer):
+        kakao_id = self.request.POST.get("kakao_id", default=None)
+        kakao_account_info = get_kakao_account_info_by_admin_key(kakao_id)
+        email = get_kakao_email(kakao_account_info)
+        user, created = get_or_create_user(email=email)
+        try:
+            KakaoAccount.objects.get(user=user, kakao_id=kakao_id)
+        except KakaoAccount.DoesNotExist:
+            serializer.save(user=user, kakao_id=kakao_id)
+        else:
+            raise ex.KakaoAccountAlreadyRegisteredError()
+
+
+class KakaoAccountRetrieveDestroyAPIView(RetrieveDestroyAPIView):
+    queryset = KakaoAccount.objects.all()
+    serializer_class = KakaoAccountSerializer
+    lookup_field = "kakao_id"

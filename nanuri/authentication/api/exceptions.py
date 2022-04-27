@@ -30,3 +30,9 @@ class KakaoAccountAlreadyUnlinkedError(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "이미 연결이 끊어진 카카오 계정입니다."
     default_code = "kakao_account_already_unlinked"
+
+
+class KakaoAccountAlreadyRegisteredError(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "이미 등록된 카카오 계정입니다."
+    default_code = "kakao_account_already_registered"
