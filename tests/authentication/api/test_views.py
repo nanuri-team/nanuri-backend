@@ -4,7 +4,7 @@ from django.urls import reverse
 pytestmark = pytest.mark.django_db
 
 
-class TestUserEndpoints:
+class TestAuthenticationEndpoints:
     def test_save_user_and_get_token(self, user_client):
         response = user_client.post(
             reverse("nanuri.authentication:kakao-account-list"),
