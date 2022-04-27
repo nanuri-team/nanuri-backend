@@ -1,12 +1,8 @@
 import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -108,22 +104,6 @@ def get_or_create_user(email):
     return user, user_created
 
 
-@extend_schema_view(get=extend_schema(summary='Return kakao token', tags=["Auth"]))
-class KakaoTokenCallbackAPIView(APIView):
-    def get(self, request):
-        authorization_code = get_code_query_param(request)
-        access_token = refresh_kakao_token(authorization_code)["access_token"]
-        kakao_account_info = get_kakao_account_info_by_access_token(access_token)
-        email = get_kakao_email(kakao_account_info)
-
-        user, _ = get_or_create_user(email=email)
-        kakao_id = kakao_account_info["id"]
-        KakaoAccount.objects.update_or_create(user=user, kakao_id=kakao_id)
-
-        token, _ = Token.objects.update_or_create(user=user)
-        return Response(data={"token": token.key}, status=status.HTTP_200_OK)
-
-
 def unlink_kakao_account(kakao_id):
     response = requests.post(
         "https://kapi.kakao.com/v1/user/unlink",
@@ -141,19 +121,7 @@ def unlink_kakao_account(kakao_id):
     return response.json()
 
 
-@extend_schema_view(post=extend_schema(summary='unlink kakao account', tags=["Auth"]))
-class KakaoUnlinkAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        token = Token.objects.get(key=request.auth)
-        kakao_account = KakaoAccount.objects.get(user=token.user)
-        unlink_kakao_account(kakao_account.kakao_id)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class KakaoAccountListCreateAPIView(ListCreateAPIView):
+class KakaoAccountCreateAPIView(APIView):
     queryset = KakaoAccount.objects.all()
     serializer_class = KakaoAccountSerializer
 
@@ -171,9 +139,3 @@ class KakaoAccountListCreateAPIView(ListCreateAPIView):
             token, _ = Token.objects.update_or_create(user=user)
             return Response(data={"token": token.key}, status=status.HTTP_201_CREATED)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class KakaoAccountRetrieveDestroyAPIView(RetrieveDestroyAPIView):
-    queryset = KakaoAccount.objects.all()
-    serializer_class = KakaoAccountSerializer
-    lookup_field = "kakao_id"
