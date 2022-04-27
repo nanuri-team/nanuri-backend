@@ -48,7 +48,7 @@ class TestPostEndpoints:
         assert post.waited_from is not None
         assert post.waited_until is not None
         assert post.waited_from.strftime("%Y-%m-%d") == result["waited_from"]
-        assert post.waited_from.strftime("%Y-%m-%d") == result["waited_until"]
+        assert post.waited_until.strftime("%Y-%m-%d") == result["waited_until"]
 
     def test_retrieve(self, user_client, post):
         response = user_client.get(reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid}))
