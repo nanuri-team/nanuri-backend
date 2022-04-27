@@ -47,6 +47,4 @@ class PostSerializer(serializers.ModelSerializer):
             "num_participants": {"read_only": True},
             "published_at": {"read_only": True},
             "view_count": {"read_only": True},
-            "waited_from": {"read_only": True},
-            "waited_until": {"read_only": True},
         }
