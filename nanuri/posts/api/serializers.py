@@ -21,6 +21,9 @@ class PostSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field="email",
     )
+
+    writer_address = serializers.StringRelatedField(source="writer.address", read_only=True, many=False)
+
     participants = serializers.SlugRelatedField(
         many=True,
         read_only=True,
