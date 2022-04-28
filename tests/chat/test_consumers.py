@@ -44,3 +44,32 @@ async def test_group_chat_consumer(token):
     # 웹소켓 연결 해제
     await communicator1.disconnect()
     await communicator2.disconnect()
+
+
+@pytest.mark.asyncio
+@pytest.mark.django_db(transaction=True)
+async def test_load_messages(token):
+    application = QueryTokenAuthMiddleware(URLRouter(websocket_urlpatterns))
+
+    # 사용자: 채팅방 입장
+    communicator = WebsocketCommunicator(application, f"/ws/chat/test_room/?token={token.key}")
+    connected, _ = await communicator.connect()
+    assert connected
+
+    # 사용자: 이전 채팅 기록 불러오기 요청
+    await communicator.send_to(text_data=json.dumps({"type": "load_messages"}))
+
+    # 사용자: 이전 채팅 기록 수신
+    response = await communicator.receive_from()
+    result = json.loads(response)
+    assert isinstance(result["message"], list)
+    for message in result["message"]:
+        assert isinstance(message, dict)
+        assert message["channel_id"] == "test_room"
+        assert "message_id" in message.keys()
+        assert "message" in message.keys()
+        assert "message_from" in message.keys()
+        assert "message_to" in message.keys()
+        assert "created_at" in message.keys()
+
+    await communicator.disconnect()

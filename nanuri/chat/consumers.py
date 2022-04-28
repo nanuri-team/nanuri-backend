@@ -55,6 +55,19 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                 },
             )
 
+        # 클라이언트가 이전 채팅 기록을 불러오고 싶어 하는 경우
+        elif message_type == 'load_messages':
+            rows = group_message_table.query_by_channel_id(self.room_name)
+            # rows.sort(key=lambda x: x['message_id'])
+            # 클라이언트에게 이전 채팅 기록 하나씩 전송
+            await self.channel_layer.send(
+                self.channel_name,
+                {
+                    'type': 'load_messages',
+                    'channel_id': self.room_name,
+                },
+            )
+
     # Receive message from room group
     async def send_message(self, event):
         message = event['message']
@@ -73,6 +86,15 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
 
     async def load_messages(self, event):
         channel_id = event['channel_id']
-        rows = group_message_table.query_by_channel_id(channel_id)
-        for row in rows:
-            await self.send(text_data=json.dumps({'message': row['message']}))
+        rows = [
+            {
+                "channel_id": r["channel_id"],
+                "message_id": float(r["message_id"]),
+                "message": r["message"],
+                "message_from": r["message_from"],
+                "message_to": r["message_to"],
+                "created_at": r["created_at"],
+            }
+            for r in group_message_table.query_by_channel_id(channel_id)
+        ]
+        await self.send(text_data=json.dumps({'message': rows}))
