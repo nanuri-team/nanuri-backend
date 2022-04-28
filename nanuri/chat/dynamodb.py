@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 
 import boto3
+from boto3.dynamodb.conditions import Key
 from django.conf import settings
 
 
@@ -73,6 +74,11 @@ class GroupMessageTable:
                 'created_at': now.strftime('%Y-%m-%d %H:%M:%S.%f'),
             }
         )
+
+    def query_by_channel_id(self, channel_id):
+        table = self.resource.Table(self.table_name)
+        response = table.query(KeyConditionExpression=Key("channel_id").eq(channel_id))
+        return response["Items"]
 
 
 group_message_table = GroupMessageTable()
