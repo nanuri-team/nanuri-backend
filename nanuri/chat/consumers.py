@@ -1,6 +1,7 @@
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.utils.timezone import now
 
 from .dynamodb import group_message_table
 
@@ -35,7 +36,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
         message_type = text_data_json['type']
 
         # 클라이언트가 채팅 방에 메시지를 보내고 싶어 하는 경우
-        if message_type == 'chat_message':
+        if message_type == 'send_message':
             message = text_data_json['message']
             group_message_table.insert_row(
                 channel_id=self.room_name,
@@ -48,31 +49,27 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
-                    'type': 'chat_message',
+                    'type': 'send_message',
                     'message': message,
-                },
-            )
-
-        # 클라이언트가 이전 채팅 기록을 불러오고 싶어 하는 경우
-        elif message_type == 'load_messages':
-            rows = group_message_table.query_by_channel_id(self.room_name)
-            [{} for row in rows]
-            rows.sort(key=lambda x: x['message_id'])
-            # 클라이언트에게 이전 채팅 기록 하나씩 전송
-            await self.channel_layer.send(
-                self.channel_name,
-                {
-                    'type': 'chat_message',
-                    'message': rows,
+                    'sender': self.user.email,
                 },
             )
 
     # Receive message from room group
-    async def chat_message(self, event):
+    async def send_message(self, event):
         message = event['message']
+        sender = event['sender']
 
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({'message': message}))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    'message': message,
+                    'sender': sender,
+                    'created_at': now().strftime("%Y-%m-%d %H:%M:%S"),
+                }
+            )
+        )
 
     async def load_messages(self, event):
         channel_id = event['channel_id']
