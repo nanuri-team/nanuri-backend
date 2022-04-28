@@ -57,9 +57,6 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
 
         # 클라이언트가 이전 채팅 기록을 불러오고 싶어 하는 경우
         elif message_type == 'load_messages':
-            rows = group_message_table.query_by_channel_id(self.room_name)
-            # rows.sort(key=lambda x: x['message_id'])
-            # 클라이언트에게 이전 채팅 기록 하나씩 전송
             await self.channel_layer.send(
                 self.channel_name,
                 {
@@ -97,4 +94,5 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             }
             for r in group_message_table.query_by_channel_id(channel_id)
         ]
+        rows.sort(key=lambda x: x["message_id"])
         await self.send(text_data=json.dumps({'message': rows}))
