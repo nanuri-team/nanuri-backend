@@ -7,12 +7,12 @@ class UserSerializer(serializers.ModelSerializer):
     posts = serializers.SlugRelatedField(
         many=True,
         read_only=True,
-        slug_field="title",
+        slug_field="uuid",
     )
     favorite_posts = serializers.SlugRelatedField(
         many=True,
         read_only=True,
-        slug_field="title",
+        slug_field="uuid",
     )
 
     def update(self, instance, validated_data):
