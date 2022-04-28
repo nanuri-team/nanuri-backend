@@ -38,7 +38,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
         # 클라이언트가 채팅 방에 메시지를 보내고 싶어 하는 경우
         if message_type == 'send_message':
             message = text_data_json['message']
-            group_message_table.insert_row(
+            row = group_message_table.insert_row(
                 channel_id=self.room_name,
                 message_to=self.room_group_name,
                 message_from=self.user.email,
@@ -50,8 +50,9 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'send_message',
-                    'message': message,
-                    'sender': self.user.email,
+                    'message': row["message"],
+                    'sender': row["message_from"],
+                    'created_at': row["created_at"],
                 },
             )
 
@@ -69,6 +70,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
     async def send_message(self, event):
         message = event['message']
         sender = event['sender']
+        created_at = event['created_at']
 
         # Send message to WebSocket
         await self.send(
@@ -76,7 +78,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                 {
                     'message': message,
                     'sender': sender,
-                    'created_at': now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'created_at': created_at,
                 }
             )
         )

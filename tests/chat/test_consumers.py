@@ -32,14 +32,14 @@ async def test_group_chat_consumer(token):
     result = json.loads(response)
     assert result["message"] == "hello"
     assert result["sender"] == token.user.email
-    assert datetime.strptime(result["created_at"], "%Y-%m-%d %H:%M:%S")
+    assert datetime.strptime(result["created_at"], "%Y-%m-%d %H:%M:%S.%f")
 
     # 사용자 2: 메시지 수신
     response = await communicator2.receive_from()
     result = json.loads(response)
     assert result["message"] == "hello"
     assert result["sender"] == token.user.email
-    assert datetime.strptime(result["created_at"], "%Y-%m-%d %H:%M:%S")
+    assert datetime.strptime(result["created_at"], "%Y-%m-%d %H:%M:%S.%f")
 
     # 웹소켓 연결 해제
     await communicator1.disconnect()

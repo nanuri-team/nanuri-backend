@@ -64,16 +64,16 @@ class GroupMessageTable:
     def insert_row(self, channel_id, message_to, message_from, message):
         table = self.resource.Table(self.table_name)
         now = datetime.utcnow()
-        return table.put_item(
-            Item={
-                'channel_id': channel_id,
-                'message_id': Decimal(now.timestamp()),
-                'message_to': message_to,
-                'message_from': message_from,
-                'message': message,
-                'created_at': now.strftime('%Y-%m-%d %H:%M:%S.%f'),
-            }
-        )
+        item = {
+            'channel_id': channel_id,
+            'message_id': Decimal(now.timestamp()),
+            'message_to': message_to,
+            'message_from': message_from,
+            'message': message,
+            'created_at': now.strftime('%Y-%m-%d %H:%M:%S.%f'),
+        }
+        table.put_item(Item=item)
+        return item
 
     def query_by_channel_id(self, channel_id):
         table = self.resource.Table(self.table_name)
