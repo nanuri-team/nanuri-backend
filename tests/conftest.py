@@ -12,9 +12,9 @@ def user():
 
 
 @pytest.fixture
-def user_client(user, token):
+def user_client(user):
     client = APIClient()
-    client.force_authenticate(user=token.user, token=token)
+    client.force_authenticate(user)
     return client
 
 
