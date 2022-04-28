@@ -1,7 +1,6 @@
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.utils.timezone import now
 
 from .dynamodb import group_message_table
 
