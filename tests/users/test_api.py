@@ -49,7 +49,6 @@ class TestUserEndpoints:
             "latitude",
             "longitude",
             "address",
-            "profile_url",
             "auth_provider",
         ]
         data = {field: getattr(new_user, field) for field in fields}
@@ -75,7 +74,6 @@ class TestUserEndpoints:
             "latitude",
             "longitude",
             "address",
-            "profile_url",
             "auth_provider",
         ],
     )
