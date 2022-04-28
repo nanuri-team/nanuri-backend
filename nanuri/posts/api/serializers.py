@@ -21,6 +21,9 @@ class PostSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field="email",
     )
+
+    writer_address = serializers.StringRelatedField(source="writer.address", read_only=True, many=False)
+
     participants = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -44,6 +47,4 @@ class PostSerializer(serializers.ModelSerializer):
             "num_participants": {"read_only": True},
             "published_at": {"read_only": True},
             "view_count": {"read_only": True},
-            "waited_from": {"read_only": True},
-            "waited_until": {"read_only": True},
         }

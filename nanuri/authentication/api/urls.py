@@ -6,13 +6,8 @@ app_name = 'nanuri.authentication'
 
 urlpatterns = [
     path(
-        'kakao/token/callback/',
-        views.KakaoTokenCallbackAPIView.as_view(),
-        name='token_callback',
-    ),
-    path(
-        'kakao/unlink/',
-        views.KakaoUnlinkAPIView.as_view(),
-        name='unlink',
+        'kakao/accounts/',
+        views.KakaoAccountCreateAPIView.as_view(),
+        name='kakao-account-list',
     ),
 ]
