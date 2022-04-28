@@ -1,5 +1,5 @@
 from django.core.files.storage import default_storage
-from drf_spectacular.utils import OpenApiExample, OpenApiTypes, extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiExample, extend_schema, extend_schema_view
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
