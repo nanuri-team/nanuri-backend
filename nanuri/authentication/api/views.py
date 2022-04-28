@@ -1,10 +1,12 @@
 import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import OpenApiExample, OpenApiTypes, extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from ..models import KakaoAccount
 from . import exceptions as ex
@@ -121,6 +123,16 @@ def unlink_kakao_account(kakao_id):
     return response.json()
 
 
+@extend_schema_view(
+    post=extend_schema(
+        description='<h2>카카오 계정 정보를 등록하는 API</h2>',
+        summary='Create a new kakao user',
+        tags=["Login"],
+        responses={
+            '201': AuthTokenSerializer
+        },
+    )
+)
 class KakaoAccountCreateAPIView(APIView):
     queryset = KakaoAccount.objects.all()
     serializer_class = KakaoAccountSerializer
