@@ -127,9 +127,11 @@ from .serializers import PostImageSerializer, PostSerializer
 class PostListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    queryset = Post.objects.all().order_by("created_at")
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        return Post.objects.filter(writer=self.request.auth.user).order_by("created_at")
 
     def perform_create(self, serializer):
         serializer.save(writer=self.request.user)
