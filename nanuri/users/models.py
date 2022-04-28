@@ -58,7 +58,7 @@ class User(AbstractBaseUser):
 
     # user.favorite_posts.all() == 이 user가 즐겨찾기한 모든 글
     # post.favored_by.all() == 이 post를 좋아하는 모든 유저
-    favorite_posts = models.ManyToManyField("posts.Post", related_name="favored_by")
+    favorite_posts = models.ManyToManyField("posts.Post", related_name="favored_by", blank=True)
 
     objects = UserManager()
 
