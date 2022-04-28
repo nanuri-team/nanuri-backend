@@ -9,8 +9,8 @@ pytestmark = pytest.mark.django_db
 
 
 class TestPostEndpoints:
-    def test_list(self, user_client, user):
-        posts = PostFactory.create_batch(size=3, writer=user)
+    def test_list(self, user_client):
+        posts = PostFactory.create_batch(size=3)
         response = user_client.get(reverse("nanuri.posts.api:list"))
         result = response.json()
 
