@@ -1,8 +1,11 @@
 import json
+import logging
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 from .dynamodb import group_message_table
+
+logger = logging.getLogger(__name__)
 
 
 class GroupChatConsumer(AsyncWebsocketConsumer):
@@ -12,7 +15,8 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
         self.user = self.scope['user']
 
         if self.user is None:
-            await self.close()
+            logger.info("인증되지 않은 유저가 '%s' 방에 접속하려고 시도했으며 이를 거절했습니다", self.room_name)
+            return await self.close()
 
         # Join room group
         await self.channel_layer.group_add(
@@ -20,10 +24,13 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             self.channel_name,
         )
 
+        logger.info("'%s'가 '%s' 방에 접속했습니다.", self.user.email, self.room_name)
         await self.accept()
 
     async def disconnect(self, code):
         # Leave room group
+        if self.user is not None:
+            logger.info("'%s'가 '%s' 방을 나갔습니다.", self.user.email, self.room_name)
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name,
@@ -43,6 +50,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                 message_from=self.user.email,
                 message=message,
             )
+            logger.info("'%s'가 '%s' 그룹에게 메시지를 전달했습니다: '%s'", self.user.email, self.room_group_name, message)
 
             # 채팅방 내 모든 사람 (그룹)에게 메시지 전송하기 위해 그룹 센드
             await self.channel_layer.group_send(
@@ -96,4 +104,5 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             for r in group_message_table.query_by_channel_id(channel_id)
         ]
         rows.sort(key=lambda x: x["message_id"])
+        logger.info("'%s'가 '%s' 방으로부터 %s개의 채팅 기록을 불러왔습니다.", self.user.email, self.room_name, len(rows))
         await self.send(text_data=json.dumps({'message': rows}))
