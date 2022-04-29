@@ -9,6 +9,7 @@ class PostAdmin(admin.ModelAdmin):
         'title',
         'writer',
         'writer_address',
+        'writer_nickname',
         'image',
         'category',
         'unit_price',
@@ -30,6 +31,9 @@ class PostAdmin(admin.ModelAdmin):
 
     def writer_address(self, obj):
         return obj.writer.address
+
+    def writer_nickname(self, obj):
+        return obj.writer.nickname
 
 
 class PostImageAdmin(admin.ModelAdmin):
