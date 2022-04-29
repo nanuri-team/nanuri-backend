@@ -23,6 +23,7 @@ class PostSerializer(serializers.ModelSerializer):
     )
 
     writer_address = serializers.StringRelatedField(source="writer.address", read_only=True, many=False)
+    writer_nickname = serializers.StringRelatedField(source="writer.nickname", read_only=True, many=False)
 
     participants = serializers.SlugRelatedField(
         many=True,
