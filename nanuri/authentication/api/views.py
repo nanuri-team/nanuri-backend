@@ -149,5 +149,5 @@ class KakaoAccountCreateAPIView(APIView):
             except KakaoAccount.DoesNotExist:
                 serializer.save(user=user, kakao_id=kakao_id)
             token, _ = Token.objects.update_or_create(user=user)
-            return Response(data={"token": token.key}, status=status.HTTP_201_CREATED)
+            return Response(data={"token": token.key, "uuid": user.uuid}, status=status.HTTP_201_CREATED)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
