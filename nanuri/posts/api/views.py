@@ -145,7 +145,9 @@ class PostListCreateAPIView(ListCreateAPIView):
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
-        serializer.save(writer=self.request.user)
+        writer = self.request.user
+        post = serializer.save(writer=writer)
+        post.participants.add(writer)
 
 
 @extend_schema_view(

@@ -45,10 +45,13 @@ class TestPostEndpoints:
         assert response.status_code == 201
         assert result["title"] == post.title
 
-        assert post.waited_from is not None
-        assert post.waited_until is not None
-        assert post.waited_from.strftime("%Y-%m-%d") == result["waited_from"]
-        assert post.waited_until.strftime("%Y-%m-%d") == result["waited_until"]
+        created_post = Post.objects.get(uuid=result["uuid"])
+
+        assert created_post.waited_from is not None
+        assert created_post.waited_until is not None
+        assert created_post.waited_from.strftime("%Y-%m-%d") == result["waited_from"]
+        assert created_post.waited_until.strftime("%Y-%m-%d") == result["waited_until"]
+        assert created_post.writer in created_post.participants.all()
 
     def test_retrieve(self, user_client, post):
         response = user_client.get(reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid}))
