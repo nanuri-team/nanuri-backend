@@ -1,7 +1,7 @@
 import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import OpenApiExample, OpenApiTypes, extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
