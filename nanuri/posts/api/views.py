@@ -20,6 +20,7 @@ from .serializers import PostImageSerializer, PostSerializer
             <h3>
             - title : 상품 게시글의 제목 <br><br>
             - image : 상품 이미지 파일 등록 <br><br>
+            - category : 상품의 카테고리 (생활용품, 음식, 주방, 욕실, 문구, 기타) <br><br>
             - unit_price : 상품의 가격 <br><br>
             - quantity :  상품의 수량 <br><br>
             - description : 상품에 대한 설명 <br><br>
@@ -49,6 +50,18 @@ from .serializers import PostImageSerializer, PostSerializer
                         'type': 'file',
                         'format': 'formData',
                         'required': False,
+                    },
+                    'category': {
+                        'type': 'string',
+                        'formData': 'enum',
+                        'enum': [
+                            '생활용품',
+                            '음식',
+                            '주방',
+                            '욕실',
+                            '문구',
+                            '기타',
+                        ],
                     },
                     'unit_price': {
                         'type': 'integer',
@@ -112,12 +125,12 @@ from .serializers import PostImageSerializer, PostSerializer
                     },
                     'waited_from': {
                         'type': 'date',
-                        'formData': 'date-time',
-                        'default': '2022-04-20T05:00:22.026Z',
+                        'formData': 'date',
+                        'default': '2022-04-30',
                     },
                     'waited_until': {
                         'type': 'date',
-                        'default': '2022-04-20T05:00:22.026Z',
+                        'default': '2022-05-30',
                     },
                 },
             },
