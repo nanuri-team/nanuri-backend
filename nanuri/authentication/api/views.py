@@ -4,9 +4,9 @@ from django.contrib.auth import get_user_model
 from drf_spectacular.utils import OpenApiExample, OpenApiTypes, extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 from ..models import KakaoAccount
 from . import exceptions as ex
@@ -129,7 +129,7 @@ def unlink_kakao_account(kakao_id):
         summary='Create a new kakao user',
         tags=["Login"],
         responses={
-            '201': AuthTokenSerializer
+            '201': AuthTokenSerializer,
         },
     )
 )
