@@ -1,4 +1,5 @@
-boto3~=1.21.37
+awscli~=1.23.8
+boto3~=1.22.8
 channels~=3.0.4
 channels-redis~=3.4.0
 Django~=3.2.12
