@@ -26,19 +26,14 @@ jobs:
           - "3.9"
 
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements/*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - uses: actions/checkout@v3
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: 'requirements/local.txt'
 
       - name: Install dependencies
         run: |
@@ -58,13 +53,9 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Set up DynamoDB local and Redis
-        run: |
-          docker-compose -f local.yml up -d --build
-
       - name: Run Tests
         run: |
-          pytest
+          pytest --ignore tests/chat
 
   cd:
     needs:
