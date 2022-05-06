@@ -53,9 +53,19 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+      - name: Setup DynamoDB Local
+        uses: rrainn/dynamodb-action@v2.0.1
+        with:
+          dbPath: # undefined by default, if this is undefined inMemory will be used
+          sharedDb: # undefined by default
+          delayTransientStatuses: # undefined by default
+          optimizeDbBeforeStartup: # undefined by default
+          port: 8000
+          cors: '*'
+
       - name: Run Tests
         run: |
-          pytest --ignore tests/chat
+          pytest
 
   cd:
     needs:
