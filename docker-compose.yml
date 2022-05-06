@@ -32,13 +32,13 @@ services:
     restart: always
 
   redis:
-    image: redis:5
+    image: redis:7.0
     ports:
       - "6379:6379"
     restart: always
 
   web:
-    image: nginx
+    image: nginx:1.21
     env_file:
       - .env
     volumes:
