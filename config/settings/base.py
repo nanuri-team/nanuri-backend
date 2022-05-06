@@ -186,6 +186,10 @@ LOGGING = {
 
 AWS_REGION = os.getenv('AWS_REGION', default='ap-northeast-2')
 
+AWS_DYNAMODB_ENDPOINT_URL = 'http://localhost:8000'
+AWS_DYNAMODB_ACCESS_KEY_ID = os.environ['AWS_DYNAMODB_ACCESS_KEY_ID']
+AWS_DYNAMODB_SECRET_ACCESS_KEY = os.environ['AWS_DYNAMODB_SECRET_ACCESS_KEY']
+
 
 # OpenAPI
 
@@ -203,3 +207,8 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+
+# Social Login
+
+KAKAO_APP_ADMIN_KEY = os.environ['KAKAO_APP_ADMIN_KEY']
