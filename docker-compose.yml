@@ -9,11 +9,11 @@ services:
       context: .
       dockerfile: ./Dockerfile
     env_file:
-      - ".env"
+      - .env
     volumes:
-      - ".:/code:z"
-    ports:
-      - "8080:8080"
+      - .:/code
+    expose:
+      - 8080
     working_dir: /code
     command: >
       sh -c "python manage.py collectstatic --no-input && daphne -b 0.0.0.0 -p 8080 config.asgi:application"
@@ -24,15 +24,27 @@ services:
   db:
     image: postgres:12.9
     env_file:
-      - ".env"
+      - .env
     volumes:
       - local_db_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - 5432:5432
     restart: always
 
   redis:
     image: redis:5
     ports:
-      - "6379:6379"
+      - 6379:6379
     restart: always
+
+  web:
+    image: nginx
+    volumes:
+      - ./templates:/etc/nginx/templates
+      - /etc/letsencrypt:/etc/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - NGINX_HOST=nanuri.app
+      - NGINX_PORT=80
