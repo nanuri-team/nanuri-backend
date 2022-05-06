@@ -6,4 +6,5 @@ class StaticStorage(S3StaticStorage):
 
 
 class MediaStorage(S3Boto3Storage):
+    querystring_auth = False
     location = 'media'
