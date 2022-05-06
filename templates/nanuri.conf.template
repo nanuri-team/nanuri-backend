@@ -2,15 +2,23 @@ server {
     server_name ${NGINX_HOST};
 
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://${APP_HOST}:${APP_PORT};
     }
 
     location /ws/ {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://${APP_HOST}:${APP_PORT};
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "Upgrade";
         proxy_set_header Host $host;
+    }
+
+    location /static/ {
+        alias https://bucket-rlkzim.s3.ap-northeast-2.amazonaws.com/static/;
+    }
+
+    location /media/ {
+        alias https://bucket-rlkzim.s3.ap-northeast-2.amazonaws.com/media/;
     }
 
     error_page   500 502 503 504  /50x.html;
