@@ -15,6 +15,13 @@ class TestUserEndpoints:
         assert response.status_code == 200
         assert len(response.json()["results"]) == len(users) + 1
 
+    def test_list_with_pagination(self, user_client):
+        UserFactory.create_batch(size=100)
+        response = user_client.get(reverse("nanuri.users.api:list"), data={"offset": "0", "limit": "20"})
+
+        assert response.status_code == 200
+        assert len(response.json()["results"]) == 20
+
     def test_create(self, user_client):
         user = UserFactory.build()
         response = user_client.post(

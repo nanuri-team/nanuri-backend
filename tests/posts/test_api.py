@@ -17,6 +17,14 @@ class TestPostEndpoints:
         assert response.status_code == 200
         assert len(result["results"]) == len(posts)
 
+    def test_list_with_pagination(self, user_client):
+        PostFactory.create_batch(size=100)
+        response = user_client.get(reverse("nanuri.posts.api:list"), data={"offset": "0", "limit": "20"})
+        result = response.json()
+
+        assert response.status_code == 200
+        assert len(result["results"]) == 20
+
     def test_create(self, user_client):
         post = PostFactory.build()
         response = user_client.post(
