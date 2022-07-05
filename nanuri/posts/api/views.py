@@ -5,8 +5,8 @@ from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView, R
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
-from ..models import Post, PostImage
-from .serializers import PostImageSerializer, PostSerializer
+from ..models import Comment, Post, PostImage, SubComment
+from .serializers import CommentSerializer, PostImageSerializer, PostSerializer, SubCommentSerializer
 
 
 @extend_schema_view(
@@ -252,3 +252,20 @@ class PostImageRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     def perform_destroy(self, instance):
         default_storage.delete(instance.image.name)
         super().perform_destroy(instance)
+
+
+class CommentListCreateAPIView(ListCreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        uuid = self.kwargs["uuid"]
+        return Comment.objects.filter(post__uuid=uuid)
+
+    def perform_create(self, serializer):
+        uuid = self.request.parser_context["kwargs"]["uuid"]
+        post = Post.objects.get(uuid=uuid)
+        writer = self.request.user
+        serializer.save(post=post, writer=writer)

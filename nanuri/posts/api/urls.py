@@ -25,4 +25,9 @@ urlpatterns = [
         views.PostImageRetrieveDestroyAPIView.as_view(),
         name="image-detail",
     ),
+    path(
+        "<uuid:uuid>/comments/",
+        views.CommentListCreateAPIView.as_view(),
+        name="comment-list",
+    ),
 ]

@@ -121,6 +121,12 @@ class PostImage(models.Model):
 
 
 class Comment(models.Model):
+    uuid = models.UUIDField(
+        verbose_name="uuid",
+        unique=True,
+        default=uuid4,
+        editable=False,
+    )
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
@@ -141,6 +147,12 @@ class Comment(models.Model):
 
 
 class SubComment(models.Model):
+    uuid = models.UUIDField(
+        verbose_name="uuid",
+        unique=True,
+        default=uuid4,
+        editable=False,
+    )
     comment = models.ForeignKey(
         Comment,
         on_delete=models.CASCADE,

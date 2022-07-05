@@ -5,7 +5,7 @@ from django.utils import timezone
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
-from nanuri.posts.models import Category, Post, PostImage
+from nanuri.posts.models import Category, Comment, Post, PostImage, SubComment
 
 from ..users.factories import UserFactory
 
@@ -50,3 +50,21 @@ class PostImageFactory(DjangoModelFactory):
 
     post = factory.SubFactory(PostFactory)
     image = factory.Faker("image_url")
+
+
+class CommentFactory(DjangoModelFactory):
+    class Meta:
+        model = Comment
+
+    post = factory.SubFactory(PostFactory)
+    text = factory.Faker("sentence")
+    writer = factory.SubFactory(UserFactory)
+
+
+class SubCommentFactory(DjangoModelFactory):
+    class Meta:
+        model = SubComment
+
+    comment = factory.SubFactory(CommentFactory)
+    text = factory.Faker("sentence")
+    writer = factory.SubFactory(UserFactory)
