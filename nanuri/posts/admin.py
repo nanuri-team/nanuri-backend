@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Post, PostImage
+from .models import Category, Comment, Post, PostImage, SubComment
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -50,6 +50,24 @@ class CategoryAdmin(admin.ModelAdmin):
     ]
 
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = [
+        "post",
+        "text",
+        "writer",
+    ]
+
+
+class SubCommentAdmin(admin.ModelAdmin):
+    list_display = [
+        "comment",
+        "text",
+        "writer",
+    ]
+
+
 admin.site.register(Post, PostAdmin)
 admin.site.register(PostImage, PostImageAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Comment, CommentAdmin)
+admin.site.register(SubComment, SubCommentAdmin)
