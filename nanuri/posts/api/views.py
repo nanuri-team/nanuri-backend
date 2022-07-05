@@ -5,8 +5,8 @@ from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView, R
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
-from ..models import Comment, Post, PostImage, SubComment
-from .serializers import CommentSerializer, PostImageSerializer, PostSerializer, SubCommentSerializer
+from ..models import Comment, Post, PostImage
+from .serializers import CommentSerializer, PostImageSerializer, PostSerializer
 
 
 @extend_schema_view(
