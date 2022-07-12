@@ -37,3 +37,43 @@ class TestCommentEndpoints:
         assert created_comment.post.uuid == post.uuid
         assert created_comment.text == comment.text
         assert created_comment.writer == user
+
+    def test_retrieve(self, user_client, comment):
+        response = user_client.get(
+            reverse(
+                "nanuri.posts.api:comment-detail",
+                kwargs={"uuid": comment.post.uuid, "comment_uuid": comment.uuid},
+            ),
+        )
+        assert response.status_code == 200
+
+        result = response.json()
+        assert result["uuid"] == str(comment.uuid)
+        assert result["text"] == comment.text
+
+    def test_update(self, user_client, comment):
+        new_comment = CommentFactory.build()
+        response = user_client.put(
+            reverse(
+                "nanuri.posts.api:comment-detail",
+                kwargs={"uuid": comment.post.uuid, "comment_uuid": comment.uuid},
+            ),
+            data={"text": new_comment.text},
+            format="json",
+        )
+        assert response.status_code == 200
+
+        result = response.json()
+        assert result["uuid"] == str(comment.uuid)
+        assert result["text"] == new_comment.text
+
+    def test_destroy(self, user_client, comment):
+        assert Comment.objects.filter(uuid=str(comment.uuid)).count() == 1
+        response = user_client.delete(
+            reverse(
+                "nanuri.posts.api:comment-detail",
+                kwargs={"uuid": comment.post.uuid, "comment_uuid": comment.uuid},
+            )
+        )
+        assert response.status_code == 204
+        assert Comment.objects.filter(uuid=str(comment.uuid)).count() == 0

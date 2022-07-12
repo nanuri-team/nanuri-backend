@@ -30,4 +30,9 @@ urlpatterns = [
         views.CommentListCreateAPIView.as_view(),
         name="comment-list",
     ),
+    path(
+        "<uuid:uuid>/comments/<uuid:comment_uuid>/",
+        views.CommentRetrieveUpdateDestroyAPIView.as_view(),
+        name="comment-detail",
+    ),
 ]

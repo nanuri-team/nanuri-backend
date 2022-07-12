@@ -269,3 +269,16 @@ class CommentListCreateAPIView(ListCreateAPIView):
         post = Post.objects.get(uuid=uuid)
         writer = self.request.user
         serializer.save(post=post, writer=writer)
+
+
+class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
+    lookup_field = "uuid"
+    lookup_url_kwarg = "comment_uuid"
+
+    def get_object(self):
+        post_uuid = self.kwargs[self.lookup_field]
+        comment_uuid = self.kwargs[self.lookup_url_kwarg]
+        return Comment.objects.get(post__uuid=post_uuid, uuid=comment_uuid)
