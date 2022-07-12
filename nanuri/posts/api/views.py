@@ -305,10 +305,13 @@ class SubCommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SubCommentSerializer
-    lookup_field = "uuid"
-    lookup_url_kwarg = ["comment_uuid", "sub_comment_uuid"]
 
     def get_object(self):
-        comment_uuid = self.kwargs[self.lookup_url_kwarg[0]]
-        sub_comment_uuid = self.kwargs[self.lookup_url_kwarg[1]]
-        return SubComment.objects.get(comment__uuid=comment_uuid, uuid=sub_comment_uuid)
+        post_uuid = self.kwargs["uuid"]
+        comment_uuid = self.kwargs["comment_uuid"]
+        sub_comment_uuid = self.kwargs["sub_comment_uuid"]
+        return SubComment.objects.get(
+            comment__post__uuid=post_uuid,
+            comment__uuid=comment_uuid,
+            uuid=sub_comment_uuid,
+        )
