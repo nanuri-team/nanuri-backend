@@ -2,7 +2,7 @@ import pytest
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from .posts.factories import CommentFactory, PostFactory
+from .posts.factories import CommentFactory, PostFactory, SubCommentFactory
 from .users.factories import UserFactory
 
 
@@ -31,3 +31,8 @@ def token(user):
 @pytest.fixture
 def comment(post):
     return CommentFactory(post=post)
+
+
+@pytest.fixture
+def sub_comment(comment):
+    return SubCommentFactory(comment=comment)

@@ -35,4 +35,14 @@ urlpatterns = [
         views.CommentRetrieveUpdateDestroyAPIView.as_view(),
         name="comment-detail",
     ),
+    path(
+        "<uuid:uuid>/comments/<uuid:comment_uuid>/sub-comments/",
+        views.SubCommentListCreateAPIView.as_view(),
+        name="sub-comment-list",
+    ),
+    path(
+        "<uuid:uuid>/comments/<uuid:comment_uuid>/sub-comments/<uuid:sub_comment_uuid>/",
+        views.SubCommentRetrieveUpdateDestroyAPIView.as_view(),
+        name="sub-comment-detail",
+    ),
 ]

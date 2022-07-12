@@ -5,8 +5,8 @@ from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView, R
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
-from ..models import Comment, Post, PostImage
-from .serializers import CommentSerializer, PostImageSerializer, PostSerializer
+from ..models import Comment, Post, PostImage, SubComment
+from .serializers import CommentSerializer, PostImageSerializer, PostSerializer, SubCommentSerializer
 
 
 @extend_schema_view(
@@ -282,3 +282,33 @@ class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         post_uuid = self.kwargs[self.lookup_field]
         comment_uuid = self.kwargs[self.lookup_url_kwarg]
         return Comment.objects.get(post__uuid=post_uuid, uuid=comment_uuid)
+
+
+class SubCommentListCreateAPIView(ListCreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = SubCommentSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        comment_uuid = self.kwargs["comment_uuid"]
+        return SubComment.objects.filter(comment__uuid=comment_uuid)
+
+    def perform_create(self, serializer):
+        comment_uuid = self.request.parser_context["kwargs"]["comment_uuid"]
+        comment = Comment.objects.get(uuid=comment_uuid)
+        writer = self.request.user
+        serializer.save(comment=comment, writer=writer)
+
+
+class SubCommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = SubCommentSerializer
+    lookup_field = "uuid"
+    lookup_url_kwarg = ["comment_uuid", "sub_comment_uuid"]
+
+    def get_object(self):
+        comment_uuid = self.kwargs[self.lookup_url_kwarg[0]]
+        sub_comment_uuid = self.kwargs[self.lookup_url_kwarg[1]]
+        return SubComment.objects.get(comment__uuid=comment_uuid, uuid=sub_comment_uuid)
