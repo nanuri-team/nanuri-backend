@@ -81,12 +81,13 @@ class KakaoAccountCreateAPIView(APIView):
             kakao_id = serializer.validated_data["kakao_id"]
             kakao_account_info = get_kakao_account_info(kakao_id)
             email = get_kakao_email(kakao_account_info)
-            user, created = get_or_create_user(email=email)
+            user, _ = get_or_create_user(email=email)
             try:
                 KakaoAccount.objects.get(user=user, kakao_id=kakao_id)
             except KakaoAccount.DoesNotExist:
                 serializer.save(user=user, kakao_id=kakao_id)
-            token, _ = Token.objects.update_or_create(user=user)
+            Token.objects.filter(user=user).update(key=Token.generate_key())
+            token, _ = Token.objects.get_or_create(user=user)
             return Response(
                 data={
                     "type": "Token",
