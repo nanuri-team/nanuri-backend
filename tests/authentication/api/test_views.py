@@ -12,8 +12,11 @@ class TestAuthenticationEndpoints:
             format="json",
         )
         assert response.status_code == 201
-        assert "token" in response.json()
-        assert "uuid" in response.json()
+
+        result = response.json()
+        assert result["type"] == "Token"
+        assert "token" in result
+        assert "uuid" in result
 
     def test_create_kakao_account_get_method_failed(self, user_client):
         response = user_client.get(reverse("nanuri.authentication:kakao-account-list"))
