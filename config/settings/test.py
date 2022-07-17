@@ -19,3 +19,5 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     }
 }
+
+MEDIA_ROOT = BASE_DIR / "testmedia"

@@ -4,6 +4,7 @@ venv/
 __pycache__/
 static/
 media/
+testmedia/
 
 *.env
 db.sqlite3

@@ -10,6 +10,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PostImageSerializer(serializers.ModelSerializer):
+    post = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field="uuid",
+    )
+
     class Meta:
         model = PostImage
         exclude = ("id",)
