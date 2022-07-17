@@ -16,16 +16,6 @@ urlpatterns = [
         name="detail",
     ),
     path(
-        "<uuid:uuid>/images/",
-        views.PostImageListCreateAPIView.as_view(),
-        name="image-list",
-    ),
-    path(
-        "<uuid:uuid>/images/<uuid:image_uuid>/",
-        views.PostImageRetrieveDestroyAPIView.as_view(),
-        name="image-detail",
-    ),
-    path(
         "<uuid:uuid>/comments/",
         views.CommentListCreateAPIView.as_view(),
         name="comment-list",

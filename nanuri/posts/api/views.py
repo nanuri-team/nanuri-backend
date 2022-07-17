@@ -1,12 +1,12 @@
 from django.core.files.storage import default_storage
-from drf_spectacular.utils import OpenApiExample, extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.generics import ListCreateAPIView, RetrieveDestroyAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import Comment, Post, PostImage, SubComment
-from .serializers import CommentSerializer, PostImageSerializer, PostSerializer, SubCommentSerializer
+from .serializers import CommentSerializer, PostSerializer, SubCommentSerializer
 
 
 @extend_schema_view(
@@ -172,85 +172,6 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         for post_image in instance.images.all():
             default_storage.delete(post_image.image.name)
-        default_storage.delete(instance.image.name)
-        super().perform_destroy(instance)
-
-
-@extend_schema_view(
-    get=extend_schema(
-        description='<h2>상품 이미지를 불러오는 API</h2>',
-        summary='Return image',
-        tags=["Post"],
-    ),
-    post=extend_schema(
-        description="""<h2>상품 이미지를 등록하는 API</h2>
-            <h3>
-            - image : 상품 이미지 파일 등록 <br>
-            <h3>
-        """,
-        summary='Create post image',
-        tags=["Post"],
-        request={
-            'multipart/form-data': {
-                'type': 'object',
-                'properties': {
-                    'image': {
-                        'type': 'file',
-                        'format': 'formData',
-                    },
-                },
-            }
-        },
-        examples=[
-            OpenApiExample(
-                name="success_example",
-                value={
-                    "image": "null",
-                },
-            ),
-        ],
-    ),
-)
-class PostImageListCreateAPIView(ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = PostImageSerializer
-    pagination_class = LimitOffsetPagination
-
-    def get_queryset(self):
-        uuid = self.kwargs["uuid"]
-        return PostImage.objects.filter(post__uuid=uuid)
-
-    def perform_create(self, serializer):
-        uuid = self.request.parser_context["kwargs"]["uuid"]
-        post = Post.objects.get(uuid=uuid)
-        serializer.save(post=post)
-
-
-@extend_schema_view(
-    get=extend_schema(
-        description='<h2>상품 게시글의 특정 이미지를 불러오는 API</h2>',
-        summary='Return post by post uuid',
-        tags=["Post"],
-    ),
-    delete=extend_schema(description='<h2>상품 게시글의 특정 이미지를 삭제하는 API</h2>', summary='Delete post', tags=["Post"]),
-)
-class PostImageRetrieveDestroyAPIView(RetrieveDestroyAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = PostImageSerializer
-    lookup_url_kwarg = "image_uuid"
-
-    def get_queryset(self):
-        uuid = self.kwargs["uuid"]
-        return PostImage.objects.filter(post__uuid=uuid)
-
-    def get_object(self):
-        queryset = self.get_queryset()
-        image_uuid = self.kwargs[self.lookup_url_kwarg]
-        return queryset.get(uuid=image_uuid)
-
-    def perform_destroy(self, instance):
         default_storage.delete(instance.image.name)
         super().perform_destroy(instance)
 

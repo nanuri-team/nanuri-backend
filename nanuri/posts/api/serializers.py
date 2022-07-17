@@ -1,23 +1,11 @@
 from rest_framework import serializers
 
-from ..models import Category, Comment, Post, PostImage, SubComment
+from ..models import Category, Comment, Post, SubComment
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        exclude = ("id",)
-
-
-class PostImageSerializer(serializers.ModelSerializer):
-    post = serializers.SlugRelatedField(
-        many=False,
-        read_only=True,
-        slug_field="uuid",
-    )
-
-    class Meta:
-        model = PostImage
         exclude = ("id",)
 
 

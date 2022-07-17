@@ -15,22 +15,6 @@ class TestApiUrls:
         url = reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid})
         assert url == self.base_url + f"/posts/{post.uuid}/"
 
-    def test_post_image_list_url(self, post):
-        url = reverse("nanuri.posts.api:image-list", kwargs={"uuid": post.uuid})
-        assert url == self.base_url + f"/posts/{post.uuid}/images/"
-
-    def test_post_image_detail_url(self, post_image):
-        post = post_image.post
-
-        url = reverse(
-            "nanuri.posts.api:image-detail",
-            kwargs={
-                "uuid": post.uuid,
-                "image_uuid": post_image.uuid,
-            },
-        )
-        assert url == self.base_url + f"/posts/{post.uuid}/images/{post_image.uuid}/"
-
     def test_comment_list_urls(self, post):
         url = reverse("nanuri.posts.api:comment-list", kwargs={"uuid": post.uuid})
         assert url == self.base_url + f"/posts/{post.uuid}/comments/"
