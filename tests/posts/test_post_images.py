@@ -1,5 +1,7 @@
+import shutil
+
 import pytest
-import requests
+from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
@@ -8,8 +10,8 @@ pytestmark = pytest.mark.django_db
 
 class TestPostImageEndpoints:
     def test_upload_post_image(self, user_client, post):
-        url = "http://www.lenna.org/lena_std.tif"
-        image_bytes = requests.get(url).content
+        with open(str(settings.MEDIA_ROOT / "lena.tif"), "rb") as f:
+            image_bytes = f.read()
         image_file = SimpleUploadedFile("test.tif", image_bytes, "image/tiff")
         response = user_client.post(
             reverse("nanuri.posts.api:image-list", kwargs={"uuid": post.uuid}),
@@ -29,3 +31,5 @@ class TestPostImageEndpoints:
             )
         )
         assert response.status_code == 200
+
+        shutil.rmtree(str(settings.MEDIA_ROOT / "posts"))

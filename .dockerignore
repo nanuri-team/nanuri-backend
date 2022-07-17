@@ -1,6 +1,7 @@
 venv/
 static/
 media/
-testmedia/
+testmedia/**/*
+!testmedia/lena.tif
 
 dynamodb/
