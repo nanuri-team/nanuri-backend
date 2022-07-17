@@ -237,7 +237,7 @@ class PostImageRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostImageSerializer
-    lookup_url_kwarg = "filename"
+    lookup_url_kwarg = "image_uuid"
 
     def get_queryset(self):
         uuid = self.kwargs["uuid"]
@@ -245,9 +245,8 @@ class PostImageRetrieveDestroyAPIView(RetrieveDestroyAPIView):
 
     def get_object(self):
         queryset = self.get_queryset()
-        filename = self.kwargs[self.lookup_url_kwarg]
-        obj = queryset.get(image__endswith=filename)
-        return obj
+        image_uuid = self.kwargs[self.lookup_url_kwarg]
+        return queryset.get(uuid=image_uuid)
 
     def perform_destroy(self, instance):
         default_storage.delete(instance.image.name)

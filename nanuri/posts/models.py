@@ -107,6 +107,12 @@ class PostImage(models.Model):
         ext = Path(filename).suffix
         return f"posts/{post_uuid}/{uuid4().hex[:8]}{ext}"
 
+    uuid = models.UUIDField(
+        verbose_name="uuid",
+        unique=True,
+        default=uuid4,
+        editable=False,
+    )
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,

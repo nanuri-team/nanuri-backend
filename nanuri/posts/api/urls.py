@@ -21,7 +21,7 @@ urlpatterns = [
         name="image-list",
     ),
     path(
-        "<uuid:uuid>/images/<str:filename>/",
+        "<uuid:uuid>/images/<uuid:image_uuid>/",
         views.PostImageRetrieveDestroyAPIView.as_view(),
         name="image-detail",
     ),

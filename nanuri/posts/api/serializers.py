@@ -12,7 +12,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class PostImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostImage
-        fields = ("image",)
+        exclude = ("id",)
 
 
 class PostSerializer(serializers.ModelSerializer):
