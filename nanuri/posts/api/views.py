@@ -175,6 +175,19 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         default_storage.delete(instance.image.name)
         super().perform_destroy(instance)
 
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        uuid = self.request.parser_context["kwargs"]["uuid"]
+        post = Post.objects.get(uuid=uuid)
+        post_images = post.images.all()
+        for post_image in post_images:
+            default_storage.delete(post_image.image.name)
+            post_image.delete()
+        new_post_images = [
+            PostImage(post=post, image=image_file) for image_file in self.request.FILES.getlist("images")
+        ]
+        PostImage.objects.bulk_create(new_post_images)
+
 
 class CommentListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]

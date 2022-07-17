@@ -126,6 +126,19 @@ class TestPostEndpoints:
         assert response.status_code == 200
         assert result[field] == getattr(params, field)
 
+    def test_update_post_images(self, user_client, post, image_file):
+        num_post_images = 2
+        for _ in range(2):
+            response = user_client.patch(
+                reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid}),
+                data={"images": [image_file for _ in range(num_post_images)]},
+                format="multipart",
+            )
+            assert response.status_code == 200
+            result = response.json()
+
+            assert len(result["images"]) == num_post_images
+
     def test_destroy(self, user_client, post):
         assert Post.objects.filter(uuid=str(post.uuid)).count() == 1
         response = user_client.delete(reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid}))
