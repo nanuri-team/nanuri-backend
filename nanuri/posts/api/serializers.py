@@ -46,6 +46,11 @@ class PostSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field="email",
     )
+    images = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="uuid",
+    )
 
     class Meta:
         model = Post

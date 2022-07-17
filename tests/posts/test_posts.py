@@ -25,8 +25,9 @@ class TestPostEndpoints:
         assert response.status_code == 200
         assert len(result["results"]) == 20
 
-    def test_create(self, user_client):
+    def test_create(self, user_client, image_file):
         post = PostFactory.build()
+        num_post_images = 3
         response = user_client.post(
             reverse("nanuri.posts.api:list"),
             data={
@@ -45,13 +46,16 @@ class TestPostEndpoints:
                 # "view_count": post.view_count,
                 "waited_from": post.waited_from,
                 "waited_until": post.waited_until,
+                "image": image_file,
+                "images": [image_file for _ in range(num_post_images)],
             },
-            format="json",
+            format="multipart",
         )
         result = response.json()
 
         assert response.status_code == 201
         assert result["title"] == post.title
+        assert len(result["images"]) == num_post_images
 
         created_post = Post.objects.get(uuid=result["uuid"])
 
@@ -60,6 +64,7 @@ class TestPostEndpoints:
         assert created_post.waited_from.strftime("%Y-%m-%d") == result["waited_from"]
         assert created_post.waited_until.strftime("%Y-%m-%d") == result["waited_until"]
         assert created_post.writer in created_post.participants.all()
+        assert len(created_post.images.all()) == num_post_images
 
     def test_retrieve(self, user_client, post):
         response = user_client.get(reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid}))

@@ -147,6 +147,8 @@ class PostListCreateAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         writer = self.request.user
         post = serializer.save(writer=writer)
+        post_images = [PostImage(post=post, image=image_file) for image_file in self.request.FILES.getlist("images")]
+        PostImage.objects.bulk_create(post_images)
         post.participants.add(writer)
 
 
