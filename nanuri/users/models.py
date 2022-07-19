@@ -25,7 +25,6 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     class AuthProvider(models.TextChoices):
-        NONE = None, _("None")
         APPLE = "APPLE", _("애플")
         KAKAO = "KAKAO", _("카카오")
 
@@ -52,7 +51,6 @@ class User(AbstractBaseUser):
         choices=AuthProvider.choices,
         null=True,
         blank=True,
-        default=AuthProvider.NONE,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
