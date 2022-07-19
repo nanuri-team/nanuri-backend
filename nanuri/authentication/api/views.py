@@ -4,13 +4,12 @@ from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..models import KakaoAccount
 from . import exceptions as ex
-from .serializers import KakaoAccountSerializer
+from .serializers import AuthTokenSerializer, KakaoAccountSerializer
 
 
 def get_kakao_account_info(kakao_id):
@@ -88,12 +87,14 @@ class KakaoAccountCreateAPIView(APIView):
                 serializer.save(user=user, kakao_id=kakao_id)
             Token.objects.filter(user=user).update(key=Token.generate_key())
             token, _ = Token.objects.get_or_create(user=user)
-            return Response(
+            token_serializer = AuthTokenSerializer(
                 data={
                     "type": "Token",
                     "token": token.key,
                     "uuid": user.uuid,
-                },
-                status=status.HTTP_201_CREATED,
+                }
             )
+            if token_serializer.is_valid(raise_exception=True):
+                return Response(data=token_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(data=token_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
