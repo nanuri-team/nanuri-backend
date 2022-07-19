@@ -18,6 +18,19 @@ class Category(models.Model):
 
 
 class Post(models.Model):
+    class TradeType(models.TextChoices):
+        DIRECT = "DIRECT", _("직거래")
+        PARCEL = "PARCEL", _("택배 거래")
+
+    class OrderStatus(models.TextChoices):
+        WAITING = "WAITING", _("인원 모집 중")
+        ORDERING = "ORDERING", _("주문 진행 중")
+        ORDERED = "ORDERED", _("주문 완료")
+        DELIVERING1 = "DELIVERING1", _("1차 배송 중")
+        DELIVERING2 = "DELIVERING2", _("2차 배송 중")
+        DELIVERED = "DELIVERED", _("배송 완료")
+        CANCELLED = "CANCELLED", _("취소됨")
+
     def upload_to(self, filename):
         post_uuid = self.uuid
         ext = Path(filename).suffix
@@ -45,25 +58,14 @@ class Post(models.Model):
     product_url = models.URLField()
     trade_type = models.CharField(
         max_length=15,
-        choices=(
-            ("DIRECT", _("직거래")),
-            ("PARCEL", _("택배 거래")),
-        ),
+        choices=TradeType.choices,
         null=True,
         blank=True,
     )
     order_status = models.CharField(
         max_length=15,
-        choices=(
-            ("WAITING", _("인원 모집 중")),
-            ("ORDERING", _("주문 진행 중")),
-            ("ORDERED", _("주문 완료")),
-            ("DELIVERING1", _("1차 배송 중")),
-            ("DELIVERING2", _("2차 배송 중")),
-            ("DELIVERED", _("배송 완료")),
-            ("CANCELLED", _("취소됨")),
-        ),
-        default="WAITING",
+        choices=OrderStatus.choices,
+        default=OrderStatus.WAITING,
     )
     is_published = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
