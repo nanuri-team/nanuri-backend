@@ -24,6 +24,11 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    class AuthProvider(models.TextChoices):
+        NONE = None, _("None")
+        APPLE = "APPLE", _("애플")
+        KAKAO = "KAKAO", _("카카오")
+
     uuid = models.UUIDField(
         verbose_name='uuid',
         unique=True,
@@ -44,14 +49,10 @@ class User(AbstractBaseUser):
     profile = models.ImageField(null=True, blank=True, default=None)
     auth_provider = models.CharField(
         max_length=15,
-        choices=(
-            (None, _('None')),
-            ('APPLE', _('애플')),
-            ('KAKAO', _('카카오')),
-        ),
+        choices=AuthProvider.choices,
         null=True,
         blank=True,
-        default=None,
+        default=AuthProvider.NONE,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
