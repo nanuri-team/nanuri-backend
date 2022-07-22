@@ -24,7 +24,9 @@ def get_kakao_account_info(kakao_id):
         headers={"Authorization": f"KakaoAK {settings.KAKAO_APP_ADMIN_KEY}"},
     )
     if response.status_code != status.HTTP_200_OK:
-        raise ex.KakaoAccountRetrieveFailedError(detail="카카오 계정 정보를 가져오는데 실패했습니다. 어드민 키가 올바른지 확인해주세요.")
+        raise ex.KakaoAccountRetrieveFailedError(
+            detail="카카오 계정 정보를 가져오는데 실패했습니다. 어드민 키가 올바른지 확인해주세요."
+        )
     return response.json()
 
 
@@ -35,11 +37,16 @@ def get_kakao_email(kakao_account_info):
     https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
     """
     if "kakao_account" not in kakao_account_info:
-        raise ex.KakaoAccountRetrieveFailedError(detail="카카오 계정 정보가 없습니다. 카카오 동의항목에 문제가 발생한 것 같습니다.")
+        raise ex.KakaoAccountRetrieveFailedError(
+            detail="카카오 계정 정보가 없습니다. 카카오 동의항목에 문제가 발생한 것 같습니다."
+        )
     kakao_account = kakao_account_info["kakao_account"]
     if "is_email_valid" not in kakao_account or not kakao_account["is_email_valid"]:
         raise ex.KakaoAccountRetrieveFailedError(detail="이메일이 유효하지 않습니다.")
-    if "is_email_verified" not in kakao_account or not kakao_account["is_email_verified"]:
+    if (
+        "is_email_verified" not in kakao_account
+        or not kakao_account["is_email_verified"]
+    ):
         raise ex.KakaoAccountRetrieveFailedError(detail="이메일이 인증되지 않았습니다.")
     if "email" not in kakao_account or not kakao_account["email"]:
         raise ex.KakaoAccountRetrieveFailedError(detail="이메일이 없습니다.")
@@ -62,11 +69,11 @@ def get_or_create_user(email):
 
 @extend_schema_view(
     post=extend_schema(
-        description='<h2>카카오 계정 정보를 등록하는 API</h2>',
-        summary='Create a new kakao user',
+        description="<h2>카카오 계정 정보를 등록하는 API</h2>",
+        summary="Create a new kakao user",
         tags=["Login"],
         responses={
-            '201': AuthTokenSerializer,
+            "201": AuthTokenSerializer,
         },
     )
 )
@@ -95,6 +102,10 @@ class KakaoAccountCreateAPIView(APIView):
                 }
             )
             if token_serializer.is_valid(raise_exception=True):
-                return Response(data=token_serializer.data, status=status.HTTP_201_CREATED)
-            return Response(data=token_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    data=token_serializer.data, status=status.HTTP_201_CREATED
+                )
+            return Response(
+                data=token_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)

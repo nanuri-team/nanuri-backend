@@ -5,10 +5,10 @@ from .models import KakaoAccount
 
 class KakaoAccountAdmin(admin.ModelAdmin):
     list_display = [
-        'user',
-        'kakao_id',
-        'created_at',
-        'updated_at',
+        "user",
+        "kakao_id",
+        "created_at",
+        "updated_at",
     ]
 
 

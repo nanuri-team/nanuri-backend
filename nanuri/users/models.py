@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
-            raise ValueError('Users must have an email address')
+            raise ValueError("Users must have an email address")
 
         user = self.model(email=self.normalize_email(email), **extra_fields)
 
@@ -29,13 +29,13 @@ class User(AbstractBaseUser):
         KAKAO = "KAKAO", _("카카오")
 
     uuid = models.UUIDField(
-        verbose_name='uuid',
+        verbose_name="uuid",
         unique=True,
         default=uuid.uuid4,
         editable=False,
     )
     email = models.EmailField(
-        verbose_name='email address',
+        verbose_name="email address",
         max_length=255,
         unique=True,
     )
@@ -57,11 +57,15 @@ class User(AbstractBaseUser):
 
     # user.favorite_posts.all() == 이 user가 즐겨찾기한 모든 글
     # post.favored_by.all() == 이 post를 좋아하는 모든 유저
-    favorite_posts = models.ManyToManyField("posts.Post", related_name="favored_by", blank=True)
+    favorite_posts = models.ManyToManyField(
+        "posts.Post",
+        related_name="favored_by",
+        blank=True,
+    )
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     def __str__(self):

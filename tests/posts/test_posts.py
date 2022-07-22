@@ -1,6 +1,5 @@
 import pytest
 from django.urls import reverse
-
 from nanuri.posts.models import Post
 
 from .factories import PostFactory
@@ -19,7 +18,10 @@ class TestPostEndpoints:
 
     def test_list_with_pagination(self, user_client):
         PostFactory.create_batch(size=100)
-        response = user_client.get(reverse("nanuri.posts.api:list"), data={"offset": "0", "limit": "20"})
+        response = user_client.get(
+            reverse("nanuri.posts.api:list"),
+            data={"offset": "0", "limit": "20"},
+        )
         result = response.json()
 
         assert response.status_code == 200
@@ -67,7 +69,12 @@ class TestPostEndpoints:
         assert len(created_post.images.all()) == num_post_images
 
     def test_retrieve(self, user_client, post):
-        response = user_client.get(reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid}))
+        response = user_client.get(
+            reverse(
+                "nanuri.posts.api:detail",
+                kwargs={"uuid": post.uuid},
+            )
+        )
         result = response.json()
 
         assert response.status_code == 200
@@ -141,7 +148,12 @@ class TestPostEndpoints:
 
     def test_destroy(self, user_client, post):
         assert Post.objects.filter(uuid=str(post.uuid)).count() == 1
-        response = user_client.delete(reverse("nanuri.posts.api:detail", kwargs={"uuid": post.uuid}))
+        response = user_client.delete(
+            reverse(
+                "nanuri.posts.api:detail",
+                kwargs={"uuid": post.uuid},
+            )
+        )
 
         assert response.status_code == 204
         assert Post.objects.filter(uuid=str(post.uuid)).count() == 0

@@ -44,7 +44,7 @@ jobs:
       - name: Format code with black
         uses: psf/black@stable
         with:
-          options: "--check --diff --line-length=120 --skip-string-normalization --extend-exclude migrations"
+          options: "--check --diff --extend-exclude migrations"
 
       - name: Lint with flake8
         run: |

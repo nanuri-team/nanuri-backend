@@ -11,8 +11,8 @@ from .serializers import CommentSerializer, PostSerializer, SubCommentSerializer
 
 @extend_schema_view(
     get=extend_schema(
-        description='<h2>상품 정보를 불러오는 API</h2>',
-        summary='Return all posts',
+        description="<h2>상품 정보를 불러오는 API</h2>",
+        summary="Return all posts",
         tags=["Post"],
     ),
     post=extend_schema(
@@ -34,103 +34,103 @@ from .serializers import CommentSerializer, PostSerializer, SubCommentSerializer
             - waited_until : 참가자 모집 마지막일
             </h3>
         """,
-        summary='Create a new post',
+        summary="Create a new post",
         tags=["Post"],
         request={
-            'multipart/form-data': {
-                'type': 'object',
-                'properties': {
-                    'title': {
-                        'type': 'string',
-                        'default': '나누리 상품 공동구매 인원 모집합니다.',
-                        'required': True,
-                        'nullable': False,
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "default": "나누리 상품 공동구매 인원 모집합니다.",
+                        "required": True,
+                        "nullable": False,
                     },
-                    'image': {
-                        'type': 'file',
-                        'format': 'formData',
-                        'required': False,
+                    "image": {
+                        "type": "file",
+                        "format": "formData",
+                        "required": False,
                     },
-                    'category': {
-                        'type': 'string',
-                        'formData': 'enum',
-                        'enum': [
-                            '생활용품',
-                            '음식',
-                            '주방',
-                            '욕실',
-                            '문구',
-                            '기타',
+                    "category": {
+                        "type": "string",
+                        "formData": "enum",
+                        "enum": [
+                            "생활용품",
+                            "음식",
+                            "주방",
+                            "욕실",
+                            "문구",
+                            "기타",
                         ],
                     },
-                    'unit_price': {
-                        'type': 'integer',
-                        'default': '8000',
-                        'required': True,
+                    "unit_price": {
+                        "type": "integer",
+                        "default": "8000",
+                        "required": True,
                     },
-                    'quantity': {
-                        'type': 'integer',
-                        'default': '6',
-                        'required': True,
+                    "quantity": {
+                        "type": "integer",
+                        "default": "6",
+                        "required": True,
                     },
-                    'description': {
-                        'type': 'string',
-                        'default': '같이 공동구매 하실분?',
-                        'required': True,
+                    "description": {
+                        "type": "string",
+                        "default": "같이 공동구매 하실분?",
+                        "required": True,
                     },
-                    'min_participants': {
-                        'type': 'integer',
-                        'format': 'Int',
-                        'default': '3',
-                        'required': True,
+                    "min_participants": {
+                        "type": "integer",
+                        "format": "Int",
+                        "default": "3",
+                        "required": True,
                     },
-                    'max_participants': {
-                        'type': 'integer',
-                        'format': 'Int',
-                        'default': '6',
-                        'required': True,
+                    "max_participants": {
+                        "type": "integer",
+                        "format": "Int",
+                        "default": "6",
+                        "required": True,
                     },
-                    'product_url': {
-                        'type': 'string',
-                        'format': 'url',
-                        'default': 'http://localhost:8080/admin/',
-                        'required': True,
+                    "product_url": {
+                        "type": "string",
+                        "format": "url",
+                        "default": "http://localhost:8080/admin/",
+                        "required": True,
                     },
-                    'trade_type': {
-                        'type': 'string',
-                        'formData': 'enum',
-                        'enum': ['DIRECT', 'PARCEL'],
+                    "trade_type": {
+                        "type": "string",
+                        "formData": "enum",
+                        "enum": ["DIRECT", "PARCEL"],
                     },
-                    'order_status': {
-                        'type': 'string',
-                        'formData': 'enum',
-                        'enum': [
-                            'WAITING',
-                            'ORDERING',
-                            'ORDERED',
-                            'DELIVERING1',
-                            'DELIVERING2',
-                            'DELIVERED',
-                            'CANCELLED',
+                    "order_status": {
+                        "type": "string",
+                        "formData": "enum",
+                        "enum": [
+                            "WAITING",
+                            "ORDERING",
+                            "ORDERED",
+                            "DELIVERING1",
+                            "DELIVERING2",
+                            "DELIVERED",
+                            "CANCELLED",
                         ],
-                        'default': 'WAITING',
+                        "default": "WAITING",
                     },
-                    'is_published': {
-                        'type': 'boolean',
-                        'default': 'true',
+                    "is_published": {
+                        "type": "boolean",
+                        "default": "true",
                     },
-                    'view_count': {
-                        'type': 'integer',
-                        'readOnly': True,
+                    "view_count": {
+                        "type": "integer",
+                        "readOnly": True,
                     },
-                    'waited_from': {
-                        'type': 'date',
-                        'formData': 'date',
-                        'default': '2022-04-30',
+                    "waited_from": {
+                        "type": "date",
+                        "formData": "date",
+                        "default": "2022-04-30",
                     },
-                    'waited_until': {
-                        'type': 'date',
-                        'default': '2022-05-30',
+                    "waited_until": {
+                        "type": "date",
+                        "default": "2022-05-30",
                     },
                 },
             },
@@ -147,20 +147,31 @@ class PostListCreateAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         writer = self.request.user
         post = serializer.save(writer=writer)
-        post_images = [PostImage(post=post, image=image_file) for image_file in self.request.FILES.getlist("images")]
+        post_images = [
+            PostImage(post=post, image=image_file)
+            for image_file in self.request.FILES.getlist("images")
+        ]
         PostImage.objects.bulk_create(post_images)
         post.participants.add(writer)
 
 
 @extend_schema_view(
     get=extend_schema(
-        description='<h2>상품 게시글 정보를 불러오는 API</h2>',
-        summary='Return post by post uuid',
+        description="<h2>상품 게시글 정보를 불러오는 API</h2>",
+        summary="Return post by post uuid",
         tags=["Post"],
     ),
-    put=extend_schema(description='<h2>상품 게시글의 전체를 업데이트 하는 API</h2>', summary='Update post', tags=["Post"]),
-    patch=extend_schema(description='<h2>상품 게시글을 업데이트 하는 API</h2>', summary='Update post', tags=["Post"]),
-    delete=extend_schema(description='<h2>상품 게시글을 삭제하는 API</h2>', summary='Delete post', tags=["Post"]),
+    put=extend_schema(
+        description="<h2>상품 게시글의 전체를 업데이트 하는 API</h2>",
+        summary="Update post",
+        tags=["Post"],
+    ),
+    patch=extend_schema(
+        description="<h2>상품 게시글을 업데이트 하는 API</h2>", summary="Update post", tags=["Post"]
+    ),
+    delete=extend_schema(
+        description="<h2>상품 게시글을 삭제하는 API</h2>", summary="Delete post", tags=["Post"]
+    ),
 )
 class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
@@ -184,7 +195,8 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
             default_storage.delete(post_image.image.name)
             post_image.delete()
         new_post_images = [
-            PostImage(post=post, image=image_file) for image_file in self.request.FILES.getlist("images")
+            PostImage(post=post, image=image_file)
+            for image_file in self.request.FILES.getlist("images")
         ]
         PostImage.objects.bulk_create(new_post_images)
 

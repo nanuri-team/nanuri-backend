@@ -17,7 +17,10 @@ class TestUserEndpoints:
 
     def test_list_with_pagination(self, user_client):
         UserFactory.create_batch(size=100)
-        response = user_client.get(reverse("nanuri.users.api:list"), data={"offset": "0", "limit": "20"})
+        response = user_client.get(
+            reverse("nanuri.users.api:list"),
+            data={"offset": "0", "limit": "20"},
+        )
 
         assert response.status_code == 200
         assert len(response.json()["results"]) == 20
@@ -38,7 +41,12 @@ class TestUserEndpoints:
         assert result["email"] == user.email
 
     def test_retrieve(self, user_client, user):
-        response = user_client.get(reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid}))
+        response = user_client.get(
+            reverse(
+                "nanuri.users.api:detail",
+                kwargs={"uuid": user.uuid},
+            )
+        )
         result = response.json()
 
         assert response.status_code == 200
@@ -98,7 +106,12 @@ class TestUserEndpoints:
 
     def test_destroy(self, user_client, user):
         assert get_user_model().objects.filter(uuid=str(user.uuid)).count() == 1
-        response = user_client.delete(reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid}))
+        response = user_client.delete(
+            reverse(
+                "nanuri.users.api:detail",
+                kwargs={"uuid": user.uuid},
+            )
+        )
 
         assert response.status_code == 204
         assert get_user_model().objects.filter(uuid=str(user.uuid)).count() == 0

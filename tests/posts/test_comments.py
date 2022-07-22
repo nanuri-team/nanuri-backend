@@ -1,6 +1,5 @@
 import pytest
 from django.urls import reverse
-
 from nanuri.posts.models import Comment
 
 from .factories import CommentFactory, PostFactory
@@ -12,7 +11,12 @@ class TestCommentEndpoints:
     def test_list(self, user_client):
         post = PostFactory.create()
         comments = CommentFactory.create_batch(post=post, size=3)
-        response = user_client.get(reverse("nanuri.posts.api:comment-list", kwargs={"uuid": post.uuid}))
+        response = user_client.get(
+            reverse(
+                "nanuri.posts.api:comment-list",
+                kwargs={"uuid": post.uuid},
+            )
+        )
         result = response.json()
 
         assert response.status_code == 200

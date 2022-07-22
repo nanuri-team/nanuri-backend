@@ -38,7 +38,11 @@ class TestApiUrls:
                 "comment_uuid": comment.uuid,
             },
         )
-        assert url == self.base_url + f"/posts/{post.uuid}/comments/{comment.uuid}/sub-comments/"
+        assert (
+            url
+            == self.base_url
+            + f"/posts/{post.uuid}/comments/{comment.uuid}/sub-comments/"
+        )
 
     def test_sub_comment_detail_urls(self, sub_comment):
         post = sub_comment.comment.post
@@ -52,4 +56,8 @@ class TestApiUrls:
                 "sub_comment_uuid": sub_comment.uuid,
             },
         )
-        assert url == self.base_url + f"/posts/{post.uuid}/comments/{comment.uuid}/sub-comments/{sub_comment.uuid}/"
+        assert (
+            url
+            == self.base_url
+            + f"/posts/{post.uuid}/comments/{comment.uuid}/sub-comments/{sub_comment.uuid}/"
+        )

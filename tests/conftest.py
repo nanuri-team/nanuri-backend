@@ -6,7 +6,12 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from .posts.factories import CommentFactory, PostFactory, PostImageFactory, SubCommentFactory
+from .posts.factories import (
+    CommentFactory,
+    PostFactory,
+    PostImageFactory,
+    SubCommentFactory,
+)
 from .users.factories import UserFactory
 
 

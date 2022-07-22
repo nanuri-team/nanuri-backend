@@ -10,7 +10,9 @@ class KakaoAuthorizationCodeInvalidError(APIException):
 
 class KakaoTokenRefreshFailedError(APIException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    default_detail = "카카오 토큰 정보가 없거나 유효하지 않습니다. 카카오 REST API Key, Redirect URI, 인가 코드가 올바른지 확인하세요."
+    default_detail = (
+        "카카오 토큰 정보가 없거나 유효하지 않습니다. 카카오 REST API Key, Redirect URI, 인가 코드가 올바른지 확인하세요."
+    )
     default_code = "kakao_token_refresh_failed"
 
 
