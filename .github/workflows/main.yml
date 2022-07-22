@@ -90,13 +90,13 @@ jobs:
             --application-name nanuri-backend-django \
             --description "Nanuri Backend Django Application" \
             --ignore-hidden-files \
-            --s3-location s3://bucket-5xwhjn/app.zip \
+            --s3-location s3://nanuri-deployment-bucket/app.zip \
             --source .
 
       - name: Trigger deployment
         run: |
           aws deploy create-deployment \
             --application-name nanuri-backend-django \
-            --s3-location bucket=bucket-5xwhjn,key=app.zip,bundleType=zip \
+            --s3-location bucket=nanuri-deployment-bucket,key=app.zip,bundleType=zip \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name NanuriBackendDjangoDeploymentGroup
