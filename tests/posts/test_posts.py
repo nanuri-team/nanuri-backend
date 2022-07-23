@@ -53,9 +53,10 @@ class TestPostEndpoints:
             },
             format="multipart",
         )
-        result = response.json()
 
         assert response.status_code == 201
+        result = response.json()
+
         assert result["title"] == post.title
         assert len(result["images"]) == num_post_images
 
@@ -67,6 +68,32 @@ class TestPostEndpoints:
         assert created_post.waited_until.strftime("%Y-%m-%d") == result["waited_until"]
         assert created_post.writer in created_post.participants.all()
         assert len(created_post.images.all()) == num_post_images
+
+    def test_create_without_attached_images(self, user_client, image_file):
+        post = PostFactory.build()
+        response = user_client.post(
+            reverse("nanuri.posts.api:list"),
+            data={
+                "title": post.title,
+                "unit_price": post.unit_price,
+                "quantity": post.quantity,
+                "description": post.description,
+                "min_participants": post.min_participants,
+                "max_participants": post.max_participants,
+                # "num_participants": post.num_participants,
+                "product_url": post.product_url,
+                "trade_type": post.trade_type,
+                "order_status": post.order_status,
+                "is_published": post.is_published,
+                # "published_at": post.published_at,
+                # "view_count": post.view_count,
+                "waited_from": post.waited_from,
+                "waited_until": post.waited_until,
+                "image": image_file,
+            },
+            format="multipart",
+        )
+        assert response.status_code == 201
 
     def test_retrieve(self, user_client, post):
         response = user_client.get(
