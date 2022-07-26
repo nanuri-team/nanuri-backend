@@ -6,6 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
+from .notifications.factories import DeviceFactory, SubscriptionFactory
 from .posts.factories import (
     CommentFactory,
     PostFactory,
@@ -61,9 +62,19 @@ def token(user):
 
 @pytest.fixture
 def comment(post):
-    return CommentFactory(post=post)
+    return CommentFactory.create(post=post)
 
 
 @pytest.fixture
 def sub_comment(comment):
-    return SubCommentFactory(comment=comment)
+    return SubCommentFactory.create(comment=comment)
+
+
+@pytest.fixture
+def device():
+    return DeviceFactory.create()
+
+
+@pytest.fixture
+def subscription(device, post):
+    return SubscriptionFactory.create(device=device, post=post)

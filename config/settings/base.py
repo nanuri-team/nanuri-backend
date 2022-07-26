@@ -53,6 +53,7 @@ LOCAL_APPS = [
     "nanuri.users.apps.UsersConfig",
     "nanuri.posts.apps.PostsConfig",
     "nanuri.chat.apps.ChatConfig",
+    "nanuri.notifications.apps.NotificationsConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

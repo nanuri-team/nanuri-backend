@@ -29,6 +29,7 @@ urlpatterns = [
     path("api/auth/", include("nanuri.authentication.api.urls", namespace="auth")),
     path("api/v1/users/", include("nanuri.users.api.urls")),
     path("api/v1/posts/", include("nanuri.posts.api.urls")),
+    path("api/v1/notifications/", include("nanuri.notifications.api.urls")),
     # Open API 자체를 조회 : json
     path("docs/json/", SpectacularJSONAPIView.as_view(), name="schema-json"),
     # Open API Document UI로 조회: Swagger, Redoc
