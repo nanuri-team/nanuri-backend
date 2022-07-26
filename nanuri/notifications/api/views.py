@@ -1,7 +1,12 @@
+import os
+
+import boto3
+from django.conf import settings
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
     CreateAPIView,
     ListCreateAPIView,
+    RetrieveDestroyAPIView,
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -11,6 +16,13 @@ from nanuri.posts.models import Post
 from ..models import Device, Subscription
 from .serializers import DeviceSerializer, SubscriptionSerializer
 
+sns = boto3.client(
+    "sns",
+    region_name=settings.AWS_REGION,
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+)
+
 
 class DeviceCreateAPIView(CreateAPIView):
     authentication_classes = [TokenAuthentication]
@@ -19,7 +31,12 @@ class DeviceCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
-        serializer.save(user=user)
+        device_token = self.request.data["device_token"]
+        endpoint_arn = sns.create_platform_endpoint(
+            PlatformApplicationArn=settings.AWS_SNS_PLATFORM_APPLICATION_ARN,
+            Token=device_token,
+        )["EndpointArn"]
+        serializer.save(user=user, endpoint_arn=endpoint_arn)
 
 
 class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
@@ -45,10 +62,22 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
         device = Device.objects.get(uuid=device_uuid)
         post_uuid = self.request.data["post"]
         post = Post.objects.get(uuid=post_uuid)
-        serializer.save(device=device, post=post)
+        topic = self.request.data["topic"]
+
+        topic_arn = sns.create_topic(Name=f"{topic}-{post_uuid}")["TopicArn"]
+        print("topic_arn:", topic_arn)
+        print("endpoint_arn:", device.endpoint_arn)
+        subscription_arn = sns.subscribe(
+            TopicArn=topic_arn,
+            Protocol="application",
+            Endpoint=device.endpoint_arn,
+        )["SubscriptionArn"]
+        print("subscription_arn:", subscription_arn)
+
+        serializer.save(device=device, post=post, subscription_arn=subscription_arn)
 
 
-class SubscriptionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializer

@@ -1,5 +1,6 @@
 import shutil
 
+import boto3
 import pytest
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -15,6 +16,13 @@ from .posts.factories import (
 )
 from .users.factories import UserFactory
 
+sns = boto3.client(
+    "sns",
+    region_name=settings.AWS_REGION,
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+)
+
 
 @pytest.fixture(autouse=True)
 def run_around_tests():
@@ -24,6 +32,14 @@ def run_around_tests():
     post_media_dir = settings.MEDIA_ROOT / "posts"
     if post_media_dir.exists():
         shutil.rmtree(str(post_media_dir))
+
+    # 매 테스트 이후 생성한 AWS SNS 주제, 구독 삭제
+    for sub in sns.list_subscriptions()["Subscriptions"]:
+        sub_arn = sub["SubscriptionArn"]
+        sns.unsubscribe(SubscriptionArn=sub_arn)
+    for topic in sns.list_topics()["Topics"]:
+        topic_arn = topic["TopicArn"]
+        sns.delete_topic(TopicArn=topic_arn)
 
 
 @pytest.fixture
@@ -72,7 +88,10 @@ def sub_comment(comment):
 
 @pytest.fixture
 def device():
-    return DeviceFactory.create()
+    return DeviceFactory.create(
+        device_token="b08f718bb925af6e3103d3c74a0275727e0112be1b70465dab1aed7c973ac308",
+        endpoint_arn="arn:aws:sns:ap-northeast-2:833928806580:endpoint/APNS/TestApplication/91d08d28-8435-37bd-9819-cf9a3989b687",
+    )
 
 
 @pytest.fixture

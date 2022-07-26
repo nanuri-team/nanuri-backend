@@ -10,7 +10,10 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ["user", "device_token"]
+        fields = ["user", "device_token", "endpoint_arn"]
+        extra_kwargs = {
+            "endpoint_arn": {"read_only": True},
+        }
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -26,6 +29,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         fields = [
             "device",
             "post",
-            "receive_chat_messages",
-            "receive_comments",
+            "topic",
+            "subscription_arn",
         ]
+        extra_kwargs = {
+            "subscription_arn": {"read_only": True},
+        }

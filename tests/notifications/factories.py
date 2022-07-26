@@ -1,5 +1,6 @@
 import factory
 from factory.django import DjangoModelFactory
+
 from nanuri.notifications.models import Device, Subscription
 
 from ..posts.factories import PostFactory
@@ -20,5 +21,3 @@ class SubscriptionFactory(DjangoModelFactory):
 
     device = factory.SubFactory(DeviceFactory)
     post = factory.SubFactory(PostFactory)
-    receive_chat_messages = factory.Faker("pybool")
-    receive_comments = factory.Faker("pybool")

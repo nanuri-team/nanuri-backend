@@ -12,7 +12,8 @@ class Device(models.Model):
         editable=False,
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    device_token = models.TextField()
+    device_token = models.TextField(null=True, blank=True)
+    endpoint_arn = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -26,10 +27,10 @@ class Subscription(models.Model):
     )
     device = models.ForeignKey("Device", on_delete=models.CASCADE)
     post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
-    receive_chat_messages = models.BooleanField(default=True)
-    receive_comments = models.BooleanField(default=True)
+    topic = models.CharField(max_length=255, null=True, blank=True)
+    subscription_arn = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = [["device", "post"]]
+        unique_together = [["device", "post", "topic"]]

@@ -22,7 +22,7 @@ urlpatterns = [
     ),
     path(
         "devices/<uuid:device_uuid>/subscriptions/<uuid:uuid>/",
-        view=views.SubscriptionRetrieveUpdateDestroyAPIView.as_view(),
+        view=views.SubscriptionRetrieveDestroyAPIView.as_view(),
         name="subscription-detail",
     ),
 ]

@@ -11,14 +11,15 @@ pytestmark = pytest.mark.django_db
 class TestDeviceApi:
     base_url = "/api/v1"
 
-    def test_create(self, user_client):
-        params = DeviceFactory.build()
+    def test_create(self, user_client, device):
         response = user_client.post(
             reverse("nanuri.notifications.api:device-list"),
-            data={"device_token": params.device_token},
+            data={"device_token": device.device_token},
             format="json",
         )
         assert response.status_code == 201
+        result = response.json()
+        assert result["endpoint_arn"].startswith("arn:aws:sns")
 
     def test_retrieve(self, user_client, device):
         response = user_client.get(
@@ -28,6 +29,10 @@ class TestDeviceApi:
             ),
         )
         assert response.status_code == 200
+        result = response.json()
+        assert "user" in result
+        assert "device_token" in result
+        assert "endpoint_arn" in result
 
     def test_update(self, user_client, device):
         params = DeviceFactory.build()
