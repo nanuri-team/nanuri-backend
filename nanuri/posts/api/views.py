@@ -188,7 +188,7 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         super().perform_update(serializer)
-        uuid = self.request.parser_context["kwargs"]["uuid"]
+        uuid = self.kwargs[self.lookup_field]
         post = Post.objects.get(uuid=uuid)
         post_images = post.images.all()
         for post_image in post_images:
@@ -212,7 +212,7 @@ class CommentListCreateAPIView(ListCreateAPIView):
         return Comment.objects.filter(post__uuid=uuid)
 
     def perform_create(self, serializer):
-        uuid = self.request.parser_context["kwargs"]["uuid"]
+        uuid = self.kwargs["uuid"]
         post = Post.objects.get(uuid=uuid)
         writer = self.request.user
         serializer.save(post=post, writer=writer)
@@ -242,7 +242,7 @@ class SubCommentListCreateAPIView(ListCreateAPIView):
         return SubComment.objects.filter(comment__uuid=comment_uuid)
 
     def perform_create(self, serializer):
-        comment_uuid = self.request.parser_context["kwargs"]["comment_uuid"]
+        comment_uuid = self.kwargs["comment_uuid"]
         comment = Comment.objects.get(uuid=comment_uuid)
         writer = self.request.user
         serializer.save(comment=comment, writer=writer)
