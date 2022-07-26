@@ -6,6 +6,7 @@ static/
 media/
 testmedia/**/*
 !testmedia/lena.tif
+certificate.p12
 
 *.env
 db.sqlite3

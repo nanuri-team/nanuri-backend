@@ -11,10 +11,10 @@ pytestmark = pytest.mark.django_db
 class TestDeviceApi:
     base_url = "/api/v1"
 
-    def test_create(self, user_client, device):
+    def test_create(self, user_client, device_token):
         response = user_client.post(
             reverse("nanuri.notifications.api:device-list"),
-            data={"device_token": device.device_token},
+            data={"device_token": device_token},
             format="json",
         )
         assert response.status_code == 201

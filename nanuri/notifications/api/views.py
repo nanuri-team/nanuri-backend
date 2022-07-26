@@ -18,6 +18,7 @@ from .serializers import DeviceSerializer, SubscriptionSerializer
 
 sns = boto3.client(
     "sns",
+    endpoint_url=settings.AWS_ENDPOINT_URL,
     region_name=settings.AWS_REGION,
     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
@@ -65,14 +66,11 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
         topic = self.request.data["topic"]
 
         topic_arn = sns.create_topic(Name=f"{topic}-{post_uuid}")["TopicArn"]
-        print("topic_arn:", topic_arn)
-        print("endpoint_arn:", device.endpoint_arn)
         subscription_arn = sns.subscribe(
             TopicArn=topic_arn,
             Protocol="application",
             Endpoint=device.endpoint_arn,
         )["SubscriptionArn"]
-        print("subscription_arn:", subscription_arn)
 
         serializer.save(device=device, post=post, subscription_arn=subscription_arn)
 

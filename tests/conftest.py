@@ -2,8 +2,10 @@ import shutil
 
 import boto3
 import pytest
+from cryptography.hazmat.primitives.serialization.pkcs12 import load_pkcs12
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from OpenSSL.crypto import FILETYPE_PEM, dump_certificate, dump_privatekey, load_pkcs12
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
@@ -18,6 +20,7 @@ from .users.factories import UserFactory
 
 sns = boto3.client(
     "sns",
+    endpoint_url=settings.AWS_ENDPOINT_URL,
     region_name=settings.AWS_REGION,
     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
@@ -34,12 +37,20 @@ def run_around_tests():
         shutil.rmtree(str(post_media_dir))
 
     # 매 테스트 이후 생성한 AWS SNS 주제, 구독 삭제
-    for sub in sns.list_subscriptions()["Subscriptions"]:
-        sub_arn = sub["SubscriptionArn"]
-        sns.unsubscribe(SubscriptionArn=sub_arn)
-    for topic in sns.list_topics()["Topics"]:
-        topic_arn = topic["TopicArn"]
-        sns.delete_topic(TopicArn=topic_arn)
+    # for sub in sns.list_subscriptions()["Subscriptions"]:
+    #     sub_arn = sub["SubscriptionArn"]
+    #     sns.unsubscribe(SubscriptionArn=sub_arn)
+    # for topic in sns.list_topics()["Topics"]:
+    #     topic_arn = topic["TopicArn"]
+    #     sns.delete_topic(TopicArn=topic_arn)
+    for app in sns.list_platform_applications()["PlatformApplications"]:
+        app_arn = app["PlatformApplicationArn"]
+        # for endpoint in sns.list_endpoints_by_platform_application(
+        #     PlatformApplicationArn=app_arn
+        # )["Endpoints"]:
+        #     endpoint_arn = endpoint["EndpointArn"]
+        #     sns.delete_endpoint(EndpointArn=endpoint_arn)
+        sns.delete_platform_application(PlatformApplicationArn=app_arn)
 
 
 @pytest.fixture
@@ -87,10 +98,52 @@ def sub_comment(comment):
 
 
 @pytest.fixture
-def device():
+def p12():
+    with open(str(settings.BASE_DIR / "certificate.p12"), "rb") as f:
+        p12_bytes = f.read()
+    return load_pkcs12(p12_bytes, b"")
+
+
+@pytest.fixture
+def p12_certificate(p12):
+    return dump_certificate(FILETYPE_PEM, p12.get_certificate()).decode("utf-8")
+
+
+@pytest.fixture
+def p12_private_key(p12):
+    return dump_privatekey(FILETYPE_PEM, p12.get_privatekey()).decode("utf-8")
+
+
+@pytest.fixture
+def sns_platform_application(p12_certificate, p12_private_key):
+    return sns.create_platform_application(
+        Name="TestApplication",
+        Platform="APNS",
+        Attributes={
+            "PlatformCredential": p12_certificate,
+            "PlatformPrincipal": p12_private_key,
+        },
+    )
+
+
+@pytest.fixture
+def device_token(sns_platform_application):
+    return "b08f718bb925af6e3103d3c74a0275727e0112be1b70465dab1aed7c973ac308"
+
+
+@pytest.fixture
+def sns_platform_endpoint(sns_platform_application, device_token):
+    return sns.create_platform_endpoint(
+        PlatformApplicationArn=sns_platform_application["PlatformApplicationArn"],
+        Token=device_token,
+    )
+
+
+@pytest.fixture
+def device(device_token, sns_platform_endpoint):
     return DeviceFactory.create(
-        device_token="b08f718bb925af6e3103d3c74a0275727e0112be1b70465dab1aed7c973ac308",
-        endpoint_arn="arn:aws:sns:ap-northeast-2:833928806580:endpoint/APNS/TestApplication/91d08d28-8435-37bd-9819-cf9a3989b687",
+        device_token=device_token,
+        endpoint_arn=sns_platform_endpoint["EndpointArn"],
     )
 
 
