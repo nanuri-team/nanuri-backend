@@ -65,14 +65,11 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
         topic = self.request.data["topic"]
 
         topic_arn = sns.create_topic(Name=f"{topic}-{post_uuid}")["TopicArn"]
-        print("topic_arn:", topic_arn)
-        print("endpoint_arn:", device.endpoint_arn)
         subscription_arn = sns.subscribe(
             TopicArn=topic_arn,
             Protocol="application",
             Endpoint=device.endpoint_arn,
         )["SubscriptionArn"]
-        print("subscription_arn:", subscription_arn)
 
         serializer.save(device=device, post=post, subscription_arn=subscription_arn)
 
