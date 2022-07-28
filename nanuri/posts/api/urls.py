@@ -16,22 +16,22 @@ urlpatterns = [
         name="detail",
     ),
     path(
-        "<uuid:uuid>/comments/",
+        "comments/",
         views.CommentListCreateAPIView.as_view(),
         name="comment-list",
     ),
     path(
-        "<uuid:uuid>/comments/<uuid:comment_uuid>/",
+        "comments/<uuid:uuid>/",
         views.CommentRetrieveUpdateDestroyAPIView.as_view(),
         name="comment-detail",
     ),
     path(
-        "<uuid:uuid>/comments/<uuid:comment_uuid>/sub-comments/",
+        "sub-comments/",
         views.SubCommentListCreateAPIView.as_view(),
         name="sub-comment-list",
     ),
     path(
-        "<uuid:uuid>/comments/<uuid:comment_uuid>/sub-comments/<uuid:sub_comment_uuid>/",
+        "sub-comments/<uuid:uuid>/",
         views.SubCommentRetrieveUpdateDestroyAPIView.as_view(),
         name="sub-comment-detail",
     ),

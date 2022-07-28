@@ -1,5 +1,5 @@
 from django.core.files.storage import default_storage
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
@@ -210,6 +210,15 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         description="<h2>댓글 목록을 조회하는 API</h2>",
         summary="Get list of comments",
         tags=["Comment"],
+        parameters=[
+            OpenApiParameter(
+                name="post",
+                location=OpenApiParameter.QUERY,
+                description="Post UUID",
+                required=False,
+                type=str,
+            )
+        ],
     ),
     post=extend_schema(
         description="<h2>상품 댓글을 등록하는 API</h2>",
@@ -224,12 +233,14 @@ class CommentListCreateAPIView(ListCreateAPIView):
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
-        uuid = self.kwargs["uuid"]
-        return Comment.objects.filter(post__uuid=uuid)
+        queryset = Comment.objects.all()
+        if post := self.request.query_params.get("post", default=None):
+            queryset = queryset.filter(post__uuid=post)
+        return queryset
 
     def perform_create(self, serializer):
-        uuid = self.kwargs["uuid"]
-        post = Post.objects.get(uuid=uuid)
+        post_uuid = self.request.data["post"]
+        post = Post.objects.get(uuid=post_uuid)
         writer = self.request.user
         serializer.save(post=post, writer=writer)
 
@@ -261,12 +272,10 @@ class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer
     lookup_field = "uuid"
-    lookup_url_kwarg = "comment_uuid"
 
     def get_object(self):
-        post_uuid = self.kwargs[self.lookup_field]
-        comment_uuid = self.kwargs[self.lookup_url_kwarg]
-        return Comment.objects.get(post__uuid=post_uuid, uuid=comment_uuid)
+        uuid = self.kwargs[self.lookup_field]
+        return Comment.objects.get(uuid=uuid)
 
 
 @extend_schema_view(
@@ -274,6 +283,15 @@ class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         description="<h2>대댓글 목록을 조회하는 API</h2>",
         summary="Get list of sub comments",
         tags=["Sub Comment"],
+        parameters=[
+            OpenApiParameter(
+                name="comment",
+                location=OpenApiParameter.QUERY,
+                description="Comment UUID",
+                required=False,
+                type=str,
+            )
+        ],
     ),
     post=extend_schema(
         description="<h2>대댓글을 생성하는 API</h2>",
@@ -288,11 +306,13 @@ class SubCommentListCreateAPIView(ListCreateAPIView):
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
-        comment_uuid = self.kwargs["comment_uuid"]
-        return SubComment.objects.filter(comment__uuid=comment_uuid)
+        queryset = SubComment.objects.all()
+        if comment := self.request.query_params.get("comment", default=None):
+            queryset = queryset.filter(comment__uuid=comment)
+        return queryset
 
     def perform_create(self, serializer):
-        comment_uuid = self.kwargs["comment_uuid"]
+        comment_uuid = self.request.data["comment"]
         comment = Comment.objects.get(uuid=comment_uuid)
         writer = self.request.user
         serializer.save(comment=comment, writer=writer)
@@ -324,13 +344,8 @@ class SubCommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SubCommentSerializer
+    lookup_field = "uuid"
 
     def get_object(self):
-        post_uuid = self.kwargs["uuid"]
-        comment_uuid = self.kwargs["comment_uuid"]
-        sub_comment_uuid = self.kwargs["sub_comment_uuid"]
-        return SubComment.objects.get(
-            comment__post__uuid=post_uuid,
-            comment__uuid=comment_uuid,
-            uuid=sub_comment_uuid,
-        )
+        uuid = self.kwargs[self.lookup_field]
+        return SubComment.objects.get(uuid=uuid)

@@ -1,6 +1,6 @@
 import boto3
 from django.conf import settings
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
     CreateAPIView,
@@ -72,8 +72,11 @@ class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = DeviceSerializer
-    queryset = Device.objects.all()
     lookup_field = "uuid"
+
+    def get_object(self):
+        uuid = self.kwargs[self.lookup_field]
+        return Device.objects.get(uuid=uuid)
 
 
 @extend_schema_view(
@@ -81,6 +84,15 @@ class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         description="<h2>구독 목록을 조회합니다.</h2>",
         summary="Get list of subscriptions",
         tags=["Subscription"],
+        parameters=[
+            OpenApiParameter(
+                name="device",
+                location=OpenApiParameter.QUERY,
+                description="Device UUID",
+                required=False,
+                type=str,
+            )
+        ],
     ),
     post=extend_schema(
         description="<h2>구독을 생성합니다.</h2>",
@@ -145,7 +157,5 @@ class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     lookup_field = "uuid"
 
     def get_object(self):
-        subscription_uuid = self.kwargs[self.lookup_field]
-        return Subscription.objects.get(
-            uuid=subscription_uuid,
-        )
+        uuid = self.kwargs[self.lookup_field]
+        return Subscription.objects.get(uuid=uuid)

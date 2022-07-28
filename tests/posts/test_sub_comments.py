@@ -9,15 +9,9 @@ pytestmark = pytest.mark.django_db
 
 
 class TestSubCommentEndpoints:
-    def test_list(self, user_client):
-        comment = CommentFactory.create()
+    def test_list(self, user_client, comment):
         sub_comments = SubCommentFactory.create_batch(comment=comment, size=3)
-        response = user_client.get(
-            reverse(
-                "nanuri.posts.api:sub-comment-list",
-                kwargs={"uuid": comment.post.uuid, "comment_uuid": comment.uuid},
-            )
-        )
+        response = user_client.get(reverse("nanuri.posts.api:sub-comment-list"))
         result = response.json()
 
         assert response.status_code == 200
@@ -27,11 +21,8 @@ class TestSubCommentEndpoints:
         comment = CommentFactory.create()
         sub_comment = SubCommentFactory.build(comment=comment)
         response = user_client.post(
-            reverse(
-                "nanuri.posts.api:sub-comment-list",
-                kwargs={"uuid": comment.post.uuid, "comment_uuid": comment.uuid},
-            ),
-            data={"text": sub_comment.text},
+            reverse("nanuri.posts.api:sub-comment-list"),
+            data={"comment": str(comment.uuid), "text": sub_comment.text},
             format="json",
         )
         result = response.json()
@@ -48,11 +39,7 @@ class TestSubCommentEndpoints:
         response = user_client.get(
             reverse(
                 "nanuri.posts.api:sub-comment-detail",
-                kwargs={
-                    "uuid": sub_comment.comment.post.uuid,
-                    "comment_uuid": sub_comment.comment.uuid,
-                    "sub_comment_uuid": sub_comment.uuid,
-                },
+                kwargs={"uuid": sub_comment.uuid},
             ),
         )
         assert response.status_code == 200
@@ -62,17 +49,17 @@ class TestSubCommentEndpoints:
         assert result["text"] == sub_comment.text
 
     def test_update(self, user_client, sub_comment):
+        new_comment = CommentFactory.create()
         new_sub_comment = SubCommentFactory.build()
         response = user_client.put(
             reverse(
                 "nanuri.posts.api:sub-comment-detail",
-                kwargs={
-                    "uuid": sub_comment.comment.post.uuid,
-                    "comment_uuid": sub_comment.comment.uuid,
-                    "sub_comment_uuid": sub_comment.uuid,
-                },
+                kwargs={"uuid": sub_comment.uuid},
             ),
-            data={"text": new_sub_comment.text},
+            data={
+                "comment": str(new_comment.uuid),
+                "text": new_sub_comment.text,
+            },
             format="json",
         )
         assert response.status_code == 200
@@ -86,11 +73,7 @@ class TestSubCommentEndpoints:
         response = user_client.delete(
             reverse(
                 "nanuri.posts.api:sub-comment-detail",
-                kwargs={
-                    "uuid": sub_comment.comment.post.uuid,
-                    "comment_uuid": sub_comment.comment.uuid,
-                    "sub_comment_uuid": sub_comment.uuid,
-                },
+                kwargs={"uuid": sub_comment.uuid},
             )
         )
         assert response.status_code == 204

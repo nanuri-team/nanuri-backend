@@ -16,48 +16,23 @@ class TestApiUrls:
         assert url == self.base_url + f"/posts/{post.uuid}/"
 
     def test_comment_list_urls(self, post):
-        url = reverse("nanuri.posts.api:comment-list", kwargs={"uuid": post.uuid})
-        assert url == self.base_url + f"/posts/{post.uuid}/comments/"
+        url = reverse("nanuri.posts.api:comment-list")
+        assert url == self.base_url + f"/posts/comments/"
 
     def test_comment_detail_urls(self, comment):
-        post = comment.post
-
         url = reverse(
             "nanuri.posts.api:comment-detail",
-            kwargs={"uuid": post.uuid, "comment_uuid": comment.uuid},
+            kwargs={"uuid": comment.uuid},
         )
-        assert url == self.base_url + f"/posts/{post.uuid}/comments/{comment.uuid}/"
+        assert url == self.base_url + f"/posts/comments/{comment.uuid}/"
 
     def test_sub_comment_list_urls(self, comment):
-        post = comment.post
-
-        url = reverse(
-            "nanuri.posts.api:sub-comment-list",
-            kwargs={
-                "uuid": post.uuid,
-                "comment_uuid": comment.uuid,
-            },
-        )
-        assert (
-            url
-            == self.base_url
-            + f"/posts/{post.uuid}/comments/{comment.uuid}/sub-comments/"
-        )
+        url = reverse("nanuri.posts.api:sub-comment-list")
+        assert url == self.base_url + f"/posts/sub-comments/"
 
     def test_sub_comment_detail_urls(self, sub_comment):
-        post = sub_comment.comment.post
-        comment = sub_comment.comment
-
         url = reverse(
             "nanuri.posts.api:sub-comment-detail",
-            kwargs={
-                "uuid": post.uuid,
-                "comment_uuid": comment.uuid,
-                "sub_comment_uuid": sub_comment.uuid,
-            },
+            kwargs={"uuid": sub_comment.uuid},
         )
-        assert (
-            url
-            == self.base_url
-            + f"/posts/{post.uuid}/comments/{comment.uuid}/sub-comments/{sub_comment.uuid}/"
-        )
+        assert url == self.base_url + f"/posts/sub-comments/{sub_comment.uuid}/"

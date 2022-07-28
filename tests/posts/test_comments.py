@@ -1,5 +1,6 @@
 import pytest
 from django.urls import reverse
+
 from nanuri.posts.models import Comment
 
 from .factories import CommentFactory, PostFactory
@@ -8,26 +9,20 @@ pytestmark = pytest.mark.django_db
 
 
 class TestCommentEndpoints:
-    def test_list(self, user_client):
-        post = PostFactory.create()
+    def test_list(self, user_client, post):
         comments = CommentFactory.create_batch(post=post, size=3)
-        response = user_client.get(
-            reverse(
-                "nanuri.posts.api:comment-list",
-                kwargs={"uuid": post.uuid},
-            )
-        )
+        response = user_client.get(reverse("nanuri.posts.api:comment-list"))
         result = response.json()
 
         assert response.status_code == 200
         assert len(result["results"]) == len(comments)
 
-    def test_create(self, user_client, user):
-        post = PostFactory.create()
+    def test_create(self, user_client, user, post):
         comment = CommentFactory.build(post=post)
         response = user_client.post(
-            reverse("nanuri.posts.api:comment-list", kwargs={"uuid": post.uuid}),
+            reverse("nanuri.posts.api:comment-list"),
             data={
+                "post": str(post.uuid),
                 "text": comment.text,
             },
             format="json",
@@ -46,7 +41,7 @@ class TestCommentEndpoints:
         response = user_client.get(
             reverse(
                 "nanuri.posts.api:comment-detail",
-                kwargs={"uuid": comment.post.uuid, "comment_uuid": comment.uuid},
+                kwargs={"uuid": comment.uuid},
             ),
         )
         assert response.status_code == 200
@@ -56,13 +51,13 @@ class TestCommentEndpoints:
         assert result["text"] == comment.text
 
     def test_update(self, user_client, comment):
-        new_comment = CommentFactory.build()
+        new_comment = CommentFactory.create()
         response = user_client.put(
             reverse(
                 "nanuri.posts.api:comment-detail",
-                kwargs={"uuid": comment.post.uuid, "comment_uuid": comment.uuid},
+                kwargs={"uuid": comment.uuid},
             ),
-            data={"text": new_comment.text},
+            data={"post": str(new_comment.post.uuid), "text": new_comment.text},
             format="json",
         )
         assert response.status_code == 200
@@ -76,7 +71,7 @@ class TestCommentEndpoints:
         response = user_client.delete(
             reverse(
                 "nanuri.posts.api:comment-detail",
-                kwargs={"uuid": comment.post.uuid, "comment_uuid": comment.uuid},
+                kwargs={"uuid": comment.uuid},
             )
         )
         assert response.status_code == 204

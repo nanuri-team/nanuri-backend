@@ -61,8 +61,8 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     post = serializers.SlugRelatedField(
         many=False,
-        read_only=True,
         slug_field="uuid",
+        queryset=Post.objects.all(),
     )
     writer = serializers.SlugRelatedField(
         many=False,
@@ -78,8 +78,8 @@ class CommentSerializer(serializers.ModelSerializer):
 class SubCommentSerializer(serializers.ModelSerializer):
     comment = serializers.SlugRelatedField(
         many=False,
-        read_only=True,
         slug_field="uuid",
+        queryset=Comment.objects.all(),
     )
     writer = serializers.SlugRelatedField(
         many=False,
