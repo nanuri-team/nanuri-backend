@@ -8,6 +8,7 @@ from rest_framework.generics import (
     RetrieveDestroyAPIView,
     RetrieveUpdateDestroyAPIView,
 )
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
 from nanuri.posts.models import Post
@@ -103,6 +104,7 @@ class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class SubscriptionListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    pagination_class = LimitOffsetPagination
     serializer_class = SubscriptionSerializer
 
     def get_queryset(self):
