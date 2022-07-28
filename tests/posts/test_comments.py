@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from nanuri.posts.models import Comment
 
-from .factories import CommentFactory, PostFactory
+from .factories import CommentFactory
 
 pytestmark = pytest.mark.django_db
 
