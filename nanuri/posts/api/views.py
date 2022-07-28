@@ -14,6 +14,15 @@ from .serializers import CommentSerializer, PostSerializer, SubCommentSerializer
         description="<h2>상품 정보를 불러오는 API</h2>",
         summary="Return all posts",
         tags=["Post"],
+        parameters=[
+            OpenApiParameter(
+                name="user",
+                location=OpenApiParameter.QUERY,
+                description="User UUID",
+                required=False,
+                type=str,
+            )
+        ],
     ),
     post=extend_schema(
         description="""<h2>상품 정보를 등록하는 API</h2>
@@ -140,9 +149,14 @@ from .serializers import CommentSerializer, PostSerializer, SubCommentSerializer
 class PostListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    queryset = Post.objects.all().order_by("created_at")
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        queryset = Post.objects.all()
+        if user := self.request.query_params.get("user", default=None):
+            queryset = queryset.filter(writer__uuid=user)
+        return queryset
 
     def perform_create(self, serializer):
         writer = self.request.user
