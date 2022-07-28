@@ -1,5 +1,6 @@
 import boto3
 from django.conf import settings
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
     CreateAPIView,
@@ -23,6 +24,13 @@ sns = boto3.client(
 )
 
 
+@extend_schema_view(
+    post=extend_schema(
+        description="<h2>기기 정보를 등록합니다.</h2>",
+        summary="Create a new device",
+        tags=["Device"],
+    ),
+)
 class DeviceCreateAPIView(CreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -38,6 +46,28 @@ class DeviceCreateAPIView(CreateAPIView):
         serializer.save(user=user, endpoint_arn=endpoint_arn)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        description="<h2>특정 기기 정보를 조회합니다.</h2>",
+        summary="Get a device",
+        tags=["Device"],
+    ),
+    put=extend_schema(
+        description="<h2>특정 기기 정보를 수정합니다.</h2>",
+        summary="Update a device",
+        tags=["Device"],
+    ),
+    patch=extend_schema(
+        description="<h2>특정 기기 정보를 부분 수정합니다.</h2>",
+        summary="Patch a device",
+        tags=["Device"],
+    ),
+    delete=extend_schema(
+        description="<h2>특정 기기 정보를 삭제합니다.</h2>",
+        summary="Delete a device",
+        tags=["Device"],
+    ),
+)
 class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -46,6 +76,18 @@ class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     lookup_field = "uuid"
 
 
+@extend_schema_view(
+    get=extend_schema(
+        description="<h2>구독 목록을 조회합니다.</h2>",
+        summary="Get list of subscriptions",
+        tags=["Subscription"],
+    ),
+    post=extend_schema(
+        description="<h2>구독을 생성합니다.</h2>",
+        summary="Create a new subscription",
+        tags=["Subscription"],
+    ),
+)
 class SubscriptionListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -73,6 +115,28 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
         serializer.save(device=device, post=post, subscription_arn=subscription_arn)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        description="<h2>특정 구독을 조회합니다.</h2>",
+        summary="Get a subscription",
+        tags=["Subscription"],
+    ),
+    put=extend_schema(
+        description="<h2>특정 구독을 수정합니다.</h2>",
+        summary="Update a subscription",
+        tags=["Subscription"],
+    ),
+    patch=extend_schema(
+        description="<h2>특정 구독을 부분 수정합니다.</h2>",
+        summary="Patch a subscription",
+        tags=["Subscription"],
+    ),
+    delete=extend_schema(
+        description="<h2>특정 구독을 삭제합니다.</h2>",
+        summary="Delete a subscription",
+        tags=["Subscription"],
+    ),
+)
 class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

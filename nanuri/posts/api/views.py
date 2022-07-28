@@ -167,10 +167,14 @@ class PostListCreateAPIView(ListCreateAPIView):
         tags=["Post"],
     ),
     patch=extend_schema(
-        description="<h2>상품 게시글을 업데이트 하는 API</h2>", summary="Update post", tags=["Post"]
+        description="<h2>상품 게시글을 업데이트 하는 API</h2>",
+        summary="Update post",
+        tags=["Post"],
     ),
     delete=extend_schema(
-        description="<h2>상품 게시글을 삭제하는 API</h2>", summary="Delete post", tags=["Post"]
+        description="<h2>상품 게시글을 삭제하는 API</h2>",
+        summary="Delete post",
+        tags=["Post"],
     ),
 )
 class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
@@ -201,6 +205,18 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         PostImage.objects.bulk_create(new_post_images)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        description="<h2>댓글 목록을 조회하는 API</h2>",
+        summary="Get list of comments",
+        tags=["Comment"],
+    ),
+    post=extend_schema(
+        description="<h2>상품 댓글을 등록하는 API</h2>",
+        summary="Create a new comment",
+        tags=["Comment"],
+    ),
+)
 class CommentListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -218,6 +234,28 @@ class CommentListCreateAPIView(ListCreateAPIView):
         serializer.save(post=post, writer=writer)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        description="<h2>특정 댓글을 조회하는 API</h2>",
+        summary="Get a comment by comment UUID",
+        tags=["Comment"],
+    ),
+    put=extend_schema(
+        description="<h2>특정 댓글을 수정하는 API</h2>",
+        summary="Update a comment",
+        tags=["Comment"],
+    ),
+    patch=extend_schema(
+        description="<h2>특정 댓글을 부분 수정하는 API</h2>",
+        summary="Patch a comment",
+        tags=["Comment"],
+    ),
+    delete=extend_schema(
+        description="<h2>특정 댓글을 삭제하는 API</h2>",
+        summary="Delete a comment",
+        tags=["Comment"],
+    ),
+)
 class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -231,6 +269,18 @@ class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         return Comment.objects.get(post__uuid=post_uuid, uuid=comment_uuid)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        description="<h2>대댓글 목록을 조회하는 API</h2>",
+        summary="Get list of sub comments",
+        tags=["Sub Comment"],
+    ),
+    post=extend_schema(
+        description="<h2>대댓글을 생성하는 API</h2>",
+        summary="Create a new sub comment",
+        tags=["Sub Comment"],
+    ),
+)
 class SubCommentListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -248,6 +298,28 @@ class SubCommentListCreateAPIView(ListCreateAPIView):
         serializer.save(comment=comment, writer=writer)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        description="<h2>특정 대댓글을 조회하는 API</h2>",
+        summary="Get a sub comment",
+        tags=["Sub Comment"],
+    ),
+    put=extend_schema(
+        description="<h2>특정 대댓글을 수정하는 API</h2>",
+        summary="Update a sub comment",
+        tags=["Sub Comment"],
+    ),
+    patch=extend_schema(
+        description="<h2>특정 대댓글을 부분 수정하는 API</h2>",
+        summary="Patch a sub comment",
+        tags=["Sub Comment"],
+    ),
+    delete=extend_schema(
+        description="<h2>특정 대댓글을 삭제하는 API</h2>",
+        summary="Remove a sub comment",
+        tags=["Sub Comment"],
+    ),
+)
 class SubCommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
