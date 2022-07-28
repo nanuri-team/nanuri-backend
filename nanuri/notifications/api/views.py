@@ -1,5 +1,3 @@
-import os
-
 import boto3
 from django.conf import settings
 from rest_framework.authentication import TokenAuthentication
