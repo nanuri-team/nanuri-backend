@@ -185,7 +185,7 @@ LOGGING = {
 
 # AWS
 
-AWS_ENDPOINT_URL = os.environ["AWS_ENDPOINT_URL"]
+AWS_ENDPOINT_URL = os.environ["AWS_ENDPOINT_URL"] or None
 AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
 AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 AWS_REGION = os.getenv("AWS_REGION", default="ap-northeast-2")

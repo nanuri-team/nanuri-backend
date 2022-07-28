@@ -3,9 +3,11 @@ name: nanuri-backend
 env:
   DJANGO_SETTINGS_MODULE: config.settings.test
   AWS_REGION: ap-northeast-2
+  AWS_ENDPOINT_URL: http://localhost:4566
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+  AWS_SNS_PLATFORM_APPLICATION_ARN: arn:aws:sns:ap-northeast-2:000000000000:app/APNS/TestApplication
   KAKAO_APP_ADMIN_KEY: ${{ secrets.KAKAO_APP_ADMIN_KEY }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 on:
   push:
@@ -22,11 +24,19 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.8"
           - "3.9"
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Start LocalStack
+        run: |
+          pip install localstack awscli-local[ver1]
+          docker pull localstack/localstack
+          localstack start -d
+          echo "Waiting for LocalStack startup..."
+          localstack wait -t 30
+          echo "Startup complete"
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
@@ -53,15 +63,9 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Setup DynamoDB Local
-        uses: rrainn/dynamodb-action@v2.0.1
-        with:
-          dbPath: # undefined by default, if this is undefined inMemory will be used
-          sharedDb: # undefined by default
-          delayTransientStatuses: # undefined by default
-          optimizeDbBeforeStartup: # undefined by default
-          port: 8000
-          cors: '*'
+      - name: Download p12 certificate
+        run: |
+          wget https://github.com/aryansbtloe/resources/raw/master/Certificate/certificate.p12
 
       - name: Run Tests
         run: |
