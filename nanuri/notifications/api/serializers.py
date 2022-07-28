@@ -17,7 +17,11 @@ class DeviceSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    device = serializers.SlugRelatedField(read_only=True, many=False, slug_field="uuid")
+    device = serializers.SlugRelatedField(
+        many=False,
+        slug_field="uuid",
+        queryset=Device.objects.all(),
+    )
     post = serializers.SlugRelatedField(
         many=False,
         slug_field="uuid",

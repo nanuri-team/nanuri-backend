@@ -92,14 +92,15 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializer
-    lookup_url_kwarg = "device_uuid"
 
     def get_queryset(self):
-        device_uuid = self.kwargs[self.lookup_url_kwarg]
-        return Subscription.objects.filter(device__uuid=device_uuid)
+        queryset = Subscription.objects.all()
+        if device := self.request.query_params.get("device", default=None):
+            queryset = queryset.filter(device__uuid=device)
+        return queryset
 
     def perform_create(self, serializer):
-        device_uuid = self.kwargs[self.lookup_url_kwarg]
+        device_uuid = self.request.data["device"]
         device = Device.objects.get(uuid=device_uuid)
         post_uuid = self.request.data["post"]
         post = Post.objects.get(uuid=post_uuid)
@@ -142,12 +143,9 @@ class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializer
     lookup_field = "uuid"
-    lookup_url_kwarg = "device_uuid"
 
     def get_object(self):
-        device_uuid = self.kwargs[self.lookup_url_kwarg]
         subscription_uuid = self.kwargs[self.lookup_field]
         return Subscription.objects.get(
-            device__uuid=device_uuid,
             uuid=subscription_uuid,
         )

@@ -12,11 +12,9 @@ class TestSubscriptionApi:
     def test_create(self, user_client, device, post):
         topic = "receive_chat_messages"
         response = user_client.post(
-            reverse(
-                "nanuri.notifications.api:subscription-list",
-                kwargs={"device_uuid": device.uuid},
-            ),
+            reverse("nanuri.notifications.api:subscription-list"),
             data={
+                "device": str(device.uuid),
                 "post": str(post.uuid),
                 "topic": topic,
             },
@@ -28,10 +26,7 @@ class TestSubscriptionApi:
         response = user_client.get(
             reverse(
                 "nanuri.notifications.api:subscription-detail",
-                kwargs={
-                    "uuid": subscription.uuid,
-                    "device_uuid": subscription.device.uuid,
-                },
+                kwargs={"uuid": subscription.uuid},
             )
         )
         assert response.status_code == 200
@@ -41,10 +36,7 @@ class TestSubscriptionApi:
         response = user_client.delete(
             reverse(
                 "nanuri.notifications.api:subscription-detail",
-                kwargs={
-                    "uuid": subscription.uuid,
-                    "device_uuid": subscription.device.uuid,
-                },
+                kwargs={"uuid": subscription.uuid},
             )
         )
         assert response.status_code == 204

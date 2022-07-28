@@ -16,12 +16,12 @@ urlpatterns = [
         name="device-detail",
     ),
     path(
-        "devices/<uuid:device_uuid>/subscriptions/",
+        "subscriptions/",
         view=views.SubscriptionListCreateAPIView.as_view(),
         name="subscription-list",
     ),
     path(
-        "devices/<uuid:device_uuid>/subscriptions/<uuid:uuid>/",
+        "subscriptions/<uuid:uuid>/",
         view=views.SubscriptionRetrieveDestroyAPIView.as_view(),
         name="subscription-detail",
     ),

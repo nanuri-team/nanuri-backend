@@ -21,21 +21,14 @@ class TestNotificationApiUrls:
     def test_subscription_list_url(self, device):
         url = reverse(
             "nanuri.notifications.api:subscription-list",
-            kwargs={"device_uuid": device.uuid},
         )
-        assert (
-            url
-            == self.base_url + f"/notifications/devices/{device.uuid}/subscriptions/"
-        )
+        assert url == self.base_url + f"/notifications/subscriptions/"
 
     def test_subscription_detail_url(self, subscription):
-        device = subscription.device
         url = reverse(
             "nanuri.notifications.api:subscription-detail",
-            kwargs={"device_uuid": device.uuid, "uuid": subscription.uuid},
+            kwargs={"uuid": subscription.uuid},
         )
         assert (
-            url
-            == self.base_url
-            + f"/notifications/devices/{device.uuid}/subscriptions/{subscription.uuid}/"
+            url == self.base_url + f"/notifications/subscriptions/{subscription.uuid}/"
         )
