@@ -3,7 +3,7 @@ import logging
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-from .dynamodb import group_message_table
+from nanuri.aws.dynamodb import group_message_table
 
 logger = logging.getLogger(__name__)
 

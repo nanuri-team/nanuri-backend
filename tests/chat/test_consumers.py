@@ -1,11 +1,26 @@
 import json
 from datetime import datetime
 
+import boto3
 import pytest
 from channels.routing import URLRouter
 from channels.testing import WebsocketCommunicator
+from django.conf import settings
+
 from nanuri.chat.middlewares import QueryTokenAuthMiddleware
 from nanuri.chat.routing import websocket_urlpatterns
+
+
+def test_create_dynamodb_tables_init():
+    client = boto3.client(
+        "dynamodb",
+        endpoint_url=settings.AWS_ENDPOINT_URL,
+        region_name=settings.AWS_REGION,
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    )
+    table_names = client.list_tables()["TableNames"]
+    assert "group_message" in table_names
 
 
 @pytest.mark.asyncio
