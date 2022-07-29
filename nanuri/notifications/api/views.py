@@ -153,3 +153,7 @@ class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     def get_object(self):
         uuid = self.kwargs[self.lookup_field]
         return Subscription.objects.get(uuid=uuid)
+
+    def perform_destroy(self, instance):
+        sns_client.unsubscribe(SubscriptionArn=instance.subscription_arn)
+        super().perform_destroy(instance)
