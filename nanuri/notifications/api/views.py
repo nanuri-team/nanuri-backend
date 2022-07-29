@@ -1,4 +1,3 @@
-import boto3
 from django.conf import settings
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework.authentication import TokenAuthentication
@@ -11,18 +10,11 @@ from rest_framework.generics import (
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
+from nanuri.aws.sns import client as sns_client
 from nanuri.posts.models import Post
 
 from ..models import Device, Subscription
 from .serializers import DeviceSerializer, SubscriptionSerializer
-
-sns = boto3.client(
-    "sns",
-    endpoint_url=settings.AWS_ENDPOINT_URL,
-    region_name=settings.AWS_REGION,
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-)
 
 
 @extend_schema_view(
@@ -40,7 +32,7 @@ class DeviceCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         user = self.request.user
         device_token = self.request.data["device_token"]
-        endpoint_arn = sns.create_platform_endpoint(
+        endpoint_arn = sns_client.create_platform_endpoint(
             PlatformApplicationArn=settings.AWS_SNS_PLATFORM_APPLICATION_ARN,
             Token=device_token,
         )["EndpointArn"]
@@ -120,8 +112,8 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
         post = Post.objects.get(uuid=post_uuid)
         topic = self.request.data["topic"]
 
-        topic_arn = sns.create_topic(Name=f"{topic}-{post_uuid}")["TopicArn"]
-        subscription_arn = sns.subscribe(
+        topic_arn = sns_client.create_topic(Name=f"{topic}-{post_uuid}")["TopicArn"]
+        subscription_arn = sns_client.subscribe(
             TopicArn=topic_arn,
             Protocol="application",
             Endpoint=device.endpoint_arn,
