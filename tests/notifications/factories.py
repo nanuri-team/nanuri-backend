@@ -24,10 +24,10 @@ class SubscriptionFactory(DjangoModelFactory):
     device = factory.SubFactory(DeviceFactory)
     topic = FuzzyChoice(
         choices=[
-            "to_all",
-            "to_post_writer",
-            "to_post_participants",
-            "to_chat_room",
+            "TO_ALL",
+            "TO_POST_WRITER",
+            "TO_POST_PARTICIPANTS",
+            "TO_CHAT_ROOM",
         ],
     )
     group_code = factory.Faker("pystr")
