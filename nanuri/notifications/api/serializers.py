@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from nanuri.posts.models import Post
-
 from ..models import Device, Subscription
 
 
@@ -10,8 +8,9 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ["user", "device_token", "endpoint_arn"]
+        fields = ["uuid", "user", "device_token", "endpoint_arn", "opt_in"]
         extra_kwargs = {
+            "uuid": {"read_only": True},
             "endpoint_arn": {"read_only": True},
         }
 
@@ -22,20 +21,18 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         slug_field="uuid",
         queryset=Device.objects.all(),
     )
-    post = serializers.SlugRelatedField(
-        many=False,
-        slug_field="uuid",
-        queryset=Post.objects.all(),
-    )
 
     class Meta:
         model = Subscription
         fields = [
+            "uuid",
             "device",
-            "post",
             "topic",
+            "group_code",
+            "opt_in",
             "subscription_arn",
         ]
         extra_kwargs = {
+            "uuid": {"read_only": True},
             "subscription_arn": {"read_only": True},
         }

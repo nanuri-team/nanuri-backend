@@ -71,3 +71,4 @@ class TestDeviceApi:
             )
         )
         assert response.status_code == 204
+        assert Device.objects.all().count() == 0

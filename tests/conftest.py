@@ -148,5 +148,24 @@ def device(device_token, sns_platform_endpoint):
 
 
 @pytest.fixture
-def subscription(device, post):
-    return SubscriptionFactory.create(device=device, post=post)
+def sns_topic():
+    return sns.create_topic(Name="TestTopic")
+
+
+@pytest.fixture
+def sns_subscription(sns_topic, sns_platform_endpoint):
+    return sns.subscribe(
+        TopicArn=sns_topic["TopicArn"],
+        Protocol="application",
+        Endpoint=sns_platform_endpoint["EndpointArn"],
+        ReturnSubscriptionArn=True,
+    )
+
+
+@pytest.fixture
+def subscription(device, post, sns_subscription):
+    return SubscriptionFactory.create(
+        device=device,
+        group_code=post.uuid,
+        subscription_arn=sns_subscription["SubscriptionArn"],
+    )

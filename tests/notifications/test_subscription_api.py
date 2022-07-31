@@ -9,13 +9,14 @@ pytestmark = pytest.mark.django_db
 class TestSubscriptionApi:
     base_url = "/api/v1"
 
-    def test_create(self, user_client, device, post):
+    def test_create(self, user_client, device):
         response = user_client.post(
             reverse("nanuri.notifications.api:subscription-list"),
             data={
                 "device": str(device.uuid),
-                "post": str(post.uuid),
-                "topic": Subscription.Topic.CHAT_MESSAGE_NOTIFICATIONS,
+                "topic": Subscription.Topic.TO_ALL,
+                "group_code": None,
+                "opt_in": True,
             },
             format="json",
         )

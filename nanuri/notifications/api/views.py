@@ -107,19 +107,25 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         device_uuid = self.request.data["device"]
-        device = Device.objects.get(uuid=device_uuid)
-        post_uuid = self.request.data["post"]
-        post = Post.objects.get(uuid=post_uuid)
         topic = self.request.data["topic"]
-
-        topic_arn = sns_client.create_topic(Name=f"{topic}-{post_uuid}")["TopicArn"]
+        topic_arn = sns_client.create_topic(Name=topic)["TopicArn"]
+        attributes = {}
+        if (group_code := self.request.data["group_code"]) is not None:
+            attributes["group_code"] = group_code
+        device = Device.objects.get(uuid=device_uuid)
         subscription_arn = sns_client.subscribe(
             TopicArn=topic_arn,
             Protocol="application",
             Endpoint=device.endpoint_arn,
+            Attributes=attributes,
+            ReturnSubscriptionArn=True,
         )["SubscriptionArn"]
-
-        serializer.save(device=device, post=post, subscription_arn=subscription_arn)
+        serializer.save(
+            device=device,
+            topic=topic,
+            group_code=group_code,
+            subscription_arn=subscription_arn,
+        )
 
 
 @extend_schema_view(

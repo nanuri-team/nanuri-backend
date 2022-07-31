@@ -15,14 +15,17 @@ class Device(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     device_token = models.TextField(null=True, blank=True)
     endpoint_arn = models.TextField(null=True, blank=True)
+    opt_in = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
 class Subscription(models.Model):
     class Topic(models.TextChoices):
-        CHAT_MESSAGE_NOTIFICATIONS = "chat_message_notification", _("채팅 메시지 알림")
-        COMMENT_NOTIFICATIONS = "comment_notification", _("댓글 알림")
+        TO_ALL = "to_all", _("공지사항")
+        TO_POST_WRITER = "to_post_writer", _("공동구매 진행자에게 보내는 푸시 알림")
+        TO_POST_PARTICIPANTS = "to_post_participants", _("공동구매 참여자에게 보내는 푸시 알림")
+        TO_CHAT_ROOM = "to_chat_room", _("채팅방 참가자에게 보내는 푸시 알림")
 
     uuid = models.UUIDField(
         primary_key=True,
@@ -31,16 +34,17 @@ class Subscription(models.Model):
         editable=False,
     )
     device = models.ForeignKey("Device", on_delete=models.CASCADE)
-    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
     topic = models.CharField(
         max_length=255,
         choices=Topic.choices,
         null=True,
-        blank=False,
+        default=None,
     )
+    group_code = models.CharField(max_length=255, null=True, blank=True)
+    opt_in = models.BooleanField(default=True)
     subscription_arn = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = [["device", "post", "topic"]]
+        unique_together = [["device", "topic", "group_code"]]
