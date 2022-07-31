@@ -11,7 +11,6 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
 from nanuri.aws.sns import client as sns_client
-from nanuri.posts.models import Post
 
 from ..models import Device, Subscription
 from .serializers import DeviceSerializer, SubscriptionSerializer
