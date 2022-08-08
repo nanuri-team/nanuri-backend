@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Comment, Post, PostImage, SubComment
+from .models import Comment, Post, PostImage, SubComment
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -43,13 +43,6 @@ class PostImageAdmin(admin.ModelAdmin):
     ]
 
 
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = [
-        "name",
-        "parent",
-    ]
-
-
 class CommentAdmin(admin.ModelAdmin):
     list_display = [
         "post",
@@ -68,6 +61,5 @@ class SubCommentAdmin(admin.ModelAdmin):
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(PostImage, PostImageAdmin)
-admin.site.register(Category, CategoryAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(SubComment, SubCommentAdmin)

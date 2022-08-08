@@ -7,18 +7,15 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name_plural = "Categories"
-
-
 class Post(models.Model):
+    class Category(models.TextChoices):
+        BATHROOM = "BATHROOM", _("욕실")
+        FOOD = "FOOD", _("음식")
+        KITCHEN = "KITCHEN", _("주방")
+        HOUSEHOLD = "HOUSEHOLD", _("생활용품")
+        STATIONERY = "STATIONERY", _("문구")
+        ETC = "ETC", _("기타")
+
     class TradeType(models.TextChoices):
         DIRECT = "DIRECT", _("직거래")
         PARCEL = "PARCEL", _("택배 거래")
@@ -44,6 +41,11 @@ class Post(models.Model):
         editable=False,
     )
     title = models.CharField(max_length=255)
+    category = models.CharField(
+        max_length=255,
+        choices=Category.choices,
+        default=Category.ETC,
+    )
     image = models.ImageField(
         null=True,
         blank=True,
@@ -83,15 +85,7 @@ class Post(models.Model):
         on_delete=models.CASCADE,
         related_name="posts",
     )
-    # post.category == 이 글의 카테고리
-    # category.posts.all() == 카테고리에 포함된 모든 글
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.SET_NULL,
-        related_name="posts",
-        null=True,
-        blank=True,
-    )
+
     # post.participants.all() == 이 글에 참여한 모든 유저
     # user.posts_participated.all() == 유저가 참여한 모든 글
     participants = models.ManyToManyField(

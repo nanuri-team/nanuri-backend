@@ -1,12 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Category, Comment, Post, SubComment
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        exclude = ("id",)
+from ..models import Comment, Post, SubComment
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -31,11 +25,6 @@ class PostSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True,
         slug_field="email",
-    )
-    category = serializers.SlugRelatedField(
-        many=False,
-        read_only=True,
-        slug_field="name",
     )
     favored_by = serializers.SlugRelatedField(
         many=True,
