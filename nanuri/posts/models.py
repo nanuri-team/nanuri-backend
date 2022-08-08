@@ -124,7 +124,7 @@ class PostImage(models.Model):
 
     @property
     def image_url(self):
-        return os.path.join(settings.MEDIA_URL, self.image.url)
+        return self.image.url
 
 
 class Comment(models.Model):
