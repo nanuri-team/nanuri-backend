@@ -1,3 +1,4 @@
+import os.path
 from pathlib import Path
 from uuid import uuid4
 
@@ -126,6 +127,10 @@ class PostImage(models.Model):
         default=None,
         upload_to=upload_to,
     )
+
+    @property
+    def image_url(self):
+        return os.path.join(settings.MEDIA_URL, self.image.url)
 
 
 class Comment(models.Model):

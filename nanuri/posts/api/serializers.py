@@ -45,7 +45,7 @@ class PostSerializer(serializers.ModelSerializer):
     images = serializers.SlugRelatedField(
         many=True,
         read_only=True,
-        slug_field="uuid",
+        slug_field="image_url",
     )
 
     class Meta:
