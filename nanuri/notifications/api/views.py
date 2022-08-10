@@ -1,5 +1,5 @@
 from django.conf import settings
-from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema_view
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
     CreateAPIView,
@@ -13,16 +13,11 @@ from rest_framework.permissions import IsAuthenticated
 from nanuri.aws.sns import client as sns_client
 
 from ..models import Device, Subscription
+from . import specs
 from .serializers import DeviceSerializer, SubscriptionSerializer
 
 
-@extend_schema_view(
-    post=extend_schema(
-        description="<h2>기기 정보를 등록합니다.</h2>",
-        summary="Create a new device",
-        tags=["Device"],
-    ),
-)
+@extend_schema_view(**specs.devices_api_specs)
 class DeviceCreateAPIView(CreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -38,28 +33,7 @@ class DeviceCreateAPIView(CreateAPIView):
         serializer.save(user=user, endpoint_arn=endpoint_arn)
 
 
-@extend_schema_view(
-    get=extend_schema(
-        description="<h2>특정 기기 정보를 조회합니다.</h2>",
-        summary="Get a device",
-        tags=["Device"],
-    ),
-    put=extend_schema(
-        description="<h2>특정 기기 정보를 수정합니다.</h2>",
-        summary="Update a device",
-        tags=["Device"],
-    ),
-    patch=extend_schema(
-        description="<h2>특정 기기 정보를 부분 수정합니다.</h2>",
-        summary="Patch a device",
-        tags=["Device"],
-    ),
-    delete=extend_schema(
-        description="<h2>특정 기기 정보를 삭제합니다.</h2>",
-        summary="Delete a device",
-        tags=["Device"],
-    ),
-)
+@extend_schema_view(**specs.device_api_specs)
 class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -71,27 +45,7 @@ class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         return Device.objects.get(uuid=uuid)
 
 
-@extend_schema_view(
-    get=extend_schema(
-        description="<h2>구독 목록을 조회합니다.</h2>",
-        summary="Get list of subscriptions",
-        tags=["Subscription"],
-        parameters=[
-            OpenApiParameter(
-                name="device",
-                location=OpenApiParameter.QUERY,
-                description="Device UUID",
-                required=False,
-                type=str,
-            )
-        ],
-    ),
-    post=extend_schema(
-        description="<h2>구독을 생성합니다.</h2>",
-        summary="Create a new subscription",
-        tags=["Subscription"],
-    ),
-)
+@extend_schema_view(**specs.subscriptions_api_specs)
 class SubscriptionListCreateAPIView(ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -127,18 +81,7 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
         )
 
 
-@extend_schema_view(
-    get=extend_schema(
-        description="<h2>특정 구독을 조회합니다.</h2>",
-        summary="Get a subscription",
-        tags=["Subscription"],
-    ),
-    delete=extend_schema(
-        description="<h2>특정 구독을 삭제합니다.</h2>",
-        summary="Delete a subscription",
-        tags=["Subscription"],
-    ),
-)
+@extend_schema_view(**specs.subscription_api_specs)
 class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

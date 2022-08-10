@@ -1,7 +1,7 @@
 import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema_view
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from ..models import KakaoAccount
 from . import exceptions as ex
+from . import specs
 from .serializers import AuthTokenSerializer, KakaoAccountSerializer
 
 
@@ -67,16 +68,7 @@ def get_or_create_user(email):
     return user, user_created
 
 
-@extend_schema_view(
-    post=extend_schema(
-        description="<h2>카카오 계정 정보를 등록하는 API</h2>",
-        summary="Create a new kakao user",
-        tags=["Login"],
-        responses={
-            "201": AuthTokenSerializer,
-        },
-    )
-)
+@extend_schema_view(**specs.kakao_accounts_api_specs)
 class KakaoAccountCreateAPIView(APIView):
     queryset = KakaoAccount.objects.all()
     serializer_class = KakaoAccountSerializer
