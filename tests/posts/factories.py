@@ -5,18 +5,9 @@ from django.utils import timezone
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
-from nanuri.posts.models import Category, Comment, Post, PostImage, SubComment
+from nanuri.posts.models import Comment, Post, PostImage, SubComment
 
 from ..users.factories import UserFactory
-
-
-class CategoryFactory(DjangoModelFactory):
-    class Meta:
-        model = Category
-        django_get_or_create = ("name",)
-
-    name = factory.Faker("safe_color_name")
-    parent = None
 
 
 class PostFactory(DjangoModelFactory):
@@ -43,7 +34,9 @@ class PostFactory(DjangoModelFactory):
     waited_until = factory.LazyAttribute(lambda x: x.waited_from + timedelta(days=3))
 
     writer = factory.SubFactory(UserFactory)
-    category = factory.SubFactory(CategoryFactory)
+    category = FuzzyChoice(
+        choices=["BATHROOM", "FOOD", "KITCHEN", "HOUSEHOLD", "STATIONERY", "ETC"]
+    )
 
 
 class PostImageFactory(DjangoModelFactory):
