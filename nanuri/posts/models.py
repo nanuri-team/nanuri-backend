@@ -43,7 +43,8 @@ class Post(models.Model):
     category = models.CharField(
         max_length=255,
         choices=Category.choices,
-        default=Category.ETC,
+        null=True,
+        blank=True,
     )
     image = models.ImageField(
         null=True,
