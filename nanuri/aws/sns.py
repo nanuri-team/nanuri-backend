@@ -8,3 +8,19 @@ client = boto3.client(
     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
 )
+
+
+def list_subscriptions():
+    subscriptions = []
+    params = {}
+    while True:
+        response = client.list_subscriptions(**params)
+        subscriptions.extend(response.get("Subscriptions", []))
+        if "NextToken" not in response:
+            break
+        params = {"NextToken": response["NextToken"]}
+    return subscriptions
+
+
+def unsubscribe(subscription_arn):
+    return client.unsubscribe(SubscriptionArn=subscription_arn)

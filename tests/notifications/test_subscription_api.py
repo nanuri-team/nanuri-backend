@@ -32,6 +32,8 @@ class TestSubscriptionApi:
         assert response.status_code == 200
 
     def test_delete(self, user_client, subscription):
+        # FIXME: 실제 AWS 상에서도 구독이 취소(삭제)되었는지 테스트 필요...
+        #  boto3로 로컬스택에 아무리 삭제 명령을 내려봐도 반응이 없는 버그가 있는듯
         assert Subscription.objects.filter(uuid=subscription.uuid).count() == 1
         response = user_client.delete(
             reverse(
