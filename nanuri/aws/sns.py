@@ -10,7 +10,7 @@ client = boto3.client(
 )
 
 
-def list_subscriptions():
+def list_subscriptions(arn_only=False):
     subscriptions = []
     params = {}
     while True:
@@ -19,6 +19,8 @@ def list_subscriptions():
         if "NextToken" not in response:
             break
         params = {"NextToken": response["NextToken"]}
+    if arn_only:
+        return [x["SubscriptionArn"] for x in subscriptions]
     return subscriptions
 
 

@@ -1,6 +1,7 @@
 import pytest
 from django.urls import reverse
 
+from nanuri.aws.sns import list_subscriptions
 from nanuri.notifications.models import Subscription
 
 pytestmark = pytest.mark.django_db
@@ -21,6 +22,8 @@ class TestSubscriptionApi:
             format="json",
         )
         assert response.status_code == 201
+        result = response.json()
+        assert result["subscription_arn"] in list_subscriptions(arn_only=True)
 
     def test_retrieve(self, user_client, subscription):
         response = user_client.get(
@@ -32,8 +35,7 @@ class TestSubscriptionApi:
         assert response.status_code == 200
 
     def test_delete(self, user_client, subscription):
-        # FIXME: 실제 AWS 상에서도 구독이 취소(삭제)되었는지 테스트 필요...
-        #  boto3로 로컬스택에 아무리 삭제 명령을 내려봐도 반응이 없는 버그가 있는듯
+        assert subscription.subscription_arn in list_subscriptions(arn_only=True)
         assert Subscription.objects.filter(uuid=subscription.uuid).count() == 1
         response = user_client.delete(
             reverse(
@@ -43,3 +45,4 @@ class TestSubscriptionApi:
         )
         assert response.status_code == 204
         assert Subscription.objects.filter(uuid=subscription.uuid).count() == 0
+        assert subscription.subscription_arn not in list_subscriptions(arn_only=True)
