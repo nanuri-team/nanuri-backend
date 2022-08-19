@@ -1,1 +1,1 @@
-Link: https://github.com/aryansbtloe/resources/raw/master/Certificate/certificate.p12
+Link: https://github.com/aryansbtloe/resources/blob/master/Certificate/certificate.p12
