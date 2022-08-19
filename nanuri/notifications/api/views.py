@@ -10,7 +10,7 @@ from rest_framework.generics import (
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
-from nanuri.aws.sns import client as sns_client
+from nanuri.aws.sns import sns
 
 from ..models import Device, Subscription
 from . import specs
@@ -26,7 +26,7 @@ class DeviceCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         user = self.request.user
         device_token = self.request.data["device_token"]
-        endpoint_arn = sns_client.create_platform_endpoint(
+        endpoint_arn = sns.create_platform_endpoint(
             PlatformApplicationArn=settings.AWS_SNS_PLATFORM_APPLICATION_ARN,
             Token=device_token,
         )["EndpointArn"]
@@ -61,12 +61,12 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
     def perform_create(self, serializer):
         device_uuid = self.request.data["device"]
         topic = self.request.data["topic"]
-        topic_arn = sns_client.create_topic(Name=topic)["TopicArn"]
+        topic_arn = sns.create_topic(Name=topic)["TopicArn"]
         attributes = {}
         if (group_code := self.request.data["group_code"]) is not None:
             attributes["group_code"] = group_code
         device = Device.objects.get(uuid=device_uuid)
-        subscription_arn = sns_client.subscribe(
+        subscription_arn = sns.subscribe(
             TopicArn=topic_arn,
             Protocol="application",
             Endpoint=device.endpoint_arn,
@@ -94,5 +94,5 @@ class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
 
     def perform_destroy(self, instance):
         if instance.subscription_arn:
-            sns_client.unsubscribe(SubscriptionArn=instance.subscription_arn)
+            sns.unsubscribe(SubscriptionArn=instance.subscription_arn)
         super().perform_destroy(instance)

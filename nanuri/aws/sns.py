@@ -1,7 +1,7 @@
 import boto3
 from django.conf import settings
 
-client = boto3.client(
+sns = boto3.client(
     "sns",
     endpoint_url=settings.AWS_ENDPOINT_URL,
     region_name=settings.AWS_REGION,
@@ -14,7 +14,7 @@ def list_subscriptions(arn_only=False):
     subscriptions = []
     params = {}
     while True:
-        response = client.list_subscriptions(**params)
+        response = sns.list_subscriptions(**params)
         subscriptions.extend(response.get("Subscriptions", []))
         if "NextToken" not in response:
             break
@@ -25,4 +25,4 @@ def list_subscriptions(arn_only=False):
 
 
 def unsubscribe(subscription_arn):
-    return client.unsubscribe(SubscriptionArn=subscription_arn)
+    return sns.unsubscribe(SubscriptionArn=subscription_arn)
