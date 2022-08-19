@@ -1,8 +1,13 @@
+import logging
+
 import boto3
+from botocore.exceptions import ClientError
 from django.conf import settings
 from OpenSSL.crypto import FILETYPE_PEM, dump_certificate, dump_privatekey, load_pkcs12
 
 from nanuri.aws.s3 import s3
+
+logger = logging.getLogger()
 
 sns = boto3.client(
     "sns",
@@ -39,6 +44,37 @@ def create_platform_application():
         },
     )["PlatformApplicationArn"]
     settings.AWS_SNS_PLATFORM_APPLICATION_ARN = platform_application_arn
+    return platform_application_arn
+
+
+def create_platform_endpoint(device_token):
+    """성공적으로 생성한 경우에만 arn 반환, 그 외는 null 반환"""
+    try:
+        response = sns.create_platform_endpoint(
+            PlatformApplicationArn=settings.AWS_SNS_PLATFORM_APPLICATION_ARN,
+            Token=device_token,
+        )
+        return response.get("EndpointArn", None)
+    except ClientError as e:
+        logger.error(e, exc_info=True)
+    return None
+
+
+def list_platform_endpoints(arn_only=False):
+    endpoints = []
+    params = {}
+    while True:
+        response = sns.list_endpoints_by_platform_application(
+            PlatformApplicationArn=settings.AWS_SNS_PLATFORM_APPLICATION_ARN,
+            **params,
+        )
+        endpoints.extend(response.get("Endpoints", []))
+        if "NextToken" not in response:
+            break
+        params = {"NextToken": response["NextToken"]}
+    if arn_only:
+        return [x["EndpointArn"] for x in endpoints]
+    return endpoints
 
 
 def list_subscriptions(arn_only=False):
