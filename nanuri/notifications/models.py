@@ -4,8 +4,6 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from nanuri.aws.sns import create_platform_endpoint
-
 
 class Device(models.Model):
     uuid = models.UUIDField(
@@ -20,18 +18,6 @@ class Device(models.Model):
     opt_in = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def save(
-        self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None,
-    ):
-        endpoint = create_platform_endpoint(self.device_token)
-        if endpoint is not None:  # `endpoint_arn` 필드를 null 값으로 업데이트 하면 안된다.
-            self.endpoint_arn = endpoint
-        super().save(force_insert, force_update, using, update_fields)
 
 
 class Subscription(models.Model):
