@@ -98,7 +98,7 @@ def sub_comment(comment):
 
 @pytest.fixture
 def p12():
-    with open(str(settings.BASE_DIR / "certificate.p12"), "rb") as f:
+    with open("/tmp/certificate.p12", "rb") as f:
         p12_bytes = f.read()
     return load_pkcs12(p12_bytes, b"")
 

@@ -6,7 +6,8 @@ env:
   AWS_ENDPOINT_URL: http://localhost:4566
   AWS_ACCESS_KEY_ID: test
   AWS_SECRET_ACCESS_KEY: test
-  AWS_SNS_PLATFORM_APPLICATION_ARN: arn:aws:sns:ap-northeast-2:000000000000:app/APNS/TestApplication
+  AWS_S3_CERTIFICATE_BUCKET_NAME: nanuri-secret-bucket
+  AWS_S3_CERTIFICATE_KEY: certificate.p12
   KAKAO_APP_ADMIN_KEY: ${{ secrets.KAKAO_APP_ADMIN_KEY }}
 
 on:
@@ -37,6 +38,7 @@ jobs:
           echo "Waiting for LocalStack startup..."
           localstack wait -t 30
           echo "Startup complete"
+          sh localstack-setup.sh
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
@@ -62,10 +64,6 @@ jobs:
           flake8 . --count --select=E9,F63,F7,F82,F401 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-      - name: Download p12 certificate
-        run: |
-          wget https://github.com/aryansbtloe/resources/raw/master/Certificate/certificate.p12
 
       - name: Run Tests
         run: |
