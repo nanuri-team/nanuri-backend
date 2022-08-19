@@ -19,6 +19,10 @@ class Device(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        # TODO: Platform Endpoint 생성 후 `self.endpoint_arn`에 할당하기
+        super().save(*args, **kwargs)
+
 
 class Subscription(models.Model):
     class Topic(models.TextChoices):
@@ -45,6 +49,10 @@ class Subscription(models.Model):
     subscription_arn = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        # TODO: Subscription 생성 후 `self.subscription_arn`에 할당하기
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = [["device", "topic", "group_code"]]

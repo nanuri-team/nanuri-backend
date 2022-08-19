@@ -25,12 +25,7 @@ class DeviceCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
-        device_token = self.request.data["device_token"]
-        endpoint_arn = sns.create_platform_endpoint(
-            PlatformApplicationArn=settings.AWS_SNS_PLATFORM_APPLICATION_ARN,
-            Token=device_token,
-        )["EndpointArn"]
-        serializer.save(user=user, endpoint_arn=endpoint_arn)
+        serializer.save(user=user)
 
 
 @extend_schema_view(**specs.device_api_specs)
