@@ -2,7 +2,6 @@ import shutil
 
 import boto3
 import pytest
-from cryptography.hazmat.primitives.serialization.pkcs12 import load_pkcs12
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from OpenSSL.crypto import FILETYPE_PEM, dump_certificate, dump_privatekey, load_pkcs12
