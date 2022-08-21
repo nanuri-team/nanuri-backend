@@ -1,4 +1,3 @@
-from django.conf import settings
 from drf_spectacular.utils import extend_schema_view
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
@@ -54,20 +53,13 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        device_uuid = self.request.data["device"]
         topic = self.request.data["topic"]
-        topic_arn = sns.create_topic(Name=topic)["TopicArn"]
-        attributes = {}
-        if (group_code := self.request.data["group_code"]) is not None:
-            attributes["group_code"] = group_code
+        group_code = self.request.data["group_code"]
+        device_uuid = self.request.data["device"]
         device = Device.objects.get(uuid=device_uuid)
-        subscription_arn = sns.subscribe(
-            TopicArn=topic_arn,
-            Protocol="application",
-            Endpoint=device.endpoint_arn,
-            Attributes=attributes,
-            ReturnSubscriptionArn=True,
-        )["SubscriptionArn"]
+        subscription_arn = sns.subscribe(topic, device.endpoint_arn, group_code)[
+            "SubscriptionArn"
+        ]
         serializer.save(
             device=device,
             topic=topic,
@@ -89,5 +81,5 @@ class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
 
     def perform_destroy(self, instance):
         if instance.subscription_arn:
-            sns.unsubscribe(SubscriptionArn=instance.subscription_arn)
+            sns.unsubscribe(instance.subscription_arn)
         super().perform_destroy(instance)
