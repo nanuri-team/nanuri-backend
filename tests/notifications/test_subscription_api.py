@@ -78,3 +78,26 @@ class TestSubscriptionApi:
         assert Subscription.objects.filter(uuid=subscription.uuid).count() == 0
         subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
         assert subscription.subscription_arn not in subscriptions
+
+    def test_opt_in_off(self, user_client):
+        subscription = SubscriptionFactory.create(opt_in=True)
+        assert subscription.opt_in is True
+        assert subscription.subscription_arn is not None
+        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+        assert subscription.subscription_arn in subscriptions
+
+        response = user_client.patch(
+            reverse(
+                "nanuri.notifications.api:subscription-detail",
+                kwargs={"uuid": subscription.uuid},
+            ),
+            data={"opt_in": False},
+            format="json",
+        )
+        assert response.status_code == 200
+
+        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+        assert subscription.subscription_arn not in subscriptions
+
+        updated_subscription = Subscription.objects.get(uuid=subscription.uuid)
+        assert updated_subscription.subscription_arn is None

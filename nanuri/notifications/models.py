@@ -66,11 +66,14 @@ class Subscription(models.Model):
     def save(self, *args, **kwargs):
         if self.subscription_arn is not None:
             sns.unsubscribe(self.subscription_arn)
-        self.subscription_arn = sns.subscribe(
-            self.topic,
-            self.device.endpoint_arn,
-            self.group_code,
-        )
+        if self.opt_in is False:
+            self.subscription_arn = None
+        else:
+            self.subscription_arn = sns.subscribe(
+                self.topic,
+                self.device.endpoint_arn,
+                self.group_code,
+            )
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
