@@ -66,9 +66,9 @@ class TestSubscriptionApi:
         assert subscription.subscription_arn not in subscriptions
 
     def test_delete(self, user_client, subscription):
-        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
-        assert subscription.subscription_arn in subscriptions
         assert Subscription.objects.filter(uuid=subscription.uuid).count() == 1
+        previous_subscription_arn = subscription.subscription_arn
+
         response = user_client.delete(
             reverse(
                 "nanuri.notifications.api:subscription-detail",
@@ -78,7 +78,7 @@ class TestSubscriptionApi:
         assert response.status_code == 204
         assert Subscription.objects.filter(uuid=subscription.uuid).count() == 0
         subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
-        assert subscription.subscription_arn not in subscriptions
+        assert previous_subscription_arn not in subscriptions
 
     def test_opt_in_off(self, user_client):
         subscription = SubscriptionFactory.create(opt_in=True)
