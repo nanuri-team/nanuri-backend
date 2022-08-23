@@ -34,6 +34,8 @@ class Device(models.Model):
 
     def delete(self, *args, **kwargs):
         sns.delete_endpoint_by_device_token(self.device_token)
+        for subscription in self.subscription_set.all():
+            subscription.delete()
         super().delete(*args, **kwargs)
 
 

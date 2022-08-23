@@ -5,7 +5,7 @@ from faker import Faker
 from nanuri.aws.sns import sns
 from nanuri.notifications.models import Device
 
-from .factories import DeviceFactory
+from .factories import DeviceFactory, SubscriptionFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -74,8 +74,12 @@ class TestDeviceApi:
             assert sns.get_endpoint_by_device_token(params.device_token) is not None
 
     def test_delete(self, user_client, device):
+        child_subscriptions = SubscriptionFactory.create_batch(size=3, device=device)
+        assert len(device.subscription_set.all()) == 3
+
         assert sns.get_endpoint_by_device_token(device.device_token) is not None
         assert Device.objects.all().count() == 1
+
         response = user_client.delete(
             reverse(
                 "nanuri.notifications.api:device-detail",
@@ -83,5 +87,10 @@ class TestDeviceApi:
             )
         )
         assert response.status_code == 204
+
         assert Device.objects.all().count() == 0
         assert sns.get_endpoint_by_device_token(device.device_token) is None
+
+        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+        for child_subscription in child_subscriptions:
+            assert child_subscription.subscription_arn not in subscriptions
