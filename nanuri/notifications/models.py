@@ -28,9 +28,9 @@ class Device(models.Model):
     def save(self, *args, **kwargs):
         if self.device_token != self.previous_device_token:
             sns.delete_endpoint_by_device_token(self.previous_device_token)
+            self.previous_device_token = self.device_token
         self.endpoint_arn = sns.create_platform_endpoint(self.device_token)
         super().save(*args, **kwargs)
-        self.previous_device_token = self.device_token
 
     def delete(self, *args, **kwargs):
         sns.delete_endpoint_by_device_token(self.device_token)
