@@ -61,7 +61,8 @@ class TestSubscriptionApi:
         assert updated_subscription.group_code == params.group_code
 
         subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
-        assert updated_subscription.subscription_arn in subscriptions
+        if updated_subscription.opt_in:
+            assert updated_subscription.subscription_arn in subscriptions
         assert subscription.subscription_arn not in subscriptions
 
     def test_delete(self, user_client, subscription):
