@@ -43,7 +43,7 @@ class Subscription(models.Model):
     class Topic(models.TextChoices):
         TO_ALL = "TO_ALL", _("공지사항")
         TO_POST_WRITER = "TO_POST_WRITER", _("공동구매 진행자에게 보내는 푸시 알림")
-        TO_POST_PARTICIPANTS = "TO_POST_WRITERS", _("공동구매 참여자에게 보내는 푸시 알림")
+        TO_POST_PARTICIPANTS = "TO_POST_PARTICIPANTS", _("공동구매 참여자에게 보내는 푸시 알림")
         TO_CHAT_ROOM = "TO_CHAT_ROOM", _("채팅방 참가자에게 보내는 푸시 알림")
 
     uuid = models.UUIDField(
