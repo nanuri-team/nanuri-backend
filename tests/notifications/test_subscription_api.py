@@ -22,10 +22,12 @@ class TestSubscriptionApi:
             format="json",
         )
         assert response.status_code == 201
+
         result = response.json()
-        assert result["subscription_arn"] in [
-            x["SubscriptionArn"] for x in sns.list_subscriptions()
-        ]
+        assert result["subscription_arn"].startswith("arn:aws:sns:")
+
+        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+        assert result["subscription_arn"] in subscriptions
 
     def test_retrieve(self, user_client, subscription):
         response = user_client.get(
@@ -37,9 +39,8 @@ class TestSubscriptionApi:
         assert response.status_code == 200
 
     def test_delete(self, user_client, subscription):
-        assert subscription.subscription_arn in [
-            x["SubscriptionArn"] for x in sns.list_subscriptions()
-        ]
+        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+        assert subscription.subscription_arn in subscriptions
         assert Subscription.objects.filter(uuid=subscription.uuid).count() == 1
         response = user_client.delete(
             reverse(
@@ -49,6 +50,5 @@ class TestSubscriptionApi:
         )
         assert response.status_code == 204
         assert Subscription.objects.filter(uuid=subscription.uuid).count() == 0
-        assert subscription.subscription_arn not in [
-            x["SubscriptionArn"] for x in sns.list_subscriptions()
-        ]
+        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+        assert subscription.subscription_arn not in subscriptions

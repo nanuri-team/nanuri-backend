@@ -12,8 +12,7 @@ class DeviceFactory(DjangoModelFactory):
         model = Device
 
     user = factory.SubFactory(UserFactory)
-    device_token = factory.Faker("pystr", min_chars=64, max_chars=152)
-    endpoint_arn = factory.Faker("pystr", min_chars=100, max_chars=150)
+    device_token = factory.Faker("sha256")
     opt_in = factory.Faker("pybool")
 
 
@@ -30,5 +29,5 @@ class SubscriptionFactory(DjangoModelFactory):
             "TO_CHAT_ROOM",
         ],
     )
-    group_code = factory.Faker("pystr")
+    group_code = factory.Faker("uuid4")
     opt_in = factory.Faker("pybool")

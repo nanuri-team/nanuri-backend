@@ -52,21 +52,6 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
             queryset = queryset.filter(device__uuid=device)
         return queryset
 
-    def perform_create(self, serializer):
-        topic = self.request.data["topic"]
-        group_code = self.request.data["group_code"]
-        device_uuid = self.request.data["device"]
-        device = Device.objects.get(uuid=device_uuid)
-        subscription_arn = sns.subscribe(topic, device.endpoint_arn, group_code)[
-            "SubscriptionArn"
-        ]
-        serializer.save(
-            device=device,
-            topic=topic,
-            group_code=group_code,
-            subscription_arn=subscription_arn,
-        )
-
 
 @extend_schema_view(**specs.subscription_api_specs)
 class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):

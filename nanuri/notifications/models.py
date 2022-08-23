@@ -4,6 +4,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from nanuri.aws.sns import sns
+
 
 class Device(models.Model):
     uuid = models.UUIDField(
@@ -19,9 +21,20 @@ class Device(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.previous_device_token = self.device_token
+
     def save(self, *args, **kwargs):
-        # TODO: Platform Endpoint 생성 후 `self.endpoint_arn`에 할당하기
+        if self.device_token != self.previous_device_token:
+            sns.delete_endpoint_by_device_token(self.previous_device_token)
+        self.endpoint_arn = sns.create_platform_endpoint(self.device_token)
         super().save(*args, **kwargs)
+        self.previous_device_token = self.device_token
+
+    def delete(self, *args, **kwargs):
+        sns.delete_endpoint_by_device_token(self.device_token)
+        super().delete(*args, **kwargs)
 
 
 class Subscription(models.Model):
@@ -51,7 +64,11 @@ class Subscription(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        # TODO: Subscription 생성 후 `self.subscription_arn`에 할당하기
+        self.subscription_arn = sns.subscribe(
+            self.topic,
+            self.device.endpoint_arn,
+            self.group_code,
+        )
         super().save(*args, **kwargs)
 
     class Meta:
