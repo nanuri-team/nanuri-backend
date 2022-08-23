@@ -97,10 +97,12 @@ class SimpleNotificationService:
         params = {}
         while True:
             response = self.client.list_subscriptions(**params)
-            subscriptions.extend(response.get("Subscriptions", []))
-            if "NextToken" not in response:
-                break
-            params = {"NextToken": response["NextToken"]}
+            items = response.get("Subscriptions", [])
+            subscriptions.extend(items)
+            if next_token := response.get("NextToken", None):
+                params["NextToken"] = next_token
+                continue
+            break
         return subscriptions
 
     def subscribe(self, topic, endpoint_arn, group_code):

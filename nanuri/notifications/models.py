@@ -64,6 +64,8 @@ class Subscription(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        if self.subscription_arn is not None:
+            sns.unsubscribe(self.subscription_arn)
         self.subscription_arn = sns.subscribe(
             self.topic,
             self.device.endpoint_arn,
@@ -72,7 +74,8 @@ class Subscription(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        sns.unsubscribe(self.subscription_arn)
+        if self.subscription_arn is not None:
+            sns.unsubscribe(self.subscription_arn)
         super().delete(*args, **kwargs)
 
     class Meta:

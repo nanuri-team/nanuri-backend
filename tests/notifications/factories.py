@@ -21,13 +21,6 @@ class SubscriptionFactory(DjangoModelFactory):
         model = Subscription
 
     device = factory.SubFactory(DeviceFactory)
-    topic = FuzzyChoice(
-        choices=[
-            "TO_ALL",
-            "TO_POST_WRITER",
-            "TO_POST_PARTICIPANTS",
-            "TO_CHAT_ROOM",
-        ],
-    )
+    topic = FuzzyChoice(Subscription.Topic.values)
     group_code = factory.Faker("uuid4")
     opt_in = factory.Faker("pybool")

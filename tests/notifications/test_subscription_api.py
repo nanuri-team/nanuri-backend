@@ -4,6 +4,8 @@ from django.urls import reverse
 from nanuri.aws.sns import sns
 from nanuri.notifications.models import Subscription
 
+from .factories import SubscriptionFactory
+
 pytestmark = pytest.mark.django_db
 
 
@@ -37,6 +39,30 @@ class TestSubscriptionApi:
             )
         )
         assert response.status_code == 200
+
+    def test_update(self, user_client, subscription, device):
+        params = SubscriptionFactory.build()
+        response = user_client.put(
+            reverse(
+                "nanuri.notifications.api:subscription-detail",
+                kwargs={"uuid": subscription.uuid},
+            ),
+            data={
+                "device": device.uuid,
+                "topic": params.topic,
+                "group_code": params.group_code,
+            },
+        )
+        assert response.status_code == 200
+
+        updated_subscription = Subscription.objects.get(uuid=subscription.uuid)
+        assert updated_subscription.device.uuid == device.uuid
+        assert updated_subscription.topic == params.topic
+        assert updated_subscription.group_code == params.group_code
+
+        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+        assert updated_subscription.subscription_arn in subscriptions
+        assert subscription.subscription_arn not in subscriptions
 
     def test_delete(self, user_client, subscription):
         subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
