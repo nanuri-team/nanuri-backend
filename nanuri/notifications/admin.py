@@ -7,7 +7,7 @@ from .models import Device, Subscription
 class DeviceChangeForm(forms.ModelForm):
     class Meta:
         model = Device
-        fields = ("user", "device_token", "opt_in")
+        fields = ("user", "device_token", "opt_in", "endpoint_arn")
 
 
 class DeviceAdmin(admin.ModelAdmin):
@@ -16,8 +16,8 @@ class DeviceAdmin(admin.ModelAdmin):
         "uuid",
         "user",
         "device_token",
-        "endpoint_arn",
         "opt_in",
+        "endpoint_arn",
         "created_at",
         "updated_at",
     ]
@@ -26,7 +26,7 @@ class DeviceAdmin(admin.ModelAdmin):
 class SubscriptionChangeForm(forms.ModelForm):
     class Meta:
         model = Subscription
-        fields = ("device", "topic", "group_code", "opt_in")
+        fields = ("device", "topic", "group_code", "opt_in", "subscription_arn")
 
 
 class SubscriptionAdmin(admin.ModelAdmin):
