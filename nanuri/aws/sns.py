@@ -107,7 +107,7 @@ class SimpleNotificationService:
         topic_arn = self.create_topic(topic)["TopicArn"]
         attributes = {}
         if group_code is not None:
-            attributes["FilterPolicy"] = json.dumps({"group_code": group_code})
+            attributes["FilterPolicy"] = json.dumps({"group_code": [group_code]})
         subscription = self.client.subscribe(
             TopicArn=topic_arn,
             Protocol="application",

@@ -71,5 +71,9 @@ class Subscription(models.Model):
         )
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        sns.unsubscribe(self.subscription_arn)
+        super().delete(*args, **kwargs)
+
     class Meta:
         unique_together = [["device", "topic", "group_code"]]

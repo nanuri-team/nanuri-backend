@@ -3,13 +3,10 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
     CreateAPIView,
     ListCreateAPIView,
-    RetrieveDestroyAPIView,
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
-
-from nanuri.aws.sns import sns
 
 from ..models import Device, Subscription
 from . import specs
@@ -54,7 +51,7 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
 
 
 @extend_schema_view(**specs.subscription_api_specs)
-class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
+class SubscriptionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializer
@@ -63,8 +60,3 @@ class SubscriptionRetrieveDestroyAPIView(RetrieveDestroyAPIView):
     def get_object(self):
         uuid = self.kwargs[self.lookup_field]
         return Subscription.objects.get(uuid=uuid)
-
-    def perform_destroy(self, instance):
-        if instance.subscription_arn:
-            sns.unsubscribe(instance.subscription_arn)
-        super().perform_destroy(instance)
