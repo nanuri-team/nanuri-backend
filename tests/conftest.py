@@ -1,4 +1,3 @@
-import boto3
 import pytest
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -13,14 +12,6 @@ from .posts.factories import (
     SubCommentFactory,
 )
 from .users.factories import UserFactory
-
-sns = boto3.client(
-    "sns",
-    endpoint_url=settings.AWS_ENDPOINT_URL,
-    region_name=settings.AWS_REGION,
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-)
 
 
 @pytest.fixture(autouse=True)
