@@ -21,6 +21,7 @@ class DeviceAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     ]
+    readonly_fields = ("endpoint_arn",)
 
 
 class SubscriptionChangeForm(forms.ModelForm):
@@ -41,6 +42,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     ]
+    readonly_fields = ("subscription_arn",)
 
 
 admin.site.register(Device, DeviceAdmin)
