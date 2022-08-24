@@ -13,8 +13,6 @@ fake = Faker()
 
 
 class TestDeviceApi:
-    base_url = "/api/v1"
-
     def test_create(self, user_client):
         device_token = fake.sha256()
         response = user_client.post(

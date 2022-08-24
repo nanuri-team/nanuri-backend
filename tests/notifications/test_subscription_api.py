@@ -10,8 +10,6 @@ pytestmark = pytest.mark.django_db
 
 
 class TestSubscriptionApi:
-    base_url = "/api/v1"
-
     def test_create(self, user_client, device):
         response = user_client.post(
             reverse("nanuri.notifications.api:subscription-list"),
