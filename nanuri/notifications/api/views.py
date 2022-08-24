@@ -70,6 +70,8 @@ class SubscriptionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 @extend_schema_view(**specs.messages_api_specs)
 class MessageAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = MessageSerializer
 
     def post(self, *args, **kwargs):
