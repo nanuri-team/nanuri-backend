@@ -62,6 +62,16 @@ subscription_api_specs = {
         summary="Get a subscription",
         tags=["Subscription"],
     ),
+    "put": extend_schema(
+        description="<h2>특정 구독을 수정합니다.</h2>",
+        summary="Update a subscription",
+        tags=["Subscription"],
+    ),
+    "patch": extend_schema(
+        description="<h2>특정 구독을 부분 수정합니다.</h2>",
+        summary="Patch a subscription",
+        tags=["Subscription"],
+    ),
     "delete": extend_schema(
         description="<h2>특정 구독을 삭제합니다.</h2>",
         summary="Delete a subscription",
