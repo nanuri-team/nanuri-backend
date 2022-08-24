@@ -90,7 +90,7 @@ class SimpleNotificationService:
             self.delete_endpoint(endpoint["EndpointArn"])
 
     def create_topic(self, name):
-        return self.client.create_topic(Name=name)
+        return self.client.create_topic(Name=name)["TopicArn"]
 
     def list_subscriptions(self):
         subscriptions = []
@@ -106,7 +106,7 @@ class SimpleNotificationService:
         return subscriptions
 
     def subscribe(self, topic, endpoint_arn, group_code):
-        topic_arn = self.create_topic(topic)["TopicArn"]
+        topic_arn = self.create_topic(topic)
         attributes = {}
         if group_code is not None:
             attributes["FilterPolicy"] = json.dumps({"group_code": [group_code]})
