@@ -122,5 +122,24 @@ class SimpleNotificationService:
     def unsubscribe(self, subscription_arn):
         return self.client.unsubscribe(SubscriptionArn=subscription_arn)
 
+    def publish(self, topic, body, group_code=None):
+        topic_arn = self.create_topic(topic)
+        message_attributes = (
+            {
+                "group_code": {
+                    "DataType": "String",
+                    "StringValue": group_code,
+                }
+            }
+            if group_code is not None
+            else {}
+        )
+        response = self.client.publish(
+            TopicArn=topic_arn,
+            Message=body,
+            MessageAttributes=message_attributes,
+        )
+        return response
+
 
 sns = SimpleNotificationService()

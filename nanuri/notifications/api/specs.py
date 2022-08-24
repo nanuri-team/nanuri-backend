@@ -68,3 +68,15 @@ subscription_api_specs = {
         tags=["Subscription"],
     ),
 }
+
+
+messages_api_specs = {
+    "post": extend_schema(
+        description="""<h2>푸시 알림 메시지를 발행합니다.</h2>
+        <p>topic이 `TO_ALL`일 때는 group_code를 `null`로 설정해도 무방합니다.</p>
+        <p>topic이 `TO_POST_WRITER`, `TO_POST_PARTICIPANTS`, `TO_CHAT_ROOM`일 때는 해당 글의 UUID를 group_code 필드의 값으로 설정해야 합니다.</p>
+        """,
+        summary="Publish push notification message",
+        tags=["Message"],
+    )
+}

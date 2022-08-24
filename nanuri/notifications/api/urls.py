@@ -25,4 +25,9 @@ urlpatterns = [
         view=views.SubscriptionRetrieveUpdateDestroyAPIView.as_view(),
         name="subscription-detail",
     ),
+    path(
+        "messages/",
+        view=views.MessageAPIView.as_view(),
+        name="message-list",
+    ),
 ]

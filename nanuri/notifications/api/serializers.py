@@ -36,3 +36,15 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             "uuid": {"read_only": True},
             "subscription_arn": {"read_only": True},
         }
+
+
+class MessageSerializer(serializers.Serializer):
+    topic = serializers.ChoiceField(choices=Subscription.Topic.choices)
+    body = serializers.CharField(max_length=1600)
+    group_code = serializers.CharField(max_length=255, allow_null=True)
+
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()
