@@ -61,7 +61,7 @@ class GroupMessageTable:
         tables = self.client.list_tables()
         return tables["TableNames"]
 
-    def insert_row(self, channel_id, message_to, message_from, message):
+    def insert_row(self, channel_id, message_to, message_from, message, message_format):
         table = self.resource.Table(self.table_name)
         now = datetime.utcnow()
         item = {
@@ -70,6 +70,7 @@ class GroupMessageTable:
             "message_to": message_to,
             "message_from": message_from,
             "message": message,
+            "format": message_format,
             "created_at": now.strftime("%Y-%m-%d %H:%M:%S.%f"),
         }
         table.put_item(Item=item)

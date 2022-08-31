@@ -43,12 +43,15 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
 
         # 클라이언트가 채팅 방에 메시지를 보내고 싶어 하는 경우
         if message_type == "send_message":
+            message_format = text_data_json["format"]
             message = text_data_json["message"]
+
             row = group_message_table.insert_row(
                 channel_id=self.room_name,
                 message_to=self.room_group_name,
                 message_from=self.user.email,
                 message=message,
+                message_format=message_format,
             )
             logger.info(
                 "'%s'가 '%s' 그룹에게 메시지를 전달했습니다: '%s'",
@@ -62,6 +65,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     "type": "send_message",
+                    "format": row["format"],
                     "message": row["message"],
                     "sender": row["message_from"],
                     "created_at": row["created_at"],
@@ -81,6 +85,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
     # Receive message from room group
     async def send_message(self, event):
         message = event["message"]
+        message_format = event["format"]
         sender = event["sender"]
         created_at = event["created_at"]
 
@@ -89,6 +94,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             text_data=json.dumps(
                 {
                     "message": message,
+                    "format": message_format,
                     "sender": sender,
                     "created_at": created_at,
                 }
@@ -101,6 +107,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             {
                 "channel_id": r["channel_id"],
                 "message_id": float(r["message_id"]),
+                "format": r.get("format", "plain/text"),
                 "message": r["message"],
                 "message_from": r["message_from"],
                 "message_to": r["message_to"],
