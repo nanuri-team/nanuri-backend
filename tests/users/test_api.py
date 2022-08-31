@@ -25,6 +25,21 @@ class TestUserEndpoints:
         assert response.status_code == 200
         assert len(response.json()["results"]) == 20
 
+    def test_list_with_nickname(self, user_client):
+        users = UserFactory.create_batch(size=3)
+        user = users[0]
+        response = user_client.get(
+            reverse("nanuri.users.api:list"),
+            data={"nickname": user.nickname},
+        )
+
+        assert response.status_code == 200
+        count = response.json()["count"]
+        results = response.json()["results"]
+        assert count == 1
+        assert len(results) == 1
+        assert results[0]["nickname"] == user.nickname
+
     def test_create(self, user_client):
         user = UserFactory.build()
         response = user_client.post(

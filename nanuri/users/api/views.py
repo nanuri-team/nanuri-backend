@@ -17,6 +17,12 @@ class UserListCreateAPIView(ListCreateAPIView):
     serializer_class = UserSerializer
     pagination_class = LimitOffsetPagination
 
+    def get_queryset(self):
+        queryset = self.queryset
+        if nickname := self.request.query_params.get("nickname", None):
+            queryset = queryset.filter(nickname=nickname)
+        return queryset
+
 
 @extend_schema_view(**specs.user_api_specs)
 class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
