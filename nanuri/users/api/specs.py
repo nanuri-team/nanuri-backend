@@ -13,8 +13,6 @@ users_api_specs = {
             - nickname : 사용자의 닉네임 <br><br>
             - is_active : 계정의 활성화 유무 <br><br>
             - is_admin :  admin 권한 제공 유무 <br><br>
-            - latitude : 사용자의 현재 위치의 위도 <br><br>
-            - longitude : 사용자의 현재 위치의 경도 <br><br>
             - address : 사용자의 주소 <br><br>
             - profile_url : 사용자의 프로필 이미지 url  <br><br>
             - auth_provider : 소셜로그인 종류 (APPLE, KAKAO) <br><br>
@@ -31,8 +29,6 @@ users_api_specs = {
                     "nickname": "nanuri",
                     "is_active": "true",
                     "is_admin": "false",
-                    "latitude": 0,
-                    "longitude": 0,
                     "address": "나누리시 나누리구 나누리동",
                     "profile_url": "https://nanuri.app/",
                     "auth_provider": "APPLE",
@@ -57,8 +53,6 @@ user_api_specs = {
             - nickname : 사용자의 닉네임 <br><br>
             - is_active : 계정의 활성화 유무 <br><br>
             - is_admin :  admin 권한 제공 유무 <br><br>
-            - latitude : 사용자의 현재 위치의 위도 <br><br>
-            - longitude : 사용자의 현재 위치의 경도 <br><br>
             - address : 사용자의 주소 <br><br>
             - profile_url : 사용자의 프로필 이미지 url  <br><br>
             - auth_provider : 소셜로그인 종류 (APPLE, KAKAO) <br><br>
@@ -75,8 +69,6 @@ user_api_specs = {
                     "nickname": "nanuri",
                     "is_active": "true",
                     "is_admin": "false",
-                    "latitude": 0,
-                    "longitude": 0,
                     "address": "나누리시 나누리구 나누리동",
                     "profile_url": "https://nanuri.app/",
                     "auth_provider": "APPLE",
@@ -92,8 +84,6 @@ user_api_specs = {
             - nickname : 사용자의 닉네임 <br><br>
             - is_active : 계정의 활성화 유무 <br><br>
             - is_admin :  admin 권한 제공 유무 <br><br>
-            - latitude : 사용자의 현재 위치의 위도 <br><br>
-            - longitude : 사용자의 현재 위치의 경도 <br><br>
             - address : 사용자의 주소 <br><br>
             - profile_url : 사용자의 프로필 이미지 url  <br><br>
             - auth_provider : 소셜로그인 종류 (APPLE, KAKAO) <br><br>
@@ -110,8 +100,6 @@ user_api_specs = {
                     "nickname": "nanuri",
                     "is_active": "true",
                     "is_admin": "false",
-                    "latitude": 0,
-                    "longitude": 0,
                     "address": "나누리시 나누리구 나누리동",
                     "profile_url": "https://nanuri.app/",
                     "auth_provider": "APPLE",

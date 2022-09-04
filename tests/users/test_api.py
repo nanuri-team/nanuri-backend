@@ -76,8 +76,6 @@ class TestUserEndpoints:
             "nickname",
             "is_active",
             "is_admin",
-            "latitude",
-            "longitude",
             "address",
             "auth_provider",
         ]
@@ -101,8 +99,6 @@ class TestUserEndpoints:
             "nickname",
             "is_active",
             "is_admin",
-            "latitude",
-            "longitude",
             "address",
             "auth_provider",
         ],

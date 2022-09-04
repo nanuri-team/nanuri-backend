@@ -14,7 +14,5 @@ class UserFactory(DjangoModelFactory):
     nickname = factory.Faker("first_name")
     is_active = factory.Faker("pybool")
     is_admin = False
-    latitude = factory.Faker("pyfloat", min_value=-90, max_value=90)
-    longitude = factory.Faker("pyfloat", min_value=-90, max_value=90)
     address = factory.Faker("address")
     auth_provider = FuzzyChoice([None, "APPLE", "KAKAO"])
