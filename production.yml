@@ -8,6 +8,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+      args:
+        ENV_NAME: "production"
     env_file:
       - .env
     volumes:
