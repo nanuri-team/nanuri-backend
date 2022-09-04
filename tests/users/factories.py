@@ -7,7 +7,7 @@ from factory.fuzzy import FuzzyChoice
 class UserFactory(DjangoModelFactory):
     class Meta:
         model = get_user_model()
-        django_get_or_create = ("email",)
+        django_get_or_create = ("email", "nickname")
 
     email = factory.Faker("email")
     password = factory.Faker("password")
