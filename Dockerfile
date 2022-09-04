@@ -10,9 +10,13 @@ COPY ./requirements/* /code/requirements/
 
 WORKDIR /code
 
-RUN apt-get update && \
-    apt-get install -y gcc python3-dev && \
-    apt-get install -y libpq-dev
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    gcc python3-dev \
+    libpq-dev \
+    binutils libproj-dev gdal-bin
+
+RUN apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN pip install -r requirements/$ENV_NAME.txt
 
