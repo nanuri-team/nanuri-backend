@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
       args:
-        ENV_NAME: "production"
+        ENV_NAME: "prod"
     env_file:
       - .env
     volumes:
