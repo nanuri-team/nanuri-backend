@@ -1,6 +1,8 @@
+import io
+
 import pytest
-from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+from PIL import Image
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
@@ -43,9 +45,10 @@ def post_image(post):
 
 @pytest.fixture
 def image_file():
-    with open(str(settings.MEDIA_ROOT / "lena.tif"), "rb") as f:
-        image_bytes = f.read()
-    return SimpleUploadedFile("test.tif", image_bytes, "image/tiff")
+    image = Image.new("RGB", (100, 100), (0, 255, 0))
+    buffer = io.BytesIO()
+    image.save(buffer, format="JPEG")
+    return SimpleUploadedFile("test.jpeg", buffer.getvalue(), "image/jpeg")
 
 
 @pytest.fixture
