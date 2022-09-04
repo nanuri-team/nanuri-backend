@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose -f /home/ubuntu/nanuri-backend/docker-compose.yml up -d --build
+docker-compose -f /home/ubuntu/nanuri-backend/production.yml up -d --build
