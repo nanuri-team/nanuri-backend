@@ -1,13 +1,8 @@
 name: nanuri-backend
 
 env:
-  DJANGO_SETTINGS_MODULE: config.settings.test
   AWS_REGION: ap-northeast-2
-  AWS_ENDPOINT_URL: http://localhost:4566
-  AWS_ACCESS_KEY_ID: test
-  AWS_SECRET_ACCESS_KEY: test
   KAKAO_APP_ADMIN_KEY: ${{ secrets.KAKAO_APP_ADMIN_KEY }}
-  AWS_SNS_PLATFORM_APPLICATION_ARN: arn:aws:sns:ap-northeast-2:000000000000:app/APNS/TestApplication
 
 on:
   push:
@@ -21,55 +16,44 @@ jobs:
   ci:
 
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        python-version:
-          - "3.9"
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Start LocalStack
-        run: |
-          pip install localstack awscli-local[ver1]
-          docker pull localstack/localstack
-          localstack start -d
-          echo "Waiting for LocalStack startup..."
-          localstack wait -t 30
-          echo "Startup complete"
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-          cache-dependency-path: 'requirements/local.txt'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
-          pip install flake8
-          if [ -f requirements/local.txt ]; then pip install -r requirements/local.txt; fi
-
-      - name: Format code with black
-        uses: psf/black@stable
-        with:
-          options: "--check --diff --extend-exclude migrations"
-
-      - name: Lint with flake8
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82,F401 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Checkout Code Repository
+        uses: actions/checkout@v3
 
       - name: Download p12 certificate
         run: |
           wget https://github.com/aryansbtloe/resources/raw/master/Certificate/certificate.p12
 
-      - name: Run Tests
+      - name: Create env file
         run: |
-          pytest
+          echo "DJANGO_SETTINGS_MODULE=config.settings.test" > .env
+          echo "AWS_REGION=$AWS_REGION" >> .env
+          echo "AWS_ENDPOINT_URL=http://localstack:4566" >> .env
+          echo "AWS_ACCESS_KEY_ID=test" >> .env
+          echo "AWS_SECRET_ACCESS_KEY=test" >> .env
+          echo "KAKAO_APP_ADMIN_KEY=$KAKAO_APP_ADMIN_KEY" >> .env
+          echo "AWS_SNS_PLATFORM_APPLICATION_ARN=arn:aws:sns:ap-northeast-2:000000000000:app/APNS/TestApplication" >> .env
+
+      - name: Build the Stack
+        run: docker-compose -f local.yml build
+
+      - name: Run DB Migrations
+        run: docker-compose -f local.yml run --rm app sh -c "python manage.py migrate"
+
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          docker-compose -f local.yml run --rm app sh -c "flake8 . --count --select=E9,F63,F7,F82,F401 --show-source --statistics"
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          docker-compose -f local.yml run --rm app sh -c "flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics"
+
+      - name: Run Django Tests
+        run: |
+          docker-compose -f local.yml run --rm app sh -c "pytest"
+
+      - name: Tear down the Stack
+        run: docker-compose -f local.yml down
 
   cd:
     needs:
