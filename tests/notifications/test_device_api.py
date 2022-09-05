@@ -1,6 +1,5 @@
 import pytest
 from django.urls import reverse
-from faker import Faker
 
 from nanuri.aws.sns import sns
 from nanuri.notifications.models import Device
@@ -9,15 +8,16 @@ from .factories import DeviceFactory, SubscriptionFactory
 
 pytestmark = pytest.mark.django_db
 
-fake = Faker()
-
 
 class TestDeviceApi:
     def test_create(self, user_client):
-        device_token = fake.sha256()
+        params = DeviceFactory.build()
         response = user_client.post(
             reverse("nanuri.notifications.api:device-list"),
-            data={"device_token": device_token},
+            data={
+                "device_token": params.device_token,
+                "location": params.location.ewkt,
+            },
             format="json",
         )
         assert response.status_code == 201

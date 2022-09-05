@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from django.conf import settings
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils.translation import gettext_lazy as _
 
 from nanuri.aws.sns import sns
@@ -18,6 +18,7 @@ class Device(models.Model):
     device_token = models.TextField(null=True, blank=True)
     endpoint_arn = models.TextField(null=True, blank=True)
     opt_in = models.BooleanField(default=True)
+    location = models.PointField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -8,7 +8,14 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ["uuid", "user", "device_token", "endpoint_arn", "opt_in"]
+        fields = [
+            "uuid",
+            "user",
+            "device_token",
+            "endpoint_arn",
+            "opt_in",
+            "location",
+        ]
         extra_kwargs = {
             "uuid": {"read_only": True},
             "endpoint_arn": {"read_only": True},

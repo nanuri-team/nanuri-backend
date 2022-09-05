@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib import admin
+from django.contrib.gis import admin
 
 from .models import Device, Subscription
 
@@ -7,10 +7,10 @@ from .models import Device, Subscription
 class DeviceChangeForm(forms.ModelForm):
     class Meta:
         model = Device
-        fields = ("user", "device_token", "opt_in", "endpoint_arn")
+        fields = ("user", "device_token", "opt_in", "endpoint_arn", "location")
 
 
-class DeviceAdmin(admin.ModelAdmin):
+class DeviceAdmin(admin.OSMGeoAdmin):
     form = DeviceChangeForm
     list_display = [
         "uuid",
@@ -18,6 +18,7 @@ class DeviceAdmin(admin.ModelAdmin):
         "device_token",
         "opt_in",
         "endpoint_arn",
+        "location",
         "created_at",
         "updated_at",
     ]
