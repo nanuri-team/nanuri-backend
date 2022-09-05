@@ -21,3 +21,5 @@ RUN apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 RUN pip install -r requirements/$ENV_NAME.txt
 
 COPY . /code
+
+ENTRYPOINT ["/code/scripts/entrypoint.sh"]
