@@ -10,11 +10,6 @@ from ..users.factories import UserFactory
 fake = Faker()
 
 
-def generate_random_ewkt():
-    latitude, longitude = fake.latlng()
-    return f"SRID=4326;POINT ({longitude} {latitude})"
-
-
 class DeviceFactory(DjangoModelFactory):
     class Meta:
         model = Device
@@ -22,7 +17,10 @@ class DeviceFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     device_token = factory.Faker("sha256")
     opt_in = factory.Faker("pybool")
-    location = factory.Faker("pystr_format", string_format=generate_random_ewkt())
+    location = factory.Faker(
+        "pystr_format",
+        string_format="SRID=4326;POINT (###.##### ###.#####)",
+    )
 
 
 class SubscriptionFactory(DjangoModelFactory):

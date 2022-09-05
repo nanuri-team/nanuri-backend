@@ -1,4 +1,8 @@
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import Point
+from django.contrib.gis.measure import D
 from django.core.files.storage import default_storage
+from django.db.models import F
 from drf_spectacular.utils import extend_schema_view
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -21,6 +25,18 @@ class PostListCreateAPIView(ListCreateAPIView):
         queryset = Post.objects.all()
         if user := self.request.query_params.get("user", default=None):
             queryset = queryset.filter(writer__uuid=user)
+
+        longitude = self.request.query_params.get("longitude", default=None)
+        latitude = self.request.query_params.get("latitude", default=None)
+        distance = self.request.query_params.get("distance", default=None)
+        if longitude and latitude and distance:
+            user_location = Point(float(longitude), float(latitude), srid=4326)
+            queryset = queryset.annotate(
+                distance=Distance(F("writer__device__location"), user_location)
+            ).order_by("distance")
+            if distance:
+                queryset = queryset.filter(distance__lt=D(m=distance))
+
         return queryset
 
     def perform_create(self, serializer):
