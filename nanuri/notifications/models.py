@@ -14,7 +14,7 @@ class Device(models.Model):
         default=uuid4,
         editable=False,
     )
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     device_token = models.TextField(null=True, blank=True)
     endpoint_arn = models.TextField(null=True, blank=True)
     opt_in = models.BooleanField(default=True)
