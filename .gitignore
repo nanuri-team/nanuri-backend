@@ -12,3 +12,4 @@ volume/
 *.env
 db.sqlite3
 dynamodb/
+.coverage
