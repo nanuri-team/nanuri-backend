@@ -1,4 +1,5 @@
 import pytest
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import connection
 from django.urls import reverse
@@ -33,6 +34,11 @@ class TestPostEndpoints:
 
     # FIXME: Raw SQL 쿼리 날리지 말고 함수로 거리 계산하도록 수정하기
     #  django.contrib.gis.geos.Point 클래스에서 제공하는 distance 메서드는 2d 거리를 계산해서 정확하지 않음
+    @pytest.mark.skipif(
+        condition=settings.DATABASES["default"]["ENGINE"]
+        != "django.contrib.gis.db.backends.postgis",
+        reason="PostGIS 데이터베이스를 사용하지 않습니다",
+    )
     def test_list_nearby_posts_only(self, user):
         user_client = APIClient()
         user_client.force_authenticate(user=user)
