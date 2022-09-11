@@ -47,6 +47,7 @@ class TestUserEndpoints:
             data={
                 "email": user.email,
                 "password": user.password,
+                "location": user.location.ewkt,
             },
             format="json",
         )
@@ -54,6 +55,8 @@ class TestUserEndpoints:
 
         assert response.status_code == 201
         assert result["email"] == user.email
+        assert "password" not in result
+        assert result["location"] == user.location.ewkt
 
     def test_retrieve(self, user_client, user):
         response = user_client.get(
@@ -67,6 +70,7 @@ class TestUserEndpoints:
         assert response.status_code == 200
         assert result["uuid"] == str(user.uuid)
         assert result["email"] == user.email
+        assert result["location"] == user.location.ewkt
 
     def test_update(self, user_client, user):
         new_user = UserFactory.build()
@@ -78,9 +82,11 @@ class TestUserEndpoints:
             "is_admin",
             "address",
             "auth_provider",
+            "location",
         ]
         data = {field: getattr(new_user, field) for field in fields}
         data["password"] = new_password
+        data["location"] = data["location"].ewkt
         response = user_client.put(
             reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid}),
             data=data,
@@ -101,13 +107,18 @@ class TestUserEndpoints:
             "is_admin",
             "address",
             "auth_provider",
+            "location",
         ],
     )
     def test_partial_update(self, user_client, user, field):
         params = UserFactory.build()
+        data = {field: getattr(params, field)}
+        # location 필드는 location.ewkt 값이 할당되어야 함
+        if field == "location":
+            data[field] = data[field].ewkt
         response = user_client.patch(
             reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid}),
-            data={field: getattr(params, field)},
+            data=data,
             format="json",
         )
         result = response.json()

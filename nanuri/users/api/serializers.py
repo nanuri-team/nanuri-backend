@@ -23,7 +23,20 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ("id",)
+        fields = (
+            "uuid",
+            "email",
+            "nickname",
+            "is_active",
+            "is_admin",
+            "last_login",
+            "address",
+            "profile",
+            "auth_provider",
+            "location",
+            "posts",
+            "favorite_posts",
+        )
         extra_kwargs = {
             "password": {
                 "write_only": True,
