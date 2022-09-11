@@ -12,7 +12,14 @@ posts_api_specs = {
                 description="User UUID",
                 required=False,
                 type=str,
-            )
+            ),
+            OpenApiParameter(
+                name="distance",
+                location=OpenApiParameter.QUERY,
+                description="현재 위치로부터 몇 미터 반경 내의 상품을 검색할 것인지",
+                required=False,
+                type=int,
+            ),
         ],
     ),
     "post": extend_schema(
