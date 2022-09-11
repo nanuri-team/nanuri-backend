@@ -1,5 +1,4 @@
 from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import D
 from django.core.files.storage import default_storage
 from django.db.models import F
