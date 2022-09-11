@@ -1,8 +1,10 @@
 import pytest
+from django.contrib.auth import get_user_model
+from django.db import connection
 from django.urls import reverse
+from rest_framework.test import APIClient
 
 from nanuri.posts.models import Post
-from tests.notifications.factories import DeviceFactory
 
 from .factories import PostFactory
 
@@ -28,6 +30,44 @@ class TestPostEndpoints:
 
         assert response.status_code == 200
         assert len(result["results"]) == 20
+
+    # FIXME: Raw SQL 쿼리 날리지 말고 함수로 거리 계산하도록 수정하기
+    #  django.contrib.gis.geos.Point 클래스에서 제공하는 distance 메서드는 2d 거리를 계산해서 정확하지 않음
+    def test_list_nearby_posts_only(self, user):
+        user_client = APIClient()
+        user_client.force_authenticate(user=user)
+        PostFactory.create_batch(size=100)
+        max_distance_in_meter = 5000 * 1000  # (= 5,000 km)
+
+        response = user_client.get(
+            reverse("nanuri.posts.api:list"),
+            data={
+                "distance": max_distance_in_meter,
+            },
+        )
+
+        assert response.status_code == 200
+        with connection.cursor() as cursor:
+            for result in response.json()["results"]:
+                writer = get_user_model().objects.get(email=result["writer"])
+                sql = (
+                    "SELECT ST_DistanceSphere("
+                    "'SRID=4326;POINT (%s %s)'::geometry, "
+                    "'SRID=4326;POINT (%s %s)'::geometry)"
+                )
+                cursor.execute(
+                    sql,
+                    [
+                        user.location.x,
+                        user.location.y,
+                        writer.location.x,
+                        writer.location.y,
+                    ],
+                )
+                row = cursor.fetchone()
+                assert row is not None
+                distance = row[0]
+                assert distance < max_distance_in_meter
 
     def test_create(self, user_client, image_file):
         post = PostFactory.build()

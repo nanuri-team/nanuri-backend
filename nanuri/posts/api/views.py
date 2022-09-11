@@ -26,16 +26,15 @@ class PostListCreateAPIView(ListCreateAPIView):
         if user := self.request.query_params.get("user", default=None):
             queryset = queryset.filter(writer__uuid=user)
 
-        longitude = self.request.query_params.get("longitude", default=None)
-        latitude = self.request.query_params.get("latitude", default=None)
         distance = self.request.query_params.get("distance", default=None)
-        if longitude and latitude and distance:
-            user_location = Point(float(longitude), float(latitude), srid=4326)
-            queryset = queryset.annotate(
-                distance=Distance(F("writer__device__location"), user_location)
-            ).order_by("distance")
-            if distance:
-                queryset = queryset.filter(distance__lt=D(m=distance))
+        if distance:
+            queryset = (
+                queryset.annotate(
+                    distance=Distance(F("writer__location"), self.request.user.location)
+                )
+                .order_by("distance")
+                .filter(distance__lt=D(m=distance))
+            )
 
         return queryset
 
