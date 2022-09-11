@@ -16,7 +16,6 @@ class TestDeviceApi:
             reverse("nanuri.notifications.api:device-list"),
             data={
                 "device_token": params.device_token,
-                "location": params.location.ewkt,
             },
             format="json",
         )

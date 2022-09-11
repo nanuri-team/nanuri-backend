@@ -14,7 +14,6 @@ class DeviceSerializer(serializers.ModelSerializer):
             "device_token",
             "endpoint_arn",
             "opt_in",
-            "location",
         ]
         extra_kwargs = {
             "uuid": {"read_only": True},

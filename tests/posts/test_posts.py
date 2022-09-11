@@ -29,29 +29,6 @@ class TestPostEndpoints:
         assert response.status_code == 200
         assert len(result["results"]) == 20
 
-    def test_list_nearby_posts_only(self, user_client):
-        posts = PostFactory.create_batch(size=100)
-        devices = []
-        for post in posts:
-            device = DeviceFactory.create(user=post.writer)
-            devices.append(device)
-
-        base_location = posts[0].writer.device.location
-        max_distance_in_meter = 5000 * 1000  # (= 5,000 km)
-
-        response = user_client.get(
-            reverse("nanuri.posts.api:list"),
-            data={
-                "longitude": base_location.x,
-                "latitude": base_location.y,
-                "distance": max_distance_in_meter,
-            },
-        )
-
-        assert response.status_code == 200
-
-        # TODO: 주어진 반경 내의 글만 조회되었는지 테스트하기
-
     def test_create(self, user_client, image_file):
         post = PostFactory.build()
         num_post_images = 3

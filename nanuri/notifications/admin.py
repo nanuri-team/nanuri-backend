@@ -7,7 +7,7 @@ from .models import Device, Subscription
 class DeviceChangeForm(forms.ModelForm):
     class Meta:
         model = Device
-        fields = ("user", "device_token", "opt_in", "endpoint_arn", "location")
+        fields = ("user", "device_token", "opt_in", "endpoint_arn")
 
 
 class DeviceAdmin(admin.OSMGeoAdmin):
@@ -18,7 +18,6 @@ class DeviceAdmin(admin.OSMGeoAdmin):
         "device_token",
         "opt_in",
         "endpoint_arn",
-        "location",
         "created_at",
         "updated_at",
     ]
