@@ -3,7 +3,6 @@ from django.contrib.gis.measure import D
 from django.core.files.storage import default_storage
 from django.db.models import F
 from drf_spectacular.utils import extend_schema_view
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
@@ -15,7 +14,6 @@ from .serializers import CommentSerializer, PostSerializer, SubCommentSerializer
 
 @extend_schema_view(**specs.posts_api_specs)
 class PostListCreateAPIView(ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
@@ -50,7 +48,6 @@ class PostListCreateAPIView(ListCreateAPIView):
 
 @extend_schema_view(**specs.post_api_specs)
 class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -79,7 +76,6 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 @extend_schema_view(**specs.comments_api_specs)
 class CommentListCreateAPIView(ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer
     pagination_class = LimitOffsetPagination
@@ -99,7 +95,6 @@ class CommentListCreateAPIView(ListCreateAPIView):
 
 @extend_schema_view(**specs.comment_api_specs)
 class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer
     lookup_field = "uuid"
@@ -111,7 +106,6 @@ class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 @extend_schema_view(**specs.sub_comments_api_specs)
 class SubCommentListCreateAPIView(ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SubCommentSerializer
     pagination_class = LimitOffsetPagination
@@ -131,7 +125,6 @@ class SubCommentListCreateAPIView(ListCreateAPIView):
 
 @extend_schema_view(**specs.sub_comment_api_specs)
 class SubCommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SubCommentSerializer
     lookup_field = "uuid"

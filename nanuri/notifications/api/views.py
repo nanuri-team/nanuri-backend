@@ -1,7 +1,6 @@
 from botocore.exceptions import ClientError
 from drf_spectacular.utils import extend_schema_view
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import (
     CreateAPIView,
     ListCreateAPIView,
@@ -21,7 +20,6 @@ from .serializers import DeviceSerializer, MessageSerializer, SubscriptionSerial
 
 @extend_schema_view(**specs.devices_api_specs)
 class DeviceCreateAPIView(CreateAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = DeviceSerializer
 
@@ -32,7 +30,6 @@ class DeviceCreateAPIView(CreateAPIView):
 
 @extend_schema_view(**specs.device_api_specs)
 class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = DeviceSerializer
     lookup_field = "uuid"
@@ -44,7 +41,6 @@ class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 @extend_schema_view(**specs.subscriptions_api_specs)
 class SubscriptionListCreateAPIView(ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     pagination_class = LimitOffsetPagination
     serializer_class = SubscriptionSerializer
@@ -58,7 +54,6 @@ class SubscriptionListCreateAPIView(ListCreateAPIView):
 
 @extend_schema_view(**specs.subscription_api_specs)
 class SubscriptionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializer
     lookup_field = "uuid"
@@ -70,7 +65,6 @@ class SubscriptionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 @extend_schema_view(**specs.messages_api_specs)
 class MessageAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = MessageSerializer
 
