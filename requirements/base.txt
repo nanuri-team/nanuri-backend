@@ -10,3 +10,4 @@ Pillow~=9.2.0
 psycopg2~=2.9.3
 drf-spectacular~=0.23.0
 django-request-logging~=0.7.5
+djangorestframework-simplejwt[crypto]~=5.2.0
