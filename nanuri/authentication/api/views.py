@@ -6,6 +6,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 from ..models import KakaoAccount
 from . import exceptions as ex
@@ -100,3 +105,18 @@ class KakaoAccountCreateAPIView(APIView):
                 data=token_serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema_view(**specs.jwt_obtain_api_specs)
+class JsonWebTokenObtainPairView(TokenObtainPairView):
+    pass
+
+
+@extend_schema_view(**specs.jwt_refresh_api_specs)
+class JsonWebTokenRefreshView(TokenRefreshView):
+    pass
+
+
+@extend_schema_view(**specs.jwt_verify_api_specs)
+class JsonWebTokenVerifyView(TokenVerifyView):
+    pass
