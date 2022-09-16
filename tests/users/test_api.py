@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import check_password
 from django.urls import reverse
 
 from .factories import UserFactory
@@ -57,6 +58,9 @@ class TestUserEndpoints:
         assert result["email"] == user.email
         assert "password" not in result
         assert result["location"] == user.location.ewkt
+
+        created_user = get_user_model().objects.get(uuid=result["uuid"])
+        assert check_password(user.password, created_user.password)
 
     def test_retrieve(self, user_client, user):
         response = user_client.get(

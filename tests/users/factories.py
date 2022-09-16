@@ -1,8 +1,9 @@
 import factory
-from django.contrib.auth import get_user_model
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 from faker import Faker
+
+from nanuri.users.models import User
 
 fake = Faker()
 
@@ -14,7 +15,7 @@ def generate_random_ewkt():
 
 class UserFactory(DjangoModelFactory):
     class Meta:
-        model = get_user_model()
+        model = User
         django_get_or_create = ("email",)
 
     email = factory.Faker("email")
@@ -25,3 +26,10 @@ class UserFactory(DjangoModelFactory):
     address = factory.Faker("address")
     auth_provider = FuzzyChoice([None, "APPLE", "KAKAO"])
     location = factory.LazyFunction(generate_random_ewkt)
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        instance = super()._create(model_class, *args, **kwargs)
+        instance.set_password(instance.password)
+        instance.save()
+        return instance

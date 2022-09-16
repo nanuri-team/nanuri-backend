@@ -10,4 +10,19 @@ urlpatterns = [
         views.KakaoAccountCreateAPIView.as_view(),
         name="kakao-account-list",
     ),
+    path(
+        "token/",
+        views.JsonWebTokenObtainPairView.as_view(),
+        name="token_obtain_pair",
+    ),
+    path(
+        "token/refresh/",
+        views.JsonWebTokenRefreshView.as_view(),
+        name="token_refresh",
+    ),
+    path(
+        "token/verify/",
+        views.JsonWebTokenVerifyView.as_view(),
+        name="token_verify",
+    ),
 ]

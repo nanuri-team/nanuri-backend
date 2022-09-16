@@ -29,3 +29,15 @@ class AuthTokenSerializer(serializers.Serializer):
     # 이 정보를 DB에 등록할 것이 아니므로 사실상 필요없는 메서드
     def create(self, validated_data):
         super().create(validated_data)
+
+
+class JsonWebTokenSerializer(serializers.Serializer):
+    type = serializers.CharField(max_length=32)
+    access = serializers.CharField(max_length=2048)
+    refresh = serializers.CharField(max_length=2048)
+
+    def update(self, instance, validated_data):
+        super().update(instance, validated_data)
+
+    def create(self, validated_data):
+        super().create(validated_data)

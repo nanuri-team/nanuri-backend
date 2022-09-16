@@ -3,14 +3,19 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema_view
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 from ..models import KakaoAccount
 from . import exceptions as ex
 from . import specs
-from .serializers import AuthTokenSerializer, KakaoAccountSerializer
+from .serializers import JsonWebTokenSerializer, KakaoAccountSerializer
 
 
 def get_kakao_account_info(kakao_id):
@@ -74,7 +79,7 @@ class KakaoAccountCreateAPIView(APIView):
     serializer_class = KakaoAccountSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = KakaoAccountSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             kakao_id = serializer.validated_data["kakao_id"]
             kakao_account_info = get_kakao_account_info(kakao_id)
@@ -84,13 +89,12 @@ class KakaoAccountCreateAPIView(APIView):
                 KakaoAccount.objects.get(user=user, kakao_id=kakao_id)
             except KakaoAccount.DoesNotExist:
                 serializer.save(user=user, kakao_id=kakao_id)
-            Token.objects.filter(user=user).update(key=Token.generate_key())
-            token, _ = Token.objects.get_or_create(user=user)
-            token_serializer = AuthTokenSerializer(
+            refresh = RefreshToken.for_user(user)
+            token_serializer = JsonWebTokenSerializer(
                 data={
-                    "type": "Token",
-                    "token": token.key,
-                    "uuid": user.uuid,
+                    "type": "Bearer",
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh),
                 }
             )
             if token_serializer.is_valid(raise_exception=True):
@@ -101,3 +105,18 @@ class KakaoAccountCreateAPIView(APIView):
                 data=token_serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema_view(**specs.jwt_obtain_api_specs)
+class JsonWebTokenObtainPairView(TokenObtainPairView):
+    pass
+
+
+@extend_schema_view(**specs.jwt_refresh_api_specs)
+class JsonWebTokenRefreshView(TokenRefreshView):
+    pass
+
+
+@extend_schema_view(**specs.jwt_verify_api_specs)
+class JsonWebTokenVerifyView(TokenVerifyView):
+    pass
