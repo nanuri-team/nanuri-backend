@@ -37,8 +37,8 @@ class TestUserEndpoints:
         assert response.status_code == 200
         count = response.json()["count"]
         results = response.json()["results"]
-        assert count == 1
-        assert len(results) == 1
+        assert count > 0
+        assert len(results) > 0
         assert results[0]["nickname"] == user.nickname
 
     def test_create(self, user_client):
@@ -106,6 +106,7 @@ class TestUserEndpoints:
         "field",
         [
             "email",
+            "password",
             "nickname",
             "is_active",
             "is_admin",
@@ -120,15 +121,21 @@ class TestUserEndpoints:
         # location 필드는 location.ewkt 값이 할당되어야 함
         if field == "location":
             data[field] = data[field].ewkt
+        if field == "password":
+            data[field] = "1234"
         response = user_client.patch(
             reverse("nanuri.users.api:detail", kwargs={"uuid": user.uuid}),
             data=data,
             format="json",
         )
         result = response.json()
+        if field == "password":
+            updated_user = get_user_model().objects.get(uuid=result["uuid"])
+            assert check_password("1234", updated_user.password)
+        else:
+            assert result[field] == getattr(params, field)
 
         assert response.status_code == 200
-        assert result[field] == getattr(params, field)
 
     def test_destroy(self, user_client, user):
         assert get_user_model().objects.filter(uuid=str(user.uuid)).count() == 1
