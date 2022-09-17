@@ -3,9 +3,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema_view
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -15,7 +15,7 @@ from rest_framework_simplejwt.views import (
 from ..models import KakaoAccount
 from . import exceptions as ex
 from . import specs
-from .serializers import JsonWebTokenSerializer, KakaoAccountSerializer
+from .serializers import AuthTokenSerializer, KakaoAccountSerializer
 
 
 def get_kakao_account_info(kakao_id):
@@ -89,12 +89,13 @@ class KakaoAccountCreateAPIView(APIView):
                 KakaoAccount.objects.get(user=user, kakao_id=kakao_id)
             except KakaoAccount.DoesNotExist:
                 serializer.save(user=user, kakao_id=kakao_id)
-            refresh = RefreshToken.for_user(user)
-            token_serializer = JsonWebTokenSerializer(
+            Token.objects.filter(user=user).update(key=Token.generate_key())
+            token, _ = Token.objects.get_or_create(user=user)
+            token_serializer = AuthTokenSerializer(
                 data={
-                    "type": "Bearer",
-                    "access": str(refresh.access_token),
-                    "refresh": str(refresh),
+                    "type": "Token",
+                    "token": token.key,
+                    "uuid": user.uuid,
                 }
             )
             if token_serializer.is_valid(raise_exception=True):

@@ -5,7 +5,7 @@ from rest_framework_simplejwt.serializers import (
     TokenVerifySerializer,
 )
 
-from .serializers import JsonWebTokenSerializer
+from .serializers import AuthTokenSerializer
 
 kakao_accounts_api_specs = {
     "post": extend_schema(
@@ -14,7 +14,7 @@ kakao_accounts_api_specs = {
         tags=["Kakao Account"],
         responses={
             201: OpenApiResponse(
-                response=JsonWebTokenSerializer,
+                response=AuthTokenSerializer,
                 description="카카오 계정 생성과 동시에 액세스 토큰과 리프레시 토큰이 발급됩니다.",
             )
         },

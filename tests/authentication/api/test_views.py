@@ -15,7 +15,6 @@ fake = Faker()
 class TestAuthenticationEndpoints:
     kakao_id = 2164473263
 
-    @pytest.mark.skip
     def test_save_user_and_get_token(self, user_client):
         response = user_client.post(
             reverse("nanuri.authentication:kakao-account-list"),
@@ -29,6 +28,7 @@ class TestAuthenticationEndpoints:
         assert "token" in result
         assert "uuid" in result
 
+    @pytest.mark.skip
     def test_save_user_and_get_jwt(self, user_client):
         response = user_client.post(
             reverse("nanuri.authentication:kakao-account-list"),
@@ -41,6 +41,7 @@ class TestAuthenticationEndpoints:
         assert result["type"] == "Bearer"
         assert "access" in result
         assert "refresh" in result
+        assert "uuid" in result
 
     def test_create_kakao_account_get_method_failed(self, user_client):
         response = user_client.get(reverse("nanuri.authentication:kakao-account-list"))
