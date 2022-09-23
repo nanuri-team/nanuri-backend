@@ -8,7 +8,6 @@ class PostAdmin(admin.ModelAdmin):
         "uuid",
         "title",
         "writer",
-        "writer_address",
         "writer_nickname",
         "image",
         "category",
@@ -28,9 +27,6 @@ class PostAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     ]
-
-    def writer_address(self, obj):
-        return obj.writer.address
 
     def writer_nickname(self, obj):
         return obj.writer.nickname

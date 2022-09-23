@@ -10,11 +10,6 @@ class PostSerializer(serializers.ModelSerializer):
         slug_field="email",
     )
 
-    writer_address = serializers.StringRelatedField(
-        source="writer.address",
-        read_only=True,
-        many=False,
-    )
     writer_nickname = serializers.StringRelatedField(
         source="writer.nickname",
         read_only=True,
