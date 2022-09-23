@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - "main"
+      - "develop"
   pull_request:
     branches:
       - "main"
@@ -63,7 +64,7 @@ jobs:
       - ci
 
     runs-on: ubuntu-20.04
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
 
     steps:
       - uses: actions/checkout@v2
