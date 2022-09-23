@@ -1,13 +1,14 @@
 import pytest
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.gis.geos import Point
 from django.db import connection
 from django.urls import reverse
 from rest_framework.test import APIClient
 
 from nanuri.posts.models import Post
 
-from .factories import PostFactory
+from .factories import PostFactory, UserFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -22,7 +23,7 @@ class TestPostEndpoints:
         assert len(result["results"]) == len(posts)
 
     def test_list_with_pagination(self, user_client):
-        PostFactory.create_batch(size=100)
+        PostFactory.create_batch(size=21)
         response = user_client.get(
             reverse("nanuri.posts.api:list"),
             data={"offset": "0", "limit": "20"},
