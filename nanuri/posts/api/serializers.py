@@ -1,20 +1,12 @@
 from rest_framework import serializers
 
+from nanuri.users.api.serializers import UserSerializer
+
 from ..models import Comment, Post, SubComment
 
 
 class PostSerializer(serializers.ModelSerializer):
-    writer = serializers.SlugRelatedField(
-        many=False,
-        read_only=True,
-        slug_field="email",
-    )
-
-    writer_nickname = serializers.StringRelatedField(
-        source="writer.nickname",
-        read_only=True,
-        many=False,
-    )
+    writer = UserSerializer(many=False, read_only=True)
 
     participants = serializers.SlugRelatedField(
         many=True,

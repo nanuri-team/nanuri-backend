@@ -1,14 +1,13 @@
 import pytest
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.gis.geos import Point
 from django.db import connection
 from django.urls import reverse
 from rest_framework.test import APIClient
 
 from nanuri.posts.models import Post
 
-from .factories import PostFactory, UserFactory
+from .factories import PostFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -56,7 +55,7 @@ class TestPostEndpoints:
         assert response.status_code == 200
         with connection.cursor() as cursor:
             for result in response.json()["results"]:
-                writer = get_user_model().objects.get(email=result["writer"])
+                writer = get_user_model().objects.get(email=result["writer"]["email"])
                 sql = (
                     "SELECT ST_DistanceSphere("
                     "'SRID=4326;POINT (%s %s)'::geometry, "
