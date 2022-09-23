@@ -38,7 +38,6 @@ class UserSerializer(serializers.ModelSerializer):
             "is_active",
             "is_admin",
             "last_login",
-            "address",
             "profile",
             "auth_provider",
             "location",
