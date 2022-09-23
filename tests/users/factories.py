@@ -23,7 +23,6 @@ class UserFactory(DjangoModelFactory):
     nickname = factory.Faker("first_name")
     is_active = factory.Faker("pybool")
     is_admin = False
-    address = factory.Faker("address")
     auth_provider = FuzzyChoice([None, "APPLE", "KAKAO"])
     location = factory.LazyFunction(generate_random_ewkt)
 

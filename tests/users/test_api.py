@@ -84,7 +84,6 @@ class TestUserEndpoints:
             "nickname",
             "is_active",
             "is_admin",
-            "address",
             "auth_provider",
             "location",
         ]
@@ -110,7 +109,6 @@ class TestUserEndpoints:
             "nickname",
             "is_active",
             "is_admin",
-            "address",
             "auth_provider",
             "location",
         ],

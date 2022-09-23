@@ -42,7 +42,6 @@ class User(AbstractBaseUser):
     nickname = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    address = models.CharField(max_length=255, null=True, blank=True, default=None)
     profile = models.ImageField(null=True, blank=True, default=None)
     auth_provider = models.CharField(
         max_length=15,
