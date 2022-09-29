@@ -3,7 +3,6 @@ import io
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
-from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 from .notifications.factories import DeviceFactory, SubscriptionFactory
@@ -49,11 +48,6 @@ def image_file():
     buffer = io.BytesIO()
     image.save(buffer, format="JPEG")
     return SimpleUploadedFile("test.jpeg", buffer.getvalue(), "image/jpeg")
-
-
-@pytest.fixture
-def token(user):
-    return Token.objects.create(user=user)
 
 
 @pytest.fixture
