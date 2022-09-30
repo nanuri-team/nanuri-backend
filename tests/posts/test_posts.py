@@ -55,7 +55,7 @@ class TestPostEndpoints:
         assert response.status_code == 200
         with connection.cursor() as cursor:
             for result in response.json()["results"]:
-                writer = get_user_model().objects.get(email=result["writer"])
+                writer = get_user_model().objects.get(email=result["writer"]["email"])
                 sql = (
                     "SELECT ST_DistanceSphere("
                     "'SRID=4326;POINT (%s %s)'::geometry, "
