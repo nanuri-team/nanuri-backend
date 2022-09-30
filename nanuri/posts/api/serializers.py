@@ -75,14 +75,21 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        exclude = ("id",)
+        fields = (
+            "uuid",
+            "post",
+            "text",
+            "writer",
+            "created_at",
+            "updated_at",
+        )
 
 
 class SubCommentSerializer(serializers.ModelSerializer):
     comment = serializers.SlugRelatedField(
         many=False,
+        read_only=True,
         slug_field="uuid",
-        queryset=Comment.objects.all(),
     )
     writer = serializers.SlugRelatedField(
         many=False,
@@ -92,4 +99,11 @@ class SubCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubComment
-        exclude = ("id",)
+        fields = (
+            "uuid",
+            "comment",
+            "text",
+            "writer",
+            "created_at",
+            "updated_at",
+        )
