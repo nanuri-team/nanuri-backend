@@ -7,6 +7,7 @@ from ..models import Comment, Post, SubComment
 
 class PostSerializer(serializers.ModelSerializer):
     writer = UserSerializer(many=False, read_only=True)
+    distance = serializers.CharField(max_length=255, read_only=True)
 
     participants = serializers.SlugRelatedField(
         many=True,
@@ -26,7 +27,33 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        exclude = ("id",)
+        fields = (
+            "uuid",
+            "title",
+            "category",
+            "image",
+            "unit_price",
+            "quantity",
+            "description",
+            "min_participants",
+            "max_participants",
+            "num_participants",
+            "product_url",
+            "trade_type",
+            "order_status",
+            "is_published",
+            "published_at",
+            "view_count",
+            "waited_from",
+            "waited_until",
+            "created_at",
+            "updated_at",
+            "writer",
+            "distance",
+            "participants",
+            "favored_by",
+            "images",
+        )
         extra_kwargs = {
             "num_participants": {"read_only": True},
             "published_at": {"read_only": True},
