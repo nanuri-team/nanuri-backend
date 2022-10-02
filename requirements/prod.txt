@@ -1,3 +1,4 @@
 -r base.txt
 
 django_storages~=1.12.3
+sentry-sdk~=1.9.9
