@@ -1,3 +1,6 @@
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from .base import *  # noqa
 
 DEBUG = False
@@ -42,3 +45,18 @@ AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
 AWS_S3_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
 AWS_S3_SECRET_ACCESS_KEY = AWS_SECRET_ACCESS_KEY
 AWS_S3_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com"
+
+
+sentry_sdk.init(
+    dsn=os.environ["SENTRY_DSN"],
+    integrations=[
+        DjangoIntegration(),
+    ],
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True,
+)

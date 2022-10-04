@@ -20,18 +20,17 @@ class PostListCreateAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Post.objects.all()
+
+        if location := self.request.user.location:
+            queryset = queryset.annotate(
+                distance=Distance(F("writer__location"), location)
+            )
+
         if user := self.request.query_params.get("user", default=None):
             queryset = queryset.filter(writer__uuid=user)
 
-        distance = self.request.query_params.get("distance", default=None)
-        if distance:
-            queryset = (
-                queryset.annotate(
-                    distance=Distance(F("writer__location"), self.request.user.location)
-                )
-                .order_by("distance")
-                .filter(distance__lt=D(m=distance))
-            )
+        if distance := self.request.query_params.get("distance", default=None):
+            queryset = queryset.filter(distance__lt=D(m=distance)).order_by("distance")
 
         return queryset
 
