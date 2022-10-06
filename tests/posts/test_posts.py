@@ -75,6 +75,18 @@ class TestPostEndpoints:
                 distance = row[0]
                 assert distance < max_distance_in_meter
 
+    def test_list_by_category(self, user_client):
+        for category in Post.Category.values:
+            PostFactory.create_batch(size=2, category=category)
+
+        response = user_client.get(
+            reverse("nanuri.posts.api:list"),
+            {"category": Post.Category.FOOD.name},
+        )
+
+        results = response.json()["results"]
+        assert len(results) == 2
+
     def test_create(self, user_client, image_file):
         post = PostFactory.build()
         num_post_images = 3
