@@ -32,8 +32,8 @@ class PostListCreateAPIView(ListCreateAPIView):
         if distance := self.request.query_params.get("distance"):
             queryset = queryset.filter(distance__lt=D(m=distance)).order_by("distance")
 
-        if category := self.request.query_params.get("category"):
-            queryset = queryset.filter(category=category)
+        if categories := self.request.query_params.getlist("category"):
+            queryset = queryset.filter(category__in=categories)
 
         return queryset
 
