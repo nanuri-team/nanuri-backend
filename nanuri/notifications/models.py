@@ -15,9 +15,20 @@ class Device(models.Model):
         editable=False,
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    device_token = models.TextField(null=True, blank=True)
-    endpoint_arn = models.TextField(null=True, blank=True)
-    opt_in = models.BooleanField(default=True)
+    device_token = models.TextField(
+        null=True,
+        blank=True,
+        help_text="기기마다 고유한 문자열 값입니다. iOS 기기인 경우 APNs를 통해 얻을 수 있습니다.",
+    )
+    endpoint_arn = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Amazon SNS에서 사용되는 모바일 엔드포인트 ARN 주소입니다.",
+    )
+    opt_in = models.BooleanField(
+        default=True,
+        help_text="모바일 푸시 알림 수신 여부를 나타냅니다.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
