@@ -1,6 +1,5 @@
 from drf_spectacular.utils import extend_schema_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import User
@@ -13,7 +12,6 @@ class UserListCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all().order_by("created_at")
     serializer_class = UserSerializer
-    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         queryset = self.queryset
