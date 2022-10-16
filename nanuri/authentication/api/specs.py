@@ -24,7 +24,7 @@ kakao_accounts_api_specs = {
                 description="`kakao_id`는 숫자로 이루어진 카카오 고유 ID입니다. 카카오 SDK를 통해 얻을 수 있습니다. "
                 '카카오 로그인 절차에 대한 자세한 설명은 <a href="https://www.notion.so/mingging/baea8a7e3c1d4853ad82561199abba23" target="_blank">이 문서</a>를 참고하세요.',
                 value={
-                    "kakao_id": 2164473263,
+                    "kakao_id": 1234567890,
                 },
                 request_only=True,
             )
@@ -124,7 +124,7 @@ jwt_refresh_api_specs = {
                         ),
                     },
                 ),
-                description="주어진 JWT 리프레시 토큰이 만료된 경우, 401 상태 코드와 함께 에러 정보가 담긴 JSON 데이터가 반환됩니다.",
+                description="전달한 JWT 리프레시 토큰이 만료된 경우, 401 상태 코드와 함께 에러 정보가 담긴 JSON 데이터가 반환됩니다.",
             ),
         },
     )
@@ -133,8 +133,8 @@ jwt_refresh_api_specs = {
 
 jwt_verify_api_specs = {
     "post": extend_schema(
-        summary="JWT 액세스 토큰을 검증합니다.",
-        description="JWT 액세스 토큰을 검증합니다.",
+        summary="JWT를 검증합니다.",
+        description="JWT를 검증합니다.",
         tags=["Token"],
         examples=[
             OpenApiExample(
@@ -142,14 +142,14 @@ jwt_verify_api_specs = {
                 value={
                     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY1OTEwNTA0LCJpYXQiOjE2NjU5MTAyMDQsImp0aSI6IjYwY2M2NDk0ZmIyYjRkYzdiYjlmMWYzYzRhYzg3MWE2IiwidXNlcl9pZCI6Mn0.kNkXW930_L87vwxlLjzpV1SNxs7wYZVNwuM6iAeOizk",
                 },
-                description="이전에 발급 받았던 JWT 액세스 토큰 값을 입력하세요.",
+                description="검증하려고 하는 JWT 액세스 토큰 또는 리프레시 토큰 값을 입력하세요.",
                 request_only=True,
             ),
         ],
         responses={
             200: OpenApiResponse(
                 response=TokenVerifySerializer,
-                description="주어진 JWT 액세스 토큰이 유효한 경우, 200 상태 코드와 함께 빈 JSON 데이터가 반환됩니다.",
+                description="주어진 토큰이 유효한 경우, 200 상태 코드와 함께 빈 JSON 데이터가 반환됩니다.",
                 examples=[
                     OpenApiExample(
                         name="응답 예시",
@@ -168,7 +168,7 @@ jwt_verify_api_specs = {
                         ),
                     },
                 ),
-                description="주어진 JWT 액세스 토큰이 만료된 경우, 401 상태 코드와 함께 에러 정보가 담긴 JSON 데이터가 반환됩니다.",
+                description="주어진 토큰이 만료된 경우, 401 상태 코드와 함께 에러 정보가 담긴 JSON 데이터가 반환됩니다.",
             ),
         },
     )
