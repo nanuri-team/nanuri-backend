@@ -202,18 +202,18 @@ AWS_SNS_PLATFORM_APPLICATION_ARN = os.environ["AWS_SNS_PLATFORM_APPLICATION_ARN"
 # OpenAPI
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Nanuri API Document",
-    "DESCRIPTION": """Nanuri를 위한 API 문서입니다. <br><br> 팀원: 김서현, 김지현, 김혜지, 이희대, 임지환, 최민경""",
-    "SWAGGER_UI_SETTINGS": {
-        "dom_id": "#swagger-ui",
-        "layout": "BaseLayout",
-        "deepLinking": True,
-        "persistAuthorization": True,
-        "displayOperationId": True,
-        "filter": True,
+    "TITLE": "Nanuri Backend API Docs",
+    "DESCRIPTION": "나누리 백엔드 API 문서입니다.",
+    "CONTACT": {
+        "email": "nanuriaws@gmail.com",
     },
+    "SERVERS": [
+        {
+            "url": "https://nanuri.app",
+            "description": "개발 서버",
+        }
+    ],
     "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 
