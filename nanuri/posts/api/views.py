@@ -4,7 +4,6 @@ from django.core.files.storage import default_storage
 from django.db.models import F
 from drf_spectacular.utils import extend_schema_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import Comment, Post, PostImage, SubComment
@@ -16,7 +15,6 @@ from .serializers import CommentSerializer, PostSerializer, SubCommentSerializer
 class PostListCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
-    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         queryset = Post.objects.all()
@@ -80,7 +78,6 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class CommentListCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer
-    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         queryset = Comment.objects.all()
@@ -110,7 +107,6 @@ class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class SubCommentListCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = SubCommentSerializer
-    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         queryset = SubComment.objects.all()

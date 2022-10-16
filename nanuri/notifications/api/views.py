@@ -6,7 +6,6 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -42,7 +41,6 @@ class DeviceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 @extend_schema_view(**specs.subscriptions_api_specs)
 class SubscriptionListCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
-    pagination_class = LimitOffsetPagination
     serializer_class = SubscriptionSerializer
 
     def get_queryset(self):
