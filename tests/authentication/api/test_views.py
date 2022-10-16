@@ -88,7 +88,7 @@ class TestAuthenticationEndpoints:
 
         assert token != token2
 
-    def test_create_jwt(self):
+    def test_jwt(self):
         # JWT 발급
         raw_password = fake.password()
         user = UserFactory.create(is_active=True, password=raw_password)
@@ -102,12 +102,17 @@ class TestAuthenticationEndpoints:
         assert "access" in response_data
         assert "refresh" in response_data
 
+        access_token = response_data["access"]
+        refresh_token = response_data["refresh"]
+
         # 액세스 토큰 유효성 검사
         response = self.anonymous.post(
             reverse("nanuri.authentication:token_verify"),
-            data={"token": response_data["access"]},
+            data={"token": access_token},
+            format="json",
         )
         assert response.status_code == 200
+        assert response.json() == dict()
 
         # 액세스 토큰 만료
         after_access_token_expired = now() + timedelta(minutes=5)
@@ -115,14 +120,19 @@ class TestAuthenticationEndpoints:
             # 액세스 토큰 유효성 검사 실패 (만료됨)
             response = self.anonymous.post(
                 reverse("nanuri.authentication:token_verify"),
-                data={"token": response_data["access"]},
+                data={"token": access_token},
+                format="json",
             )
             assert response.status_code == 401
+            response_data = response.json()
+            assert "code" in response_data
+            assert "detail" in response_data
 
             # 리프레시 토큰으로 액세스 토큰 재발급
             response = self.anonymous.post(
                 reverse("nanuri.authentication:token_refresh"),
-                data={"refresh": response_data["refresh"]},
+                data={"refresh": refresh_token},
+                format="json",
             )
             assert response.status_code == 200
             assert "access" in response.json()
@@ -133,6 +143,7 @@ class TestAuthenticationEndpoints:
             # 리프레시 토큰으로 액세스 토큰 재발급 시 실패
             response = self.anonymous.post(
                 reverse("nanuri.authentication:token_refresh"),
-                data={"refresh": response_data["refresh"]},
+                data={"refresh": refresh_token},
+                format="json",
             )
             assert response.status_code == 401
