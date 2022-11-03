@@ -2,6 +2,8 @@ server {
     server_name ${NGINX_HOST};
 
     location / {
+        proxy_hide_header Access-Control-Allow-Origin;
+        add_header 'Access-Control-Allow-Origin' '*';
         proxy_pass http://${APP_HOST}:${APP_PORT};
     }
 
