@@ -48,6 +48,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "drf_spectacular",
     "rest_framework_simplejwt",
+    "corsheaders",
 ]
 
 LOCAL_APPS = [
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     "request_logging.middleware.LoggingMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -220,3 +222,8 @@ SPECTACULAR_SETTINGS = {
 # Social Login
 
 KAKAO_APP_ADMIN_KEY = os.environ["KAKAO_APP_ADMIN_KEY"]
+
+
+# CORS Header
+
+CORS_ALLOW_ALL_ORIGINS = True
