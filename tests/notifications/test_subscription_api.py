@@ -4,30 +4,41 @@ from django.urls import reverse
 from nanuri.aws.sns import sns
 from nanuri.notifications.models import Subscription
 
-from .factories import SubscriptionFactory
+from .factories import DeviceFactory, SubscriptionFactory
 
 pytestmark = pytest.mark.django_db
 
 
 class TestSubscriptionApi:
-    def test_create(self, user_client, device):
+    @pytest.mark.parametrize("subscription_opt_in", [True, False])
+    @pytest.mark.parametrize("device_opt_in", [True, False])
+    def test_create(self, user_client, device_opt_in, subscription_opt_in):
+        # given: 1개의 기기를 준비함
+        device = DeviceFactory.create(opt_in=device_opt_in)
+
+        # when: 구독을 생성함
         response = user_client.post(
             reverse("nanuri.notifications.api:subscription-list"),
             data={
                 "device": str(device.uuid),
                 "topic": Subscription.Topic.TO_ALL,
                 "group_code": None,
-                "opt_in": True,
+                "opt_in": subscription_opt_in,
             },
             format="json",
         )
+
+        # then
         assert response.status_code == 201
 
+        # `opt_in` 에 따라서 Subscription ARN 도 생성되어야 함
         result = response.json()
-        assert result["subscription_arn"].startswith("arn:aws:sns:")
-
-        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
-        assert result["subscription_arn"] in subscriptions
+        if device_opt_in and subscription_opt_in:
+            assert result["subscription_arn"].startswith("arn:aws:sns:")
+            subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+            assert result["subscription_arn"] in subscriptions
+        else:
+            assert result["subscription_arn"] is None
 
     def test_retrieve(self, user_client, subscription):
         response = user_client.get(
@@ -79,12 +90,12 @@ class TestSubscriptionApi:
         assert previous_subscription_arn not in subscriptions
 
     def test_opt_in_off(self, user_client):
+        # given: 구독을 생성함
         subscription = SubscriptionFactory.create(opt_in=True)
-        assert subscription.opt_in is True
-        assert subscription.subscription_arn is not None
-        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
-        assert subscription.subscription_arn in subscriptions
+        all_subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+        assert subscription.subscription_arn in all_subscriptions
 
+        # when: `opt_in` 을 끔
         response = user_client.patch(
             reverse(
                 "nanuri.notifications.api:subscription-detail",
@@ -93,10 +104,9 @@ class TestSubscriptionApi:
             data={"opt_in": False},
             format="json",
         )
+
+        # then
         assert response.status_code == 200
 
-        subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
-        assert subscription.subscription_arn not in subscriptions
-
-        updated_subscription = Subscription.objects.get(uuid=subscription.uuid)
-        assert updated_subscription.subscription_arn is None
+        all_subscriptions = [x["SubscriptionArn"] for x in sns.list_subscriptions()]
+        assert subscription.subscription_arn not in all_subscriptions
