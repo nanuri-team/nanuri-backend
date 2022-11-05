@@ -82,11 +82,12 @@ class Subscription(models.Model):
         if self.opt_in is False:
             self.subscription_arn = None
         else:
-            self.subscription_arn = sns.subscribe(
-                self.topic,
-                self.device.endpoint_arn,
-                self.group_code,
-            )
+            if self.device.endpoint_arn and self.device.opt_in:
+                self.subscription_arn = sns.subscribe(
+                    self.topic,
+                    self.device.endpoint_arn,
+                    self.group_code,
+                )
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
