@@ -1,7 +1,6 @@
 import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema_view
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -14,7 +13,6 @@ from rest_framework_simplejwt.views import (
 
 from ..models import KakaoAccount
 from . import exceptions as ex
-from . import specs
 from .serializers import AuthTokenSerializer, KakaoAccountSerializer
 
 
@@ -73,7 +71,6 @@ def get_or_create_user(email):
     return user, user_created
 
 
-@extend_schema_view(**specs.kakao_accounts_api_specs)
 class KakaoAccountCreateAPIView(APIView):
     queryset = KakaoAccount.objects.all()
     serializer_class = KakaoAccountSerializer
@@ -108,16 +105,13 @@ class KakaoAccountCreateAPIView(APIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema_view(**specs.jwt_obtain_api_specs)
 class JsonWebTokenObtainPairView(TokenObtainPairView):
     pass
 
 
-@extend_schema_view(**specs.jwt_refresh_api_specs)
 class JsonWebTokenRefreshView(TokenRefreshView):
     pass
 
 
-@extend_schema_view(**specs.jwt_verify_api_specs)
 class JsonWebTokenVerifyView(TokenVerifyView):
     pass
