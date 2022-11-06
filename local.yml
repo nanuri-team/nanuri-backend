@@ -11,9 +11,9 @@ services:
       args:
         ENV_NAME: "local"
     env_file:
-      - .env
+      - ./nanuri-backend/.env
     volumes:
-      - .:/code
+      - ./nanuri-backend:/code
     ports:
       - "8000:8000"
     working_dir: /code
@@ -27,7 +27,7 @@ services:
   db:
     image: postgis/postgis:12-master
     env_file:
-      - .env
+      - ./nanuri-backend/.env
     volumes:
       - local_db_data:/var/lib/postgresql/data
     ports:

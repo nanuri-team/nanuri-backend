@@ -6,7 +6,7 @@ ARG ENV_NAME
 
 RUN mkdir /code
 
-COPY ./requirements/* /code/requirements/
+COPY ./nanuri-backend/requirements/* /code/requirements/
 
 WORKDIR /code
 
@@ -21,6 +21,6 @@ RUN apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 RUN pip install -r requirements/$ENV_NAME.txt
 
-COPY . /code
+COPY ./nanuri-backend /code
 
 ENTRYPOINT ["/code/scripts/entrypoint.sh"]

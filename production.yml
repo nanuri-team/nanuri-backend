@@ -11,9 +11,9 @@ services:
       args:
         ENV_NAME: "prod"
     env_file:
-      - .env
+      - ./nanuri-backend/.env
     volumes:
-      - .:/code
+      - ./nanuri-backend:/code
     expose:
       - 8000
     working_dir: /code

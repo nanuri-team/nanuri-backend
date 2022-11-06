@@ -25,6 +25,7 @@ jobs:
       - name: Download p12 certificate
         run: |
           wget https://github.com/aryansbtloe/resources/raw/master/Certificate/certificate.p12
+          mv certificate.p12 nanuri-backend/
 
       - name: Create env file
         run: |
@@ -38,6 +39,7 @@ jobs:
           echo "POSTGRES_USER=postgres" >> .env
           echo "POSTGRES_PASSWORD=postgres" >> .env
           echo "POSTGRES_DB=postgres" >> .env
+          mv .env nanuri-backend/
 
       - name: Build the Stack
         run: docker-compose -f local.yml build
