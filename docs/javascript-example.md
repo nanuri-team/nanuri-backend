@@ -2,7 +2,7 @@
 // 소켓 100개 생성 (= 방에 유저 100명 접속)
 let sockets = [];
 for (let i = 0; i < 100; i++) {
-    const socket = new WebSocket('ws://localhost:8080/ws/chat/my_room/?token=...');
+    const socket = new WebSocket('ws://localhost:8000/ws/chat/my_room/?token=...');
     socket.onmessage = (e) => {
         const data = JSON.parse(e.data);
         console.log(data);
@@ -29,7 +29,7 @@ for (let i = 0; i < 100; i++) {
 ```
 
 ```javascript
-const socket = new WebSocket('ws://localhost:8080/ws/chat/my_room/?token=...')
+const socket = new WebSocket('ws://localhost:8000/ws/chat/my_room/?token=...')
 socket.onmessage = (e) => {
     const data = JSON.parse(e.data);
     console.log(data);

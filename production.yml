@@ -15,10 +15,10 @@ services:
     volumes:
       - .:/code
     expose:
-      - 8080
+      - 8000
     working_dir: /code
     command: >
-      sh -c "python manage.py collectstatic --no-input && daphne -b 0.0.0.0 -p 8080 config.asgi:application"
+      sh -c "python manage.py collectstatic --no-input && daphne -b 0.0.0.0 -p 8000 config.asgi:application"
     restart: unless-stopped
     depends_on:
       - db
@@ -53,6 +53,6 @@ services:
       - NGINX_HOST=nanuri.app
       - NGINX_PORT=80
       - APP_HOST=app
-      - APP_PORT=8080
+      - APP_PORT=8000
     depends_on:
       - app

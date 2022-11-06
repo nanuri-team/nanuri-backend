@@ -10,7 +10,7 @@ class WebsiteUser(HttpUser):
 
     def on_start(self):
         response = self.client.post(
-            "http://localhost:8080/api/auth/token/",
+            "http://localhost:8000/api/auth/token/",
             {"email": "admin@example.com", "password": "password1234"},
         )
         access_token = response.json()["access"]
@@ -18,12 +18,12 @@ class WebsiteUser(HttpUser):
 
     @task
     def get_posts(self):
-        self.client.get("http://localhost:8080/api/v1/posts/")
+        self.client.get("http://localhost:8000/api/v1/posts/")
 
     @task
     def create_posts(self):
         self.client.post(
-            "http://localhost:8080/api/v1/posts/",
+            "http://localhost:8000/api/v1/posts/",
             json={
                 "title": self.fake.pystr(),
                 "category": random.choice(
