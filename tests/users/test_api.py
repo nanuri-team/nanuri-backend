@@ -76,6 +76,21 @@ class TestUserEndpoints:
         assert result["email"] == user.email
         assert result["location"] == user.location.ewkt
 
+    def test_retrieve_with_posts_participated(self, user_client, user, post):
+        post.participants.add(user)
+
+        response = user_client.get(
+            reverse(
+                "nanuri.users.api:detail",
+                kwargs={"uuid": user.uuid},
+            )
+        )
+        result = response.json()
+
+        posts_participated = result['posts_participated']
+        assert len(posts_participated) == 1
+        assert posts_participated[0] == str(post.uuid)
+
     def test_update(self, user_client, user):
         new_user = UserFactory.build()
         new_password = "password1234"

@@ -14,6 +14,11 @@ class UserSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field="uuid",
     )
+    posts_participated = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="uuid",
+    )
 
     def create(self, validated_data):
         instance = super().create(validated_data)
@@ -43,6 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
             "location",
             "posts",
             "favorite_posts",
+            "posts_participated",
         )
         extra_kwargs = {
             "password": {
