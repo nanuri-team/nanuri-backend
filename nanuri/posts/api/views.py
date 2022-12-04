@@ -2,13 +2,16 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
 from django.core.files.storage import default_storage
 from django.db.models import F
+from drf_spectacular.utils import extend_schema_view
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import CommentSerializer, PostSerializer, SubCommentSerializer
 from ..models import Comment, Post, PostImage, SubComment
+from . import specs
+from .serializers import CommentSerializer, PostSerializer, SubCommentSerializer
 
 
+@extend_schema_view(**specs.posts_api_specs)
 class PostListCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
@@ -43,6 +46,7 @@ class PostListCreateAPIView(ListCreateAPIView):
         post.participants.add(writer)
 
 
+@extend_schema_view(**specs.post_api_specs)
 class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Post.objects.all()
@@ -70,6 +74,7 @@ class PostRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         PostImage.objects.bulk_create(new_post_images)
 
 
+@extend_schema_view(**specs.comments_api_specs)
 class CommentListCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer
@@ -87,6 +92,7 @@ class CommentListCreateAPIView(ListCreateAPIView):
         serializer.save(post=post, writer=writer)
 
 
+@extend_schema_view(**specs.comment_api_specs)
 class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer
@@ -97,6 +103,7 @@ class CommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
         return Comment.objects.get(uuid=uuid)
 
 
+@extend_schema_view(**specs.sub_comments_api_specs)
 class SubCommentListCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = SubCommentSerializer
@@ -114,6 +121,7 @@ class SubCommentListCreateAPIView(ListCreateAPIView):
         serializer.save(comment=comment, writer=writer)
 
 
+@extend_schema_view(**specs.sub_comment_api_specs)
 class SubCommentRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = SubCommentSerializer
